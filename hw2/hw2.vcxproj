@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="io_utils.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Wall.cpp" />
@@ -21,6 +22,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="io_utils.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
