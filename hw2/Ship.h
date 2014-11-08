@@ -1,5 +1,5 @@
-#ifndef _IO_UTILS_H_
-#define _IO_UTILS_H_
+#ifndef _SHIP_H_
+#define _SHIP_H_
 
 typedef struct
 {
