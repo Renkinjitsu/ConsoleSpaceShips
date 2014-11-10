@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="ExitPoint.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Ship.h" />
