@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ExitPoint.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />

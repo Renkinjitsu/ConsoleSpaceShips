@@ -1,6 +1,8 @@
 #ifndef _WALL_H_
 #define _WALL_H_
 
+using namespace std;
+
 typedef struct
 {
 	int x;
@@ -24,6 +26,11 @@ public:
 	{
 		location = wall_stating_location;
 		size = wall_size;
+	};
+
+	void Draw()
+	{
+
 	};
 };
 #endif

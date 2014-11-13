@@ -16,7 +16,7 @@ int main()
 	int y = 1;
 
 
-	Game_t * game_screen = new Game_t();
+	Game * game = new Game();
 
 	Item_location_t location_arr[4];
 	location_arr[0].x = 1;
@@ -34,26 +34,9 @@ int main()
 	location_arr2[0].y = 7;
 
 
-	game_screen->items[0] = new Item(4, location_arr, 4);
+	game->add_item(new Item(4, location_arr, 4));
 
-	game_screen->items[1] = new Item(6, location_arr2, 2);
+	game->add_item(new Item(6, location_arr2, 2));
 
-	game_screen->num_of_items = 2;
-
-	// esc (Ascii 27) ends the loop
-	while (!_kbhit() || _getch() != ESC)
-	{
-		game_screen->items[0]->advance_falling(game_screen);
-		Sleep(50);
-		/*gotoxy(x, y);
-		cout << "*" << endl;
-		Sleep(50);
-		gotoxy(x, y);
-		cout << " " << endl;
-		++x;
-		if (x>79) { x = 1; }
-		++y;
-		if (y>20) { y = 1; }*/
-	}
-	return 0;
+	game->Run();
 }

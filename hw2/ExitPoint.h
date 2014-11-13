@@ -1,5 +1,6 @@
 #ifndef _EXITPOINT_H_
 #define _EXITPOINT_H_
+using namespace std;
 
 typedef struct
 {

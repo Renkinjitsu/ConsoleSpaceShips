@@ -1,6 +1,8 @@
 #ifndef _SHIP_H_
 #define _SHIP_H_
 
+using namespace std;
+
 typedef struct
 {
 	int x;
@@ -30,6 +32,11 @@ public:
 	{
 		size = ship_size;
 		location = ship_starting_location;
+	};
+
+	void Draw()
+	{
+		
 	};
 
 

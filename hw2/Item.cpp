@@ -1,14 +1,14 @@
 #include "Item.h"
 #include "config.h"
 
-void Item::advance_falling(Game_t * game_screen)
+void Item::advance_falling(Game * game_screen)
 {
 	if (item_alive)
 	{
 
-		for (size_t i = 0; i < game_screen->num_of_items; i++)
+		for (size_t i = 0; i < game_screen->get_num_of_items(); i++)
 		{
-			if (this->standing_on(game_screen->items[i]))
+			if (this->standing_on(game_screen->get_item(i)))
 			{
 				return;
 			}

@@ -21,16 +21,6 @@ private:
 	Item_location_t * location_with_y_most_higher = NULL;
 	bool item_alive = false;
 
-
-	void Draw()
-	{
-		for (size_t i = 0; i < locations_arr_len; i++)
-		{
-			gotoxy(locations_arr[i].x, locations_arr[i].y);
-			cout << item_number;
-		}
-	};
-
 	void EraseDrawing()
 	{
 		for (size_t i = 0; i < locations_arr_len; i++)
@@ -40,7 +30,7 @@ private:
 		}
 	}
 public:
-	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len )
+	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len)
 	{
 		this->item_number = item_number;
 
@@ -61,12 +51,21 @@ public:
 			}
 		}
 
-		Draw();
+		//Draw();
 		item_alive = true;
 
 	};
 
-	void advance_falling(Game_t * game_screen);
+	void Draw()
+	{
+		for (size_t i = 0; i < locations_arr_len; i++)
+		{
+			gotoxy(locations_arr[i].x, locations_arr[i].y);
+			cout << item_number;
+		}
+	};
+
+	void advance_falling(class Game * game_screen);
 	bool standing_on(Item * items);
 };
 #endif
