@@ -47,6 +47,11 @@ public:
 		walls[num_of_walls++] = wall;
 	};
 
+	void set_exitpoint(ExitPoint * exit)
+	{
+		exit_point = exit;
+	};
+
 	size_t get_num_of_items()
 	{
 		return num_of_items;

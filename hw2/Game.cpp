@@ -21,6 +21,11 @@ void Game::draw_all()
 	{
 		walls[i]->Draw();
 	}
+
+	if (exit_point != NULL)
+	{
+		exit_point->Draw();
+	}
 };
 
 void Game::Run()

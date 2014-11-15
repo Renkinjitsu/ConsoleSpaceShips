@@ -27,10 +27,6 @@ void Item::advance_falling(Game * game_screen)
 		}
 		else
 		{
-			/*for (size_t i = 0; i < locations_arr_len; i++)
-			{
-			locations_arr[i].y = 1 + (UPPER_Y - locations_arr[i].y);
-			}*/
 
 			//Item disappeared and died
 			item_alive = false;

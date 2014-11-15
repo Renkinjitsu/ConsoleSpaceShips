@@ -38,5 +38,13 @@ int main()
 
 	game->add_item(new Item(6, location_arr2, 2));
 
+	ExitPoint_location_t exit_location;
+	exit_location.x = 10;
+	exit_location.y = 5;
+	ExitPoint * exit = new ExitPoint(exit_location);
+	game->set_exitpoint(exit);
+
 	game->Run();
+
+
 }
