@@ -5,6 +5,8 @@
 #include "Game.h"
 using namespace std;
 
+class Wall;
+
 typedef struct
 {
 	int x;
@@ -21,31 +23,7 @@ private:
 	Item_location_t * location_with_y_most_higher = NULL;
 	bool item_alive = false;
 public:
-	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len)
-	{
-		this->item_number = item_number;
-
-		locations_arr = new Item_location_t[locations_array_len];
-		locations_arr_len = locations_array_len;
-
-		for (size_t i = 0; i < locations_array_len; i++)
-		{
-			locations_arr[i] = locations_array[i];
-			if (location_with_y_most_lower == NULL || locations_arr[i].y < location_with_y_most_lower->y)
-			{
-				location_with_y_most_lower = &locations_arr[i];
-			}
-
-			if (location_with_y_most_higher == NULL || locations_arr[i].y > location_with_y_most_higher->y)
-			{
-				location_with_y_most_higher = &locations_arr[i];
-			}
-		}
-
-		//Draw();
-		item_alive = true;
-
-	};
+	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len);
 
 	void Draw()
 	{
@@ -66,6 +44,8 @@ public:
 	}
 
 	void advance_falling(class Game * game_screen);
-	bool standing_on(Item * items);
+
+	bool Item::is_standing_on_me(Item * item);
+	bool Item::is_standing_on_me(Wall * wall);
 };
 #endif

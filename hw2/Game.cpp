@@ -63,7 +63,9 @@ void Game::Run()
 		{
 			this->get_item(i)->advance_falling(this);
 		}
-		//this->get_item(0)->advance_falling(this);
+
+		//for each ship do IsAtExitPoint and if so - quit the loop
+
 		Sleep(150);
 	}
 

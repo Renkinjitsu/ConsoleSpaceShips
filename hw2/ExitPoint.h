@@ -1,6 +1,7 @@
 #ifndef _EXITPOINT_H_
 #define _EXITPOINT_H_
 #include "ExitPoint.h"
+#include "Game.h"
 #include "io_utils.h"
 using namespace std;
 
@@ -19,6 +20,8 @@ public:
 	{
 		location = exitpoint_start_location;
 	};
+
+	bool IsAtExitPoint(Ship * ship);
 
 	void Draw()
 	{

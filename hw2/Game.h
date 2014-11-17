@@ -1,18 +1,20 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+using namespace std;
+
+#define MAX_OF_EACH_OBSTECLE 10
+
 #include "Item.h"
 #include "Ship.h"
 #include "Wall.h"
 #include "ExitPoint.h"
-using namespace std;
-
-#define MAX_OF_EACH_OBSTECLE 10
 
 // Forward dec
 class Item;
 class Ship;
 class Wall;
+class ExitPoint;
 
 class Game
 {
