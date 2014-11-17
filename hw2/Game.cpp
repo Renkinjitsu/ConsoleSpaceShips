@@ -28,22 +28,48 @@ void Game::draw_all()
 	}
 };
 
+void Game::erase_all()
+{
+	size_t i;
+
+	for (i = 0; i < num_of_items; i++)
+	{
+		items[i]->EraseDrawing();
+	}
+
+	for (i = 0; i < num_of_ships; i++)
+	{
+		ships[i]->EraseDrawing();
+	}
+
+	for (i = 0; i < num_of_walls; i++)
+	{
+		walls[i]->EraseDrawing();
+	}
+
+	if (exit_point != NULL)
+	{
+		exit_point->EraseDrawing();
+	}
+}
+
 void Game::Run()
 {
 	this->draw_all();
 	// esc (Ascii 27) ends the loop
 	while (!_kbhit() || _getch() != ESC)
 	{
-		this->get_item(0)->advance_falling(this);
-		Sleep(50);
-		/*gotoxy(x, y);
-		cout << "*" << endl;
-		Sleep(50);
-		gotoxy(x, y);
-		cout << " " << endl;
-		++x;
-		if (x>79) { x = 1; }
-		++y;
-		if (y>20) { y = 1; }*/
+		for (size_t i = 0; i < this->get_num_of_items(); i++)
+		{
+			this->get_item(i)->advance_falling(this);
+		}
+		//this->get_item(0)->advance_falling(this);
+		Sleep(150);
 	}
+
+
+	this->erase_all();
+
+	gotoxy(UPPER_X / 2, UPPER_Y / 2);
+	cout << "GAME OVER!";
 }

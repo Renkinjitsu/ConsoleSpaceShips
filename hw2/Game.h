@@ -29,6 +29,7 @@ private:
 	ExitPoint * exit_point;
 
 	void draw_all();
+	void erase_all();
 public:
 	void Run();
 

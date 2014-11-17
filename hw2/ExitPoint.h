@@ -10,21 +10,13 @@ typedef struct
 	int y;
 }ExitPoint_location_t;
 
-/*typedef struct
-{
-	int size_lines;
-	int size_columns;
-}ExitPoint_size_t;*/
-
 class ExitPoint
 {
 private:
 	ExitPoint_location_t location;
-	//ExitPoint_size_t size;
 public:
 	ExitPoint(ExitPoint_location_t exitpoint_start_location)
 	{
-		//size = exitpoint_size;
 		location = exitpoint_start_location;
 	};
 
@@ -32,6 +24,12 @@ public:
 	{
 		gotoxy(location.x, location.y);
 		cout << "X";
+	};
+
+	void EraseDrawing()
+	{
+		gotoxy(location.x, location.y);
+		cout << " ";
 	};
 };
 #endif

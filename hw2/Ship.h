@@ -39,6 +39,11 @@ public:
 		
 	};
 
+	void EraseDrawing()
+	{
+
+	};
+
 
 };
 
