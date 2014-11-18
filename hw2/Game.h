@@ -13,6 +13,10 @@ using namespace std;
 
 // Forward dec
 class Item;
+class Ship;
+class Wall;
+class ExitPoint;
+class Canvas;
 
 class Game
 {
@@ -31,7 +35,7 @@ private:
 	Canvas canvas;
 
 	void draw_all();
-	void erase_all();
+	//void erase_all();
 public:
 	void Run();
 
