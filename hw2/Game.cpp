@@ -28,7 +28,7 @@ void Game::draw_all()
 	}
 };
 
-void Game::erase_all()
+/*void Game::erase_all()
 {
 	size_t i;
 
@@ -51,7 +51,7 @@ void Game::erase_all()
 	{
 		exit_point->EraseDrawing();
 	}
-}
+}*/
 
 void Game::Run()
 {
@@ -70,7 +70,7 @@ void Game::Run()
 	}
 
 
-	this->erase_all();
+	//this->erase_all();
 
 	gotoxy(UPPER_X / 2, UPPER_Y / 2);
 	cout << "GAME OVER!";
