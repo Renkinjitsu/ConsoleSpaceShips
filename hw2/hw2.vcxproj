@@ -11,21 +11,29 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BigShip.cpp" />
+    <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="SmallShip.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BigShip.h" />
+    <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="SmallShip.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

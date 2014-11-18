@@ -14,21 +14,21 @@ void Game::draw_all()
 
 	for (i = 0; i < num_of_ships; i++)
 	{
-		ships[i]->Draw();
+		ships[i]->draw(this->canvas);
 	}
 
 	for (i = 0; i < num_of_walls; i++)
 	{
-		walls[i]->Draw();
+		walls[i]->draw(this->canvas);
 	}
 };
 
 void Game::Run()
 {
-	this->draw_all();
 	// esc (Ascii 27) ends the loop
 	while (!_kbhit() || _getch() != ESC)
 	{
+		this->draw_all();
 		this->get_item(0)->advance_falling(this);
 		Sleep(50);
 		/*gotoxy(x, y);

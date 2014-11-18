@@ -3,6 +3,10 @@
 #include "io_utils.h"
 #include "Item.h"
 #include "Game.h"
+#include "SmallShip.h"
+#include "BigShip.h"
+#include "Wall.h"
+#include "Ship.h"
 
 using namespace std;
 
@@ -14,7 +18,6 @@ int main()
 
 	int x = 1;
 	int y = 1;
-
 
 	Game * game = new Game();
 
@@ -37,6 +40,27 @@ int main()
 	game->add_item(new Item(4, location_arr, 4));
 
 	game->add_item(new Item(6, location_arr2, 2));
+
+	game->add_ship(new SmallShip(12, 12));
+	game->add_ship(new BigShip(18, 12));
+
+	for (unsigned i = 0; i < 8; i++)
+	{
+		game->add_wall(new Wall(i, 0));
+		game->add_wall(new Wall(i, game->getCanvas()->getHeight() - 1));
+
+		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1 - i, 0));
+		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1 - i, game->getCanvas()->getHeight() - 1));
+	}
+
+	for (unsigned i = 0; i < 6; i++)
+	{
+		game->add_wall(new Wall(0, i + 1));
+		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1, i + 1));
+
+		game->add_wall(new Wall(0, game->getCanvas()->getHeight() - 2 - i));
+		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1, game->getCanvas()->getHeight() - 2 - i));
+	}
 
 	game->Run();
 }

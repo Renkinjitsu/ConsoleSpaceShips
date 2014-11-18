@@ -5,14 +5,14 @@
 #include "Ship.h"
 #include "Wall.h"
 #include "ExitPoint.h"
+#include "Canvas.h"
 using namespace std;
 
 #define MAX_OF_EACH_OBSTECLE 10
+#define MAX_OF_EACH_WALL_BLOCK 1000
 
 // Forward dec
 class Item;
-class Ship;
-class Wall;
 
 class Game
 {
@@ -23,10 +23,12 @@ private:
 	Ship * ships[MAX_OF_EACH_OBSTECLE];
 	size_t num_of_ships;
 
-	Wall * walls[MAX_OF_EACH_OBSTECLE];
+	Wall * walls[MAX_OF_EACH_WALL_BLOCK];
 	size_t num_of_walls;
 
 	ExitPoint * exit_point;
+
+	Canvas canvas;
 
 	void draw_all();
 public:
@@ -67,9 +69,14 @@ public:
 		return items[index];
 	};
 
-	Game(): exit_point(NULL)
+	Game() : exit_point(NULL), canvas(80, 24)
 	{
 		num_of_items = num_of_ships = num_of_walls = 0;
+	};
+
+	Canvas * getCanvas()
+	{
+		return &(this->canvas);
 	};
 };
 
