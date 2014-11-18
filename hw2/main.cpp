@@ -39,7 +39,19 @@ int main()
 
 	game->add_item(new Item(4, location_arr, 4));
 
-	game->add_item(new Item(6, location_arr2, 2));
+	//game->add_item(new Item(6, location_arr2, 2));
+
+	Item_location_t location_arr3[1];
+	location_arr3[0].x = 10;
+	location_arr3[0].y = 20;
+
+	game->add_item(new Item(9, location_arr3, 1));
+
+	ExitPoint_location_t exit_location;
+	exit_location.x = 10;
+	exit_location.y = 5;
+	ExitPoint * exit = new ExitPoint(exit_location);
+	game->set_exitpoint(exit);
 
 	game->add_ship(new SmallShip(12, 12));
 	game->add_ship(new BigShip(18, 12));
@@ -63,4 +75,6 @@ int main()
 	}
 
 	game->Run();
+
+
 }

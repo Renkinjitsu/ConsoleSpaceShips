@@ -31,6 +31,7 @@ private:
 	Canvas canvas;
 
 	void draw_all();
+	void erase_all();
 public:
 	void Run();
 
@@ -47,6 +48,11 @@ public:
 	void add_wall(Wall * wall)
 	{
 		walls[num_of_walls++] = wall;
+	};
+
+	void set_exitpoint(ExitPoint * exit)
+	{
+		exit_point = exit;
 	};
 
 	size_t get_num_of_items()

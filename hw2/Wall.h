@@ -11,6 +11,6 @@ public:
 	Wall(unsigned x, unsigned y);
 
 	void draw(Canvas & canvas);
-};
+	};
 
 #endif /* WALL_H_ */
