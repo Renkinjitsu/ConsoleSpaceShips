@@ -17,7 +17,7 @@ public:
 
 	void setPosition(unsigned x, unsigned y);
 
-	void moveUp();
+	void moveUp(Game & screen);
 	void moveDown();
 	void moveLeft();
 	void moveRight();

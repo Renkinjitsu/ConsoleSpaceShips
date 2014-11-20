@@ -14,6 +14,12 @@ void Canvas::setCharacter(unsigned x, unsigned y, char character)
 	std::cout << character;
 }
 
+void Canvas::setCharacter(unsigned x, unsigned y, int num_character)
+{
+	gotoxy((int)x, (int)y);
+	std::cout << num_character;
+}
+
 void Canvas::clear()
 {
 	for (unsigned i = 0; i < this->width; i++)

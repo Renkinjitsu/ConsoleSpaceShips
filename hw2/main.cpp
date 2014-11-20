@@ -59,19 +59,19 @@ int main()
 	for (unsigned i = 0; i < 8; i++)
 	{
 		game->add_wall(new Wall(i, 0));
-		game->add_wall(new Wall(i, game->getCanvas()->getHeight() - 1));
+		game->add_wall(new Wall(i, game->getCanvas().getHeight() - 1));
 
-		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1 - i, 0));
-		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1 - i, game->getCanvas()->getHeight() - 1));
+		game->add_wall(new Wall(game->getCanvas().getWidth() - 1 - i, 0));
+		game->add_wall(new Wall(game->getCanvas().getWidth() - 1 - i, game->getCanvas().getHeight() - 1));
 	}
 
 	for (unsigned i = 0; i < 6; i++)
 	{
 		game->add_wall(new Wall(0, i + 1));
-		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1, i + 1));
+		game->add_wall(new Wall(game->getCanvas().getWidth() - 1, i + 1));
 
-		game->add_wall(new Wall(0, game->getCanvas()->getHeight() - 2 - i));
-		game->add_wall(new Wall(game->getCanvas()->getWidth() - 1, game->getCanvas()->getHeight() - 2 - i));
+		game->add_wall(new Wall(0, game->getCanvas().getHeight() - 2 - i));
+		game->add_wall(new Wall(game->getCanvas().getWidth() - 1, game->getCanvas().getHeight() - 2 - i));
 	}
 
 	game->Run();

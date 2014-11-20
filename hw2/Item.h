@@ -3,6 +3,7 @@
 
 #include "io_utils.h"
 #include "Game.h"
+#include "GameObject.h"
 using namespace std;
 
 class Wall;
@@ -13,7 +14,7 @@ typedef struct
 	int y;
 }Item_location_t;
 
-class Item
+class Item : GameObject
 {
 private:
 	int item_number;
@@ -25,12 +26,13 @@ private:
 public:
 	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len);
 
-	void Draw()
+	void draw(Canvas & canvas)
 	{
 		for (size_t i = 0; i < locations_arr_len; i++)
 		{
-			gotoxy(locations_arr[i].x, locations_arr[i].y);
-			cout << item_number;
+			canvas.setCharacter(locations_arr[i].x, locations_arr[i].y, item_number);
+			/*gotoxy(locations_arr[i].x, locations_arr[i].y);
+			cout << item_number;*/
 		}
 	};
 

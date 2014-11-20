@@ -48,7 +48,7 @@ void Item::advance_falling(Game * game_screen)
 				locations_arr[i].y++;
 			}
 
-			Draw();
+			draw(game_screen->getCanvas());
 		}
 		else
 		{

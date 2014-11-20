@@ -84,9 +84,9 @@ public:
 		num_of_items = num_of_ships = num_of_walls = 0;
 	};
 
-	Canvas * getCanvas()
+	Canvas & getCanvas()
 	{
-		return &(this->canvas);
+		return (this->canvas);
 	};
 };
 

@@ -9,7 +9,7 @@ void Game::draw_all()
 
 	for (i = 0; i < num_of_items; i++)
 	{
-		items[i]->Draw();
+		items[i]->draw(this->canvas);
 	}
 
 	for (i = 0; i < num_of_ships; i++)

@@ -11,6 +11,7 @@ public:
 	Canvas(unsigned width, unsigned height);
 
 	void setCharacter(unsigned x, unsigned y, char character);
+	void setCharacter(unsigned x, unsigned y, int num_character);
 	void clear();
 
 	unsigned getWidth();

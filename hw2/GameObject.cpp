@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Game.h"
 
 GameObject::GameObject(unsigned x, unsigned y)
 {
@@ -22,14 +23,19 @@ void GameObject::setPosition(unsigned x, unsigned y)
 	this->y = y;
 }
 
-void GameObject::moveUp()
+void GameObject::moveUp(Game & screen)
 {
-	this->y++;
+	for (size_t i = 0; i < screen.get_num_of_items(); i++)
+	{
+
+	}
+
+	this->y--;
 }
 
 void GameObject::moveDown()
 {
-	this->y--;
+	this->y++;
 }
 
 void GameObject::moveLeft()
