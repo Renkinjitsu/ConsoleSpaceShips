@@ -15,24 +15,23 @@ typedef struct
 
 typedef enum
 {
-	SQUARE_TEXTURE,
+	SINGLE_LOCATION_TEXTURE,
 	MULTI_LOCATION_TEXTURE
 }texture_e;
 
 class GameObject
 {
 private:
-	/*unsigned x; //The amount of characters from the left
-	unsigned y; //The amount of characters from the bottom*/
-
 	Item_location_t start_location;
-
 	vector<Item_location_t> locations;
 
 	texture_e texture_type;
 
 public:
+	//Single location
 	GameObject(unsigned x = 0, unsigned y = 0);
+
+	//Multi location
 	GameObject(vector<Item_location_t> & location);
 
 	void set_locations(unsigned x = 0, unsigned y = 0);
@@ -40,7 +39,7 @@ public:
 
 	vector<Item_location_t> & GameObject::get_locations();
 
-
+	//only on single location
 	unsigned getXstart();
 	unsigned getYstart();
 
@@ -50,8 +49,6 @@ public:
 	virtual bool moveDown(Game * screen);
 	void moveLeft();
 	void moveRight();
-
-	bool GameObject::IsUpperTouchingDowner(GameObject * downer, GameObject * upper);
 
 	virtual void draw(Canvas & canvas) = 0;
 };

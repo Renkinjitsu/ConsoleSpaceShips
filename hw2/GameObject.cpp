@@ -20,7 +20,7 @@ void GameObject::set_locations(unsigned x , unsigned y)
 	start_location.x = x;
 	start_location.y = y;
 
-	this->texture_type = SQUARE_TEXTURE;
+	this->texture_type = SINGLE_LOCATION_TEXTURE;
 }
 
 
@@ -48,18 +48,6 @@ vector<Item_location_t> & GameObject::get_locations()
 	return this->locations;
 }
 
-
-bool GameObject::IsUpperTouchingDowner(GameObject * downer, GameObject * upper)
-{
-	//if (downer->x)
-	return false;
-}
-
-/*void GameObject::setPosition(unsigned x, unsigned y)
-{
-	this->x = x;
-	this->y = y;
-}*/
 
 void GameObject::moveUp()
 {
