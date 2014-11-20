@@ -5,6 +5,8 @@
 #include "io_utils.h"
 using namespace std;
 
+class Ship;
+
 typedef struct
 {
 	int x;

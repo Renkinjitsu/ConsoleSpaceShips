@@ -3,6 +3,49 @@
 
 #define ESC 27
 
+bool Game::canMoveDown(Item * item)
+{
+	//check for wall blockage
+	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
+	{
+		unsigned wallX = it->getXstart();
+		unsigned wallY = it->getYstart();
+
+		vector<Item_location_t> item_locations = item->get_locations();
+
+		for (vector<Item_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
+		{
+			if (wallX == it_item_loc->x && wallY == it_item_loc->y + 1)
+			{
+				return false;
+			}
+		}
+	}
+
+	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) 
+	{
+		vector<Item_location_t> my_item_locations = item->get_locations();
+		vector<Item_location_t> other_item_locations = it->get_locations();
+
+		for (vector<Item_location_t>::iterator my_item_loc_it = my_item_locations.begin(); my_item_loc_it != my_item_locations.end(); ++my_item_loc_it)
+		{
+			for (vector<Item_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
+			{
+				unsigned MyItemPointX = my_item_loc_it->x;
+				unsigned MyItemPointY = my_item_loc_it->y;
+				unsigned OtherItemPointX = other_item_loc_it->x;
+				unsigned OtherItemPointY = other_item_loc_it->y;
+				if (MyItemPointX == OtherItemPointX && OtherItemPointY == MyItemPointY + 1)
+				{
+					return it->canMoveDown(this);
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 void Game::draw_all()
 {
 	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
@@ -54,7 +97,7 @@ void Game::Run()
 	while (!_kbhit() || _getch() != ESC)
 	{
 		for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
-			it->advance_falling(this);
+			it->MoveDown(this);
 		}
 
 		//for each ship do IsAtExitPoint and if so - quit the loop

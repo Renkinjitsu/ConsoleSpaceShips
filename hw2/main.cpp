@@ -40,12 +40,17 @@ int main()
 	Item * item1 = new Item(4, location_arr, 4);
 	game->add_item(*item1);
 
+
+
+	Item * item2 = new Item(1, location_arr2, 1);
+	game->add_item(*item2);
+
 	Item_location_t location_arr3[1];
 	location_arr3[0].x = 15;
 	location_arr3[0].y = 20;
 
-	Item * item2 = new Item(9, location_arr3, 1);
-	game->add_item(*item2);
+	Item * item3 = new Item(9, location_arr3, 1);
+	game->add_item(*item3);
 
 	ExitPoint_location_t exit_location;
 	exit_location.x = 10;
@@ -87,6 +92,9 @@ int main()
 		walls[walls_counter] = new Wall(game->getCanvas().getWidth() - 1, game->getCanvas().getHeight() - 2 - i);
 		game->add_wall(*walls[walls_counter++]);
 	}
+
+	/*walls[walls_counter] = new Wall(1, 3);
+	game->add_wall(*walls[walls_counter++]);*/
 
 	game->Run();
 

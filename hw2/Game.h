@@ -99,6 +99,8 @@ public:
 	{
 		return (this->canvas);
 	};
+
+	bool canMoveDown(Item * item);
 };
 
 #endif

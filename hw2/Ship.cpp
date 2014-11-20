@@ -14,8 +14,8 @@ void Ship::draw(Canvas & canvas)
 	{
 		for (unsigned j = 0; j < this->height; j++)
 		{
-			unsigned x = this->getX() + this->width - i;
-			unsigned y = this->getY() + this->height - j;
+			unsigned x = this->getXstart() + this->width - i;
+			unsigned y = this->getYstart() + this->height - j;
 
 			canvas.setCharacter(x, y, this->texture);
 		}

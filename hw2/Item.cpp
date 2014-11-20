@@ -5,51 +5,62 @@ Item::Item(int item_number, const Item_location_t locations_array[], size_t loca
 {
 	this->item_number = item_number;
 
+
+	vector<Item_location_t> locations;
 	for (size_t i = 0; i < locations_array_len; i++)
 	{
 		locations.push_back(locations_array[i]);
 	}
 
+	set_locations(locations);
 }
 
-void Item::advance_falling(Game * game_screen)
+bool Item::canMoveDown(Game * game_screen)
 {
-	for (vector<Item>::iterator it = game_screen->items_iterator_begin(); it != game_screen->items_iterator_end(); ++it) {
+	return game_screen->canMoveDown(this);
+}
+
+void Item::MoveDown(Game * game_screen)
+{
+	/*for (vector<Item>::iterator it = game_screen->items_iterator_begin(); it != game_screen->items_iterator_end(); ++it) {
 		Item & item = *it;
 		if (this->is_standing_on_me(&item))
 		{
 			return;
 		}
-	}
-
+	}*/
 
 
 
 	//Lets go down!
-	EraseDrawing();
-
-	for (vector<Item_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+	if (this->canMoveDown(game_screen))
 	{
-		if (it->y == UPPER_Y)
+		EraseDrawing();
+		vector<Item_location_t> & locations = get_locations();
+		for (vector<Item_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			it->y = it->y % UPPER_Y;
+			if (it->y == UPPER_Y)
+			{
+				it->y = it->y % UPPER_Y;
+			}
+			else
+			{
+				it->y++;
+			}
 		}
-		else
-		{
-			it->y++;
-		}
-	}
 
-	draw(game_screen->getCanvas());
+		draw(game_screen->getCanvas());
+	}
 }
 
-bool Item::is_standing_on_me(Item * item)
+/*bool Item::is_standing_on_me(Item * item)
 {
 	if (item == this)
 	{ // He is me
 		return false;
 	}
 
+	vector<Item_location_t> & locations = get_locations();
 	for (vector<Item_location_t>::iterator it = this->locations.begin(); it != this->locations.end(); ++it)
 	{
 		for (vector<Item_location_t>::iterator it_other = item->locations.begin(); it_other != item->locations.end(); ++it_other)
@@ -62,7 +73,7 @@ bool Item::is_standing_on_me(Item * item)
 	}
 
 	return false;
-}
+}*/
 
 /*bool Item::standing_on(Wall * wall)
 {
