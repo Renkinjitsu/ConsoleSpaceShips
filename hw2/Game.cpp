@@ -22,6 +22,7 @@ bool Game::canMoveDown(Item * item)
 		}
 	}
 
+	//check for item blockage
 	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) 
 	{
 		vector<Item_location_t> my_item_locations = item->get_locations();
@@ -41,6 +42,13 @@ bool Game::canMoveDown(Item * item)
 				}
 			}
 		}
+	}
+
+	//check for ship blockage
+	vector<Item_location_t> item_locations = item->get_locations();
+	for (vector<Item_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
+	{
+		
 	}
 
 	return true;
