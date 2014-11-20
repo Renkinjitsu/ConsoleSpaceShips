@@ -37,15 +37,15 @@ int main()
 	location_arr2[0].y = 7;
 
 
-	game->add_item(new Item(4, location_arr, 4));
-
-	//game->add_item(new Item(6, location_arr2, 2));
+	Item * item1 = new Item(4, location_arr, 4);
+	game->add_item(*item1);
 
 	Item_location_t location_arr3[1];
-	location_arr3[0].x = 10;
+	location_arr3[0].x = 15;
 	location_arr3[0].y = 20;
 
-	game->add_item(new Item(9, location_arr3, 1));
+	Item * item2 = new Item(9, location_arr3, 1);
+	game->add_item(*item2);
 
 	ExitPoint_location_t exit_location;
 	exit_location.x = 10;
@@ -53,25 +53,39 @@ int main()
 	ExitPoint * exit = new ExitPoint(exit_location);
 	game->set_exitpoint(exit);
 
-	game->add_ship(new SmallShip(12, 12));
-	game->add_ship(new BigShip(18, 12));
+	SmallShip smallship(12, 12);
+	game->set_small_ship(smallship);
+
+	BigShip bigship(18, 12);
+	game->set_big_ship(bigship);
+
+	Wall * walls[4 * 8 + 4 * 6];
+	size_t walls_counter = 0;
 
 	for (unsigned i = 0; i < 8; i++)
 	{
-		game->add_wall(new Wall(i, 0));
-		game->add_wall(new Wall(i, game->getCanvas().getHeight() - 1));
+		walls[walls_counter] = new Wall(i, 0);
+		game->add_wall(*walls[walls_counter++]);
+		walls[walls_counter] = new Wall(i, game->getCanvas().getHeight() - 1);
+		game->add_wall(*walls[walls_counter++]);
 
-		game->add_wall(new Wall(game->getCanvas().getWidth() - 1 - i, 0));
-		game->add_wall(new Wall(game->getCanvas().getWidth() - 1 - i, game->getCanvas().getHeight() - 1));
+		walls[walls_counter] = new Wall(game->getCanvas().getWidth() - 1 - i, 0);
+		game->add_wall(*walls[walls_counter++]);
+		walls[walls_counter] = new Wall(game->getCanvas().getWidth() - 1 - i, game->getCanvas().getHeight() - 1);
+		game->add_wall(*walls[walls_counter++]);
 	}
 
 	for (unsigned i = 0; i < 6; i++)
 	{
-		game->add_wall(new Wall(0, i + 1));
-		game->add_wall(new Wall(game->getCanvas().getWidth() - 1, i + 1));
+		walls[walls_counter] = new Wall(0, i + 1);
+		game->add_wall(*walls[walls_counter++]);
+		walls[walls_counter] = new Wall(game->getCanvas().getWidth() - 1, i + 1);
+		game->add_wall(*walls[walls_counter++]);
 
-		game->add_wall(new Wall(0, game->getCanvas().getHeight() - 2 - i));
-		game->add_wall(new Wall(game->getCanvas().getWidth() - 1, game->getCanvas().getHeight() - 2 - i));
+		walls[walls_counter] = new Wall(0, game->getCanvas().getHeight() - 2 - i);
+		game->add_wall(*walls[walls_counter++]);
+		walls[walls_counter] = new Wall(game->getCanvas().getWidth() - 1, game->getCanvas().getHeight() - 2 - i);
+		game->add_wall(*walls[walls_counter++]);
 	}
 
 	game->Run();

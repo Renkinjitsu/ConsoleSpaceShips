@@ -5,21 +5,15 @@
 
 void Game::draw_all()
 {
-	size_t i;
-
-	for (i = 0; i < num_of_items; i++)
-	{
-		items[i]->draw(this->canvas);
+	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
+		it->draw(this->canvas);
 	}
 
-	for (i = 0; i < num_of_ships; i++)
-	{
-		ships[i]->draw(this->canvas);
-	}
+	small_ship->draw(this->canvas);
+	big_ship->draw(this->canvas);
 
-	for (i = 0; i < num_of_walls; i++)
-	{
-		walls[i]->draw(this->canvas);
+	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it) {
+		it->draw(this->canvas);
 	}
 
 	if (exit_point != NULL)
@@ -59,9 +53,8 @@ void Game::Run()
 	// esc (Ascii 27) ends the loop
 	while (!_kbhit() || _getch() != ESC)
 	{
-		for (size_t i = 0; i < this->get_num_of_items(); i++)
-		{
-			this->get_item(i)->advance_falling(this);
+		for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
+			it->advance_falling(this);
 		}
 
 		//for each ship do IsAtExitPoint and if so - quit the loop
