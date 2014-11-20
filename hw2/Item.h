@@ -18,17 +18,9 @@ class Item : GameObject
 {
 private:
 	int item_number;
-	/*Item_location_t * locations_arr;
-	size_t locations_arr_len;*/
-
 
 	vector<Item_location_t> locations;
-	/*Item_location_t * location_with_y_most_lower = NULL;
-	Item_location_t * location_with_y_most_higher = NULL;*/
 
-	Item_location_t location_with_y_most_lower;
-	Item_location_t location_with_y_most_higher;
-	//bool item_alive = false;
 public:
 	Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len);
 
@@ -38,11 +30,6 @@ public:
 		{
 			canvas.setCharacter(it->x, it->y, item_number);
 		}
-
-		/*for (size_t i = 0; i < locations_arr_len; i++)
-		{
-			canvas.setCharacter(locations_arr[i].x, locations_arr[i].y, item_number);
-		}*/
 	};
 
 	void EraseDrawing()
@@ -53,12 +40,6 @@ public:
 			gotoxy(it->x, it->y);
 			cout << " ";
 		}
-
-		/*for (size_t i = 0; i < locations_arr_len; i++)
-		{
-			gotoxy(locations_arr[i].x, locations_arr[i].y);
-			cout << " ";
-		}*/
 	}
 
 	void advance_falling(class Game * game_screen);

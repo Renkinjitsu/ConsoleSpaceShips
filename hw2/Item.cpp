@@ -5,48 +5,10 @@ Item::Item(int item_number, const Item_location_t locations_array[], size_t loca
 {
 	this->item_number = item_number;
 
-	location_with_y_most_higher.x = 0;
-	location_with_y_most_higher.y = 0;
-
-	location_with_y_most_lower.x = UPPER_X;
-	location_with_y_most_lower.y = UPPER_Y;
-
-	/*locations_arr = new Item_location_t[locations_array_len];
-	locations_arr_len = locations_array_len;*/
-
-
-
 	for (size_t i = 0; i < locations_array_len; i++)
 	{
 		locations.push_back(locations_array[i]);
-		//locations_arr[i] = locations_array[i];
-		/*if (location_with_y_most_lower == NULL || locations_array[i].y < location_with_y_most_lower->y)
-		{
-			location_with_y_most_lower = &locations_array[i];
-		}
-
-		if (location_with_y_most_higher == NULL || locations_arr[i].y > location_with_y_most_higher->y)
-		{
-			location_with_y_most_higher = &locations_arr[i];
-		}*/
 	}
-
-	for (vector<Item_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
-	{
-		Item_location_t & item_loc = *it;
-		if (/*location_with_y_most_lower == NULL ||*/ it->y < location_with_y_most_lower.y)
-		{
-			location_with_y_most_lower = item_loc;
-		}
-
-		if (/*location_with_y_most_higher == NULL ||*/ it->y > location_with_y_most_higher.y)
-		{
-			location_with_y_most_higher = item_loc;
-		}
-	}
-
-	//Draw();
-	//item_alive = true;
 
 }
 
@@ -98,17 +60,6 @@ bool Item::is_standing_on_me(Item * item)
 			}
 		}
 	}
-
-	/*for (size_t j = 0; j < this->locations_arr_len; j++)
-	{
-		for (size_t i = 0; i < item->locations_arr_len; i++)
-		{
-			if (item->locations_arr[i].y + 1 == this->locations_arr[j].y && item->locations_arr[i].x + 1 == this->locations_arr[j].x)
-			{
-				return true;
-			}
-		}
-	}*/
 
 	return false;
 }
