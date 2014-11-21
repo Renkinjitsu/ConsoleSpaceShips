@@ -5,14 +5,14 @@ GameObject::GameObject(unsigned x, unsigned y)
 	this->set_locations(x, y);
 }
 
-GameObject::GameObject(vector<Item_location_t> & location)
+GameObject::GameObject(vector<Object_location_t> & location)
 {
 	this->set_locations(location);
 }
 
 void GameObject::set_locations(unsigned x , unsigned y)
 {
-	Item_location_t loc;
+	Object_location_t loc;
 	loc.x = x;
 	loc.y = y;
 	this->locations.push_back(loc);
@@ -24,7 +24,7 @@ void GameObject::set_locations(unsigned x , unsigned y)
 }
 
 
-void GameObject::set_locations(vector<Item_location_t> & location)
+void GameObject::set_locations(vector<Object_location_t> & location)
 {
 	this->locations = location;
 
@@ -43,7 +43,7 @@ unsigned GameObject::getYstart()
 	// only for SQUARE_TEXTURE
 	return this->start_location.y;
 }
-vector<Item_location_t> & GameObject::get_locations()
+vector<Object_location_t> & GameObject::get_locations()
 {
 	return this->locations;
 }

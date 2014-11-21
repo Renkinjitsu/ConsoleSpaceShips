@@ -3,19 +3,66 @@
 
 #define ESC 27
 
-bool Game::canMoveDown(Item * item)
+bool Game::checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type)
+{
+	switch (block_type)
+	{
+		case DIRECTION_UP:
+		{
+			if (possible_blocking_location.x == caller_location.x && possible_blocking_location.y == caller_location.y - 1)
+			{
+				return true;
+			}
+		}
+		break;
+
+		case DIRECTION_DOWN:
+		{
+			if (possible_blocking_location.x == caller_location.x && possible_blocking_location.y == caller_location.y + 1)
+			{
+				return true;
+			}
+		}
+		break;
+
+		case DIRECTION_LEFT:
+		{
+			if (possible_blocking_location.y == caller_location.y && possible_blocking_location.x == caller_location.x - 1)
+			{
+				return true;
+			}
+		}
+		break;
+
+		case DIRECTION_RIGHT:
+		{
+			if (possible_blocking_location.y == caller_location.y && possible_blocking_location.x == caller_location.x + 1)
+			{
+				return true;
+			}
+		}
+		break;
+
+	}
+
+	return false;
+}
+
+bool Game::canMoveX(Item * item, game_direction_e direction)
 {
 	//check for wall blockage
 	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
 	{
-		unsigned wallX = it->getXstart();
-		unsigned wallY = it->getYstart();
+		Object_location_t wall_loc;
+		wall_loc.x = it->getXstart();
+		wall_loc.y = it->getYstart();
 
-		vector<Item_location_t> item_locations = item->get_locations();
+		vector<Object_location_t> item_locations = item->get_locations();
 
-		for (vector<Item_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
+		for (vector<Object_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
 		{
-			if (wallX == it_item_loc->x && wallY == it_item_loc->y + 1)
+			Object_location_t & item_loc = *it_item_loc;
+			if (checkBlockage(item_loc, wall_loc, direction))
 			{
 				return false;
 			}
@@ -23,32 +70,36 @@ bool Game::canMoveDown(Item * item)
 	}
 
 	//check for item blockage
-	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) 
+	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it)
 	{
-		vector<Item_location_t> my_item_locations = item->get_locations();
-		vector<Item_location_t> other_item_locations = it->get_locations();
+		vector<Object_location_t> my_item_locations = item->get_locations();
+		vector<Object_location_t> other_item_locations = it->get_locations();
 
-		for (vector<Item_location_t>::iterator my_item_loc_it = my_item_locations.begin(); my_item_loc_it != my_item_locations.end(); ++my_item_loc_it)
+		for (vector<Object_location_t>::iterator my_item_loc_it = my_item_locations.begin(); my_item_loc_it != my_item_locations.end(); ++my_item_loc_it)
 		{
-			for (vector<Item_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
+			for (vector<Object_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
 			{
-				unsigned MyItemPointX = my_item_loc_it->x;
-				unsigned MyItemPointY = my_item_loc_it->y;
-				unsigned OtherItemPointX = other_item_loc_it->x;
-				unsigned OtherItemPointY = other_item_loc_it->y;
-				if (MyItemPointX == OtherItemPointX && OtherItemPointY == MyItemPointY + 1)
+				Object_location_t MyItemLocation;
+				MyItemLocation.x = my_item_loc_it->x;
+				MyItemLocation.y = my_item_loc_it->y;
+
+				Object_location_t OtherItemLocation;
+				OtherItemLocation.x = other_item_loc_it->x;
+				OtherItemLocation.y = other_item_loc_it->y;
+
+				if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 				{
-					return it->canMoveDown(this);
+					return false;
 				}
 			}
 		}
 	}
 
 	//check for ship blockage
-	vector<Item_location_t> item_locations = item->get_locations();
-	for (vector<Item_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
+	vector<Object_location_t> item_locations = item->get_locations();
+	for (vector<Object_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
 	{
-		
+
 	}
 
 	return true;

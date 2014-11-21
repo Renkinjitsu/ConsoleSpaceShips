@@ -9,8 +9,14 @@
 #include "Canvas.h"
 using namespace std;
 
-#define MAX_OF_EACH_OBSTECLE 10
-#define MAX_OF_EACH_WALL_BLOCK 1000
+typedef enum
+{
+	DIRECTION_UP,
+	DIRECTION_DOWN,
+	DIRECTION_LEFT,
+	DIRECTION_RIGHT
+}game_direction_e;
+
 
 // Forward dec
 class Item;
@@ -101,6 +107,10 @@ public:
 	};
 
 	bool canMoveDown(Item * item);
+	bool canMoveUp(Item * item);
+	bool canMoveX(Item * item, game_direction_e direction);
+
+	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type);
 };
 
 #endif

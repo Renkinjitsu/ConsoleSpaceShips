@@ -11,7 +11,7 @@ typedef struct
 {
 	int x;
 	int y;
-}Item_location_t;
+}Object_location_t;
 
 typedef enum
 {
@@ -22,8 +22,8 @@ typedef enum
 class GameObject
 {
 private:
-	Item_location_t start_location;
-	vector<Item_location_t> locations;
+	Object_location_t start_location;
+	vector<Object_location_t> locations;
 
 	texture_e texture_type;
 
@@ -32,12 +32,12 @@ public:
 	GameObject(unsigned x = 0, unsigned y = 0);
 
 	//Multi location
-	GameObject(vector<Item_location_t> & location);
+	GameObject(vector<Object_location_t> & location);
 
 	void set_locations(unsigned x = 0, unsigned y = 0);
-	void set_locations(vector<Item_location_t> & locatio);
+	void set_locations(vector<Object_location_t> & locatio);
 
-	vector<Item_location_t> & GameObject::get_locations();
+	vector<Object_location_t> & GameObject::get_locations();
 
 	//only on single location
 	unsigned getXstart();

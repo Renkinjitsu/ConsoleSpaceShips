@@ -1,12 +1,12 @@
 #include "Item.h"
 #include "config.h"
 
-Item::Item(int item_number, const Item_location_t locations_array[], size_t locations_array_len)
+Item::Item(int item_number, const Object_location_t locations_array[], size_t locations_array_len)
 {
 	this->item_number = item_number;
 
 
-	vector<Item_location_t> locations;
+	vector<Object_location_t> locations;
 	for (size_t i = 0; i < locations_array_len; i++)
 	{
 		locations.push_back(locations_array[i]);
@@ -17,27 +17,59 @@ Item::Item(int item_number, const Item_location_t locations_array[], size_t loca
 
 bool Item::canMoveDown(Game * game_screen)
 {
-	return game_screen->canMoveDown(this);
+	return game_screen->canMoveX(this, DIRECTION_DOWN);
 }
 
-void Item::MoveDown(Game * game_screen)
+bool Item::canMoveUp(Game * game_screen)
 {
-	/*for (vector<Item>::iterator it = game_screen->items_iterator_begin(); it != game_screen->items_iterator_end(); ++it) {
-		Item & item = *it;
-		if (this->is_standing_on_me(&item))
+	return game_screen->canMoveX(this, DIRECTION_UP);
+}
+
+bool Item::canMoveLeft(Game * game_screen)
+{
+	return game_screen->canMoveX(this, DIRECTION_LEFT);
+}
+
+bool Item::canMoveRight(Game * game_screen)
+{
+	return game_screen->canMoveX(this, DIRECTION_RIGHT);
+}
+
+
+bool Item::MoveUp(Game * game_screen)
+{
+	//Lets go down!
+	if (this->canMoveUp(game_screen))
+	{
+		EraseDrawing();
+		vector<Object_location_t> & locations = get_locations();
+		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			return;
+			if (it->y == 0)
+			{
+				it->y = UPPER_Y;
+			}
+			else
+			{
+				it->y--;
+			}
 		}
-	}*/
 
+		draw(game_screen->getCanvas());
 
+		return true;
+	}
+	return false;
+}
 
+bool Item::MoveDown(Game * game_screen)
+{
 	//Lets go down!
 	if (this->canMoveDown(game_screen))
 	{
 		EraseDrawing();
-		vector<Item_location_t> & locations = get_locations();
-		for (vector<Item_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+		vector<Object_location_t> & locations = get_locations();
+		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
 			if (it->y == UPPER_Y)
 			{
@@ -50,43 +82,60 @@ void Item::MoveDown(Game * game_screen)
 		}
 
 		draw(game_screen->getCanvas());
+
+		return true;
 	}
+	return false;
 }
 
-/*bool Item::is_standing_on_me(Item * item)
+bool Item::MoveLeft(Game * game_screen)
 {
-	if (item == this)
-	{ // He is me
-		return false;
-	}
-
-	vector<Item_location_t> & locations = get_locations();
-	for (vector<Item_location_t>::iterator it = this->locations.begin(); it != this->locations.end(); ++it)
+	//Lets go down!
+	if (this->canMoveLeft(game_screen))
 	{
-		for (vector<Item_location_t>::iterator it_other = item->locations.begin(); it_other != item->locations.end(); ++it_other)
+		EraseDrawing();
+		vector<Object_location_t> & locations = get_locations();
+		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			if (it_other->y + 1 == it->y && it_other->x + 1 == it->x)
+			if (it->x == 0)
 			{
-				return true;
+				it->x = UPPER_X;
+			}
+			else
+			{
+				it->x--;
 			}
 		}
+
+		draw(game_screen->getCanvas());
+
+		return true;
 	}
-
 	return false;
-}*/
+}
 
-/*bool Item::standing_on(Wall * wall)
+bool Item::MoveRight(Game * game_screen)
 {
-	for (size_t j = 0; j < this->locations_arr_len; j++)
+	//Lets go down!
+	if (this->canMoveRight(game_screen))
 	{
-		for (size_t i = 0; i < wall->locations_arr_len; i++)
+		EraseDrawing();
+		vector<Object_location_t> & locations = get_locations();
+		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			if (item->locations_arr[i].y == this->locations_arr[j].y + 1 && item->locations_arr[i].x == this->locations_arr[j].x + 1)
+			if (it->x == UPPER_X)
 			{
-				return true;
+				it->x = it->x % UPPER_X;
+			}
+			else
+			{
+				it->x++;
 			}
 		}
-	}
 
+		draw(game_screen->getCanvas());
+
+		return true;
+	}
 	return false;
-}*/
+}
