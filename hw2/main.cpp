@@ -21,6 +21,40 @@ int main()
 
 	Game * game = new Game();
 
+	Object_location_t location_arr_strange[8];
+	location_arr_strange[0].x = 10;
+	location_arr_strange[0].y = 5;
+	location_arr_strange[1].x = 11;
+	location_arr_strange[1].y = 5;
+	location_arr_strange[2].x = 12;
+	location_arr_strange[2].y = 5;
+	location_arr_strange[3].x = 12;
+	location_arr_strange[3].y = 6;
+	location_arr_strange[4].x = 12;
+	location_arr_strange[4].y = 7;
+	location_arr_strange[5].x = 12;
+	location_arr_strange[5].y = 8;
+	location_arr_strange[6].x = 11;
+	location_arr_strange[6].y = 8;
+	location_arr_strange[7].x = 10;
+	location_arr_strange[7].y = 8;
+
+	Item * item_strange1 = new Item(7, location_arr_strange, 8);
+	game->add_item(*item_strange1);
+
+	Object_location_t location_arr_strange2[4];
+	location_arr_strange2[0].x = 10;
+	location_arr_strange2[0].y = 6;
+	location_arr_strange2[1].x = 11;
+	location_arr_strange2[1].y = 6;
+	location_arr_strange2[2].x = 10;
+	location_arr_strange2[2].y = 7;
+	location_arr_strange2[3].x = 11;
+	location_arr_strange2[3].y = 7;
+
+	/*Item * item_strange2 = new Item(2, location_arr_strange2, 4);
+	game->add_item(*item_strange2);*/
+
 	Object_location_t location_arr[4];
 	location_arr[0].x = 1;
 	location_arr[0].y = 1;
@@ -67,7 +101,7 @@ int main()
 	game->add_item(*item5);
 
 	ExitPoint_location_t exit_location;
-	exit_location.x = 10;
+	exit_location.x = 18;
 	exit_location.y = 5;
 	ExitPoint * exit = new ExitPoint(exit_location);
 	game->set_exitpoint(exit);

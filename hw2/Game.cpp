@@ -72,24 +72,28 @@ bool Game::canMoveX(Item * item, game_direction_e direction)
 	//check for item blockage
 	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it)
 	{
-		vector<Object_location_t> my_item_locations = item->get_locations();
-		vector<Object_location_t> other_item_locations = it->get_locations();
-
-		for (vector<Object_location_t>::iterator my_item_loc_it = my_item_locations.begin(); my_item_loc_it != my_item_locations.end(); ++my_item_loc_it)
+		Item & cur_item = *it;
+		if (&cur_item != item)
 		{
-			for (vector<Object_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
+			vector<Object_location_t> my_item_locations = item->get_locations();
+			vector<Object_location_t> other_item_locations = it->get_locations();
+
+			for (vector<Object_location_t>::iterator my_item_loc_it = my_item_locations.begin(); my_item_loc_it != my_item_locations.end(); ++my_item_loc_it)
 			{
-				Object_location_t MyItemLocation;
-				MyItemLocation.x = my_item_loc_it->x;
-				MyItemLocation.y = my_item_loc_it->y;
-
-				Object_location_t OtherItemLocation;
-				OtherItemLocation.x = other_item_loc_it->x;
-				OtherItemLocation.y = other_item_loc_it->y;
-
-				if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
+				for (vector<Object_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
 				{
-					return false;
+					Object_location_t MyItemLocation;
+					MyItemLocation.x = my_item_loc_it->x;
+					MyItemLocation.y = my_item_loc_it->y;
+
+					Object_location_t OtherItemLocation;
+					OtherItemLocation.x = other_item_loc_it->x;
+					OtherItemLocation.y = other_item_loc_it->y;
+
+					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
+					{
+						return false;
+					}
 				}
 			}
 		}
