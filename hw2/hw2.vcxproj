@@ -27,6 +27,7 @@
     <ClInclude Include="BigShip.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="Definitions.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="io_utils.h" />

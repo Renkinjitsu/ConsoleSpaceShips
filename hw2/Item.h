@@ -39,6 +39,8 @@ public:
 	bool canMoveUp(Game * game_screen);
 	bool canMoveLeft(Game * game_screen);
 	bool canMoveRight(Game * game_screen);
+	bool canItemMoveX(Game * game_screen, game_direction_e direction);
+	bool MoveX(Game * game_screen, game_direction_e direction);
 	bool MoveUp(Game * game_screen);
 	bool MoveDown(Game * game_screen);
 	bool MoveLeft(Game * game_screen);

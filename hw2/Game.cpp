@@ -74,7 +74,7 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction)
 	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it)
 	{
 		Item & cur_item = *it;
-		if (typeid(obj) != typeid(Item) || &cur_item != obj)
+		if (&cur_item != obj)
 		{
 			vector<Object_location_t> my_obj_locations = obj->get_locations();
 			vector<Object_location_t> other_item_locations = it->get_locations();
@@ -93,6 +93,11 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction)
 
 					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 					{
+						if (it->MoveX(this, direction))
+						{
+							return true;
+						}
+
 						return false;
 					}
 				}
@@ -147,7 +152,7 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction)
 	return true;
 }
 
-bool Game::canMoveX(Item * item, game_direction_e direction)
+/*bool Game::canMoveX(Item * item, enum game_direction_e direction)
 {
 	//check for wall blockage
 	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
@@ -191,6 +196,10 @@ bool Game::canMoveX(Item * item, game_direction_e direction)
 
 					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 					{
+						if (it->MoveX(this, direction))
+						{
+
+						}
 						return false;
 					}
 				}
@@ -206,7 +215,7 @@ bool Game::canMoveX(Item * item, game_direction_e direction)
 	}
 
 	return true;
-}
+}*/
 
 void Game::draw_all()
 {

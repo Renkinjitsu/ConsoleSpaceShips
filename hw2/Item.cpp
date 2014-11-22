@@ -35,6 +35,41 @@ bool Item::canMoveRight(Game * game_screen)
 	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT);
 }
 
+bool Item::canItemMoveX(Game * game_screen, game_direction_e direction)
+{
+	return game_screen->canMoveX((GameObject *)this, direction);
+}
+
+bool Item::MoveX(Game * game_screen, game_direction_e direction)
+{
+	switch (direction)
+	{
+	case DIRECTION_UP:
+	{
+		return MoveUp(game_screen);
+	}
+		break;
+
+	case DIRECTION_DOWN:
+	{
+		return MoveDown(game_screen);
+	}
+		break;
+
+	case DIRECTION_RIGHT:
+	{
+		return MoveRight(game_screen);
+	}
+		break;
+
+	case DIRECTION_LEFT:
+	{
+		return MoveLeft(game_screen);
+	}
+		break;
+	}
+}
+
 
 bool Item::MoveUp(Game * game_screen)
 {

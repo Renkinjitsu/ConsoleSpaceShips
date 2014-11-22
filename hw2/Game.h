@@ -1,6 +1,7 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 #include <vector>
+#include "Definitions.h"
 #include "Item.h"
 #include "BigShip.h"
 #include "SmallShip.h"
@@ -8,15 +9,6 @@
 #include "ExitPoint.h"
 #include "Canvas.h"
 using namespace std;
-
-typedef enum
-{
-	DIRECTION_UP,
-	DIRECTION_DOWN,
-	DIRECTION_LEFT,
-	DIRECTION_RIGHT
-}game_direction_e;
-
 
 // Forward dec
 class Item;
@@ -108,7 +100,7 @@ public:
 
 	bool canMoveDown(Item * item);
 	bool canMoveUp(Item * item);
-	bool canMoveX(Item * item, game_direction_e direction);
+	//bool canMoveX(Item * item, enum game_direction_e direction);
 	bool canMoveX(GameObject * obj, game_direction_e direction);
 
 	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type);
