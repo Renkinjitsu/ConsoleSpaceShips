@@ -17,28 +17,28 @@ Item::Item(int item_number, const Object_location_t locations_array[], size_t lo
 
 bool Item::canMoveDown(Game * game_screen)
 {
-	return game_screen->canMoveX(this, DIRECTION_DOWN);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_DOWN);
 }
 
 bool Item::canMoveUp(Game * game_screen)
 {
-	return game_screen->canMoveX(this, DIRECTION_UP);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_UP);
 }
 
 bool Item::canMoveLeft(Game * game_screen)
 {
-	return game_screen->canMoveX(this, DIRECTION_LEFT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_LEFT);
 }
 
 bool Item::canMoveRight(Game * game_screen)
 {
-	return game_screen->canMoveX(this, DIRECTION_RIGHT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT);
 }
 
 
 bool Item::MoveUp(Game * game_screen)
 {
-	//Lets go down!
+	//Lets go up!
 	if (this->canMoveUp(game_screen))
 	{
 		EraseDrawing();

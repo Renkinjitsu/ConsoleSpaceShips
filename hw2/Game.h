@@ -109,6 +109,7 @@ public:
 	bool canMoveDown(Item * item);
 	bool canMoveUp(Item * item);
 	bool canMoveX(Item * item, game_direction_e direction);
+	bool canMoveX(GameObject * obj, game_direction_e direction);
 
 	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type);
 };
