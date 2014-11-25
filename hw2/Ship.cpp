@@ -51,7 +51,7 @@ bool Ship::MoveDown(Game * game_screen, game_move_flags_t flags)
 	//Lets go down!
 	if (this->canMoveDown(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -77,7 +77,7 @@ bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 	//Lets go up!
 	if (this->canMoveUp(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -105,7 +105,7 @@ bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 	{
 
 		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_LEFT, flags);
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -133,7 +133,7 @@ bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 	{
 		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_RIGHT, flags);
 
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -165,12 +165,11 @@ void Ship::draw(Canvas & canvas)
 	}
 }
 
-void Ship::EraseDrawing()
+void Ship::EraseDrawing(Canvas & canvas)
 {
 	vector<Object_location_t> & locations = get_locations();
 	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-		gotoxy(it->x, it->y);
-		cout << " ";
+		canvas.setCharacter(it->x, it->y, ' ');
 	}
 }

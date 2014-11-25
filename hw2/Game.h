@@ -37,6 +37,8 @@ private:
 public:
 	void Run();
 
+	void erase_all();
+
 	void add_item(Item & item)
 	{
 		items_vec.push_back(item);

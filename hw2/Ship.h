@@ -27,7 +27,7 @@ public:
 	bool MoveRight(Game * game_screen, game_move_flags_t flags);
 
 	void draw(Canvas & canvas);
-	void EraseDrawing();
+	void EraseDrawing(Canvas & canvas);
 };
 
 #endif /* SHIP_H_ */

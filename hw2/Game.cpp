@@ -271,30 +271,26 @@ void Game::draw_all()
 	}
 };
 
-/*void Game::erase_all()
+void Game::erase_all()
 {
 	size_t i;
 
-	for (i = 0; i < num_of_items; i++)
-	{
-		items[i]->EraseDrawing();
+	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
+		it->EraseDrawing(this->canvas);
 	}
 
-	for (i = 0; i < num_of_ships; i++)
-	{
-		ships[i]->EraseDrawing();
-	}
+	small_ship->EraseDrawing(this->canvas);
+	big_ship->EraseDrawing(this->canvas);
 
-	for (i = 0; i < num_of_walls; i++)
-	{
-		walls[i]->EraseDrawing();
+	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it) {
+		it->EraseDrawing(this->canvas);
 	}
 
 	if (exit_point != NULL)
 	{
-		exit_point->EraseDrawing();
+		exit_point->EraseDrawing(this->canvas);
 	}
-}*/
+}
 
 void Game::Run()
 {
@@ -376,7 +372,7 @@ void Game::Run()
 	}
 
 
-	//this->erase_all();
+	this->erase_all();
 
 	gotoxy(UPPER_X / 2, UPPER_Y / 2);
 	cout << "GAME OVER!";

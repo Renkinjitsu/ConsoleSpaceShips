@@ -31,10 +31,9 @@ public:
 		cout << "X";
 	};
 
-	void EraseDrawing()
+	void EraseDrawing(Canvas & canvas)
 	{
-		gotoxy(location.x, location.y);
-		cout << " ";
+		canvas.setCharacter(location.x, location.y, ' ');
 	};
 };
 #endif

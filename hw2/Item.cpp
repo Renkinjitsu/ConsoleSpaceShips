@@ -77,7 +77,7 @@ bool Item::MoveUp(Game * game_screen, game_move_flags_t flags)
 	//Lets go up!
 	if (this->canMoveUp(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -104,7 +104,7 @@ bool Item::MoveDown(Game * game_screen, game_move_flags_t flags)
 	//Lets go down!
 	if (this->canMoveDown(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -130,7 +130,7 @@ bool Item::MoveLeft(Game * game_screen, game_move_flags_t flags)
 	//Lets go down!
 	if (this->canMoveLeft(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
@@ -156,7 +156,7 @@ bool Item::MoveRight(Game * game_screen, game_move_flags_t flags)
 	//Lets go down!
 	if (this->canMoveRight(game_screen, flags))
 	{
-		EraseDrawing();
+		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{

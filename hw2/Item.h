@@ -25,13 +25,12 @@ public:
 		}
 	};
 
-	void EraseDrawing()
+	void EraseDrawing(Canvas & canvas)
 	{
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			gotoxy(it->x, it->y);
-			cout << " ";
+			canvas.setCharacter(it->x, it->y, ' ');
 		}
 	}
 
