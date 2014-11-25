@@ -48,6 +48,7 @@ bool Game::checkBlockage(const Object_location_t & caller_location, const Object
 	return false;
 }
 
+//According to the specs , items one level above the ship should be carried with it
 bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags)
 {
 	vector<Object_location_t> & ship_locations = ship->get_locations();

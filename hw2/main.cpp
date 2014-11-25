@@ -112,7 +112,7 @@ int main()
 	BigShip bigship(18, 12);
 	game->set_big_ship(bigship);
 
-	Wall * walls[4 * 8 + 4 * 6];
+	Wall * walls[4 * 8 + 4 * 6 + 1];
 	size_t walls_counter = 0;
 
 	for (unsigned i = 0; i < 8; i++)
@@ -146,5 +146,20 @@ int main()
 
 	game->Run();
 
+	for (size_t i = 0; i < walls_counter; i++)
+	{
+		delete walls[i];
+	}
+
+	delete exit;
+	delete item1;
+	delete item2;
+	delete item3;
+	delete item4;
+	delete item5;
+
+	delete item_strange1;
+
+	delete game;
 
 }
