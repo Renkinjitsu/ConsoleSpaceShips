@@ -3,6 +3,8 @@
 
 #include "Ship.h"
 
+class Ship;
+
 class SmallShip : public Ship
 {
 public:

@@ -48,8 +48,42 @@ bool Game::checkBlockage(const Object_location_t & caller_location, const Object
 	return false;
 }
 
+bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags)
+{
+	vector<Object_location_t> & ship_locations = ship->get_locations();
+	for (vector<Object_location_t>::iterator it_ship_loc = ship_locations.begin(); it_ship_loc != ship_locations.end(); ++it_ship_loc)
+	{
+		//Iterate all items
+		for (vector<Item>::iterator it_items = items_vec.begin(); it_items != items_vec.end(); ++it_items)
+		{
+			vector<Object_location_t> & item_locations = it_items->get_locations();
+			for (vector<Object_location_t>::iterator it_item_loc = item_locations.begin(); it_item_loc != item_locations.end(); ++it_item_loc)
+			{
+				Object_location_t ItemLocation;
+				ItemLocation.x = it_item_loc->x;
+				ItemLocation.y = it_item_loc->y;
 
-bool Game::canMoveX(GameObject * obj, game_direction_e direction)
+				Object_location_t ShipLocation;
+				ShipLocation.x = it_ship_loc->x;
+				ShipLocation.y = it_ship_loc->y;
+
+				//Check if the ship carries the item from upwards
+				if (checkBlockage(ShipLocation, ItemLocation, DIRECTION_UP))
+				{
+					if (it_items->MoveX(this, direction, flags))
+					{
+						return true;
+					}
+
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags)
 {
 	//check for wall blockage
 	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
@@ -93,7 +127,7 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction)
 
 					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 					{
-						if (it->MoveX(this, direction))
+						if (it->MoveX(this, direction, flags))
 						{
 							return true;
 						}
@@ -265,68 +299,70 @@ void Game::Run()
 {
 	this->draw_all();
 	char key = ' ';
+	game_move_flags_t flags;
+	flags.is_carried_on_ship = false;
 	// esc (Ascii 27) ends the loop
 	while (!_kbhit() || (key = _getch()) != ESC)
 	{
 
 		for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
-			it->MoveDown(this);
+			it->MoveDown(this, flags);
 		}
 
 		switch (key)
 		{
 			case 'x':
 			{
-				small_ship->MoveDown(this);
+				small_ship->MoveDown(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'w':
 			{
-				small_ship->MoveUp(this);
+				small_ship->MoveUp(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'd':
 			{
-				small_ship->MoveRight(this);
+				small_ship->MoveRight(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'a':
 			{
-				small_ship->MoveLeft(this);
+				small_ship->MoveLeft(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'i':
 			{
-				big_ship->MoveUp(this);
+				big_ship->MoveUp(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'j':
 			{
-				big_ship->MoveLeft(this);
+				big_ship->MoveLeft(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'l':
 			{
-				big_ship->MoveRight(this);
+				big_ship->MoveRight(this, flags);
 				key = ' ';
 			}
 			break;
 
 			case 'm':
 			{
-				big_ship->MoveDown(this);
+				big_ship->MoveDown(this, flags);
 				key = ' ';
 			}
 			break;

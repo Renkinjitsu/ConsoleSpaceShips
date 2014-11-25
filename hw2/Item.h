@@ -35,15 +35,15 @@ public:
 		}
 	}
 
-	bool canMoveDown(Game * screen);
-	bool canMoveUp(Game * game_screen);
-	bool canMoveLeft(Game * game_screen);
-	bool canMoveRight(Game * game_screen);
-	bool canItemMoveX(Game * game_screen, game_direction_e direction);
-	bool MoveX(Game * game_screen, game_direction_e direction);
-	bool MoveUp(Game * game_screen);
-	bool MoveDown(Game * game_screen);
-	bool MoveLeft(Game * game_screen);
-	bool MoveRight(Game * game_screen);
+	bool canMoveDown(Game * screen, game_move_flags_t flags);
+	bool canMoveUp(Game * game_screen, game_move_flags_t flags);
+	bool canMoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool canMoveRight(Game * game_screen, game_move_flags_t flags);
+	bool canItemMoveX(Game * game_screen, game_direction_e direction, game_move_flags_t flags);
+	bool MoveX(Game * game_screen, game_direction_e direction, game_move_flags_t flags);
+	bool MoveUp(Game * game_screen, game_move_flags_t flags);
+	bool MoveDown(Game * game_screen, game_move_flags_t flags);
+	bool MoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool MoveRight(Game * game_screen, game_move_flags_t flags);
 };
 #endif

@@ -1,3 +1,4 @@
+#include "Definitions.h"
 #include "Ship.h"
 #include "Game.h"
 
@@ -25,30 +26,30 @@ Ship::Ship(unsigned xPositin, unsigned yPosition,
 	set_locations(locations);
 }
 
-bool Ship::canMoveDown(Game * game_screen)
+bool Ship::canMoveDown(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_DOWN);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_DOWN, flags);
 }
 
-bool Ship::canMoveUp(Game * game_screen)
+bool Ship::canMoveUp(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_UP);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_UP, flags);
 }
 
-bool Ship::canMoveLeft(Game * game_screen)
+bool Ship::canMoveLeft(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_LEFT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_LEFT, flags);
 }
 
-bool Ship::canMoveRight(Game * game_screen)
+bool Ship::canMoveRight(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT, flags);
 }
 
-bool Ship::MoveDown(Game * game_screen)
+bool Ship::MoveDown(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveDown(game_screen))
+	if (this->canMoveDown(game_screen, flags))
 	{
 		EraseDrawing();
 		vector<Object_location_t> & locations = get_locations();
@@ -71,10 +72,10 @@ bool Ship::MoveDown(Game * game_screen)
 	return false;
 }
 
-bool Ship::MoveUp(Game * game_screen)
+bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go up!
-	if (this->canMoveUp(game_screen))
+	if (this->canMoveUp(game_screen, flags))
 	{
 		EraseDrawing();
 		vector<Object_location_t> & locations = get_locations();
@@ -97,11 +98,13 @@ bool Ship::MoveUp(Game * game_screen)
 	return false;
 }
 
-bool Ship::MoveLeft(Game * game_screen)
+bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveLeft(game_screen))
+	if (this->canMoveLeft(game_screen, flags))
 	{
+
+		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_LEFT, flags);
 		EraseDrawing();
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
@@ -123,11 +126,13 @@ bool Ship::MoveLeft(Game * game_screen)
 	return false;
 }
 
-bool Ship::MoveRight(Game * game_screen)
+bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveRight(game_screen))
+	if (this->canMoveRight(game_screen, flags))
 	{
+		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_RIGHT, flags);
+
 		EraseDrawing();
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
@@ -143,6 +148,8 @@ bool Ship::MoveRight(Game * game_screen)
 		}
 
 		draw(game_screen->getCanvas());
+
+	
 
 		return true;
 	}

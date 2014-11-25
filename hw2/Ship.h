@@ -1,6 +1,6 @@
 #ifndef SHIP_H_
 #define SHIP_H_
-
+#include "Definitions.h"
 #include "GameObject.h"
 
 class Ship : public GameObject
@@ -17,14 +17,14 @@ public:
 		unsigned width, unsigned height,
 		char texture);
 
-	bool canMoveDown(Game * game_screen);
-	bool canMoveUp(Game * game_screen);
-	bool canMoveLeft(Game * game_screen);
-	bool canMoveRight(Game * game_screen);
-	bool MoveDown(Game * game_screen);
-	bool MoveUp(Game * game_screen);
-	bool MoveLeft(Game * game_screen);
-	bool MoveRight(Game * game_screen);
+	bool canMoveDown(Game * game_screen, game_move_flags_t flags);
+	bool canMoveUp(Game * game_screen, game_move_flags_t flags);
+	bool canMoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool canMoveRight(Game * game_screen, game_move_flags_t flags);
+	bool MoveDown(Game * game_screen, game_move_flags_t flags);
+	bool MoveUp(Game * game_screen, game_move_flags_t flags);
+	bool MoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool MoveRight(Game * game_screen, game_move_flags_t flags);
 
 	void draw(Canvas & canvas);
 	void EraseDrawing();
