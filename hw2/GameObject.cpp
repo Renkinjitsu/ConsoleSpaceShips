@@ -1,13 +1,15 @@
 #include "GameObject.h"
 #include "Game.h"
-GameObject::GameObject(unsigned x, unsigned y)
+GameObject::GameObject(Object_type_e object_type, unsigned x, unsigned y)
 {
 	this->set_locations(x, y);
+	this->object_type = object_type;
 }
 
-GameObject::GameObject(vector<Object_location_t> & location)
+GameObject::GameObject(vector<Object_location_t> & location, Object_type_e object_type)
 {
 	this->set_locations(location);
+	this->object_type = object_type;
 }
 
 void GameObject::set_locations(unsigned x , unsigned y)
@@ -31,6 +33,11 @@ void GameObject::set_locations(vector<Object_location_t> & location)
 	this->texture_type = MULTI_LOCATION_TEXTURE;
 }
 
+void GameObject::clear_locations()
+{
+	this->locations.clear();
+}
+
 unsigned GameObject::getXstart()
 {
 	// only for SQUARE_TEXTURE
@@ -46,6 +53,11 @@ unsigned GameObject::getYstart()
 vector<Object_location_t> & GameObject::get_locations()
 {
 	return this->locations;
+}
+
+Object_location_t GameObject::get_location()
+{
+	return this->start_location;
 }
 
 

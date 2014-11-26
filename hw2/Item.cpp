@@ -2,7 +2,7 @@
 #include "Item.h"
 #include "config.h"
 
-Item::Item(int item_number, const Object_location_t locations_array[], size_t locations_array_len)
+Item::Item(int item_number, const Object_location_t locations_array[], size_t locations_array_len) : GameObject(OBJECT_ITEM)
 {
 	this->item_number = item_number;
 
@@ -69,6 +69,8 @@ bool Item::MoveX(Game * game_screen, game_direction_e direction, game_move_flags
 	}
 		break;
 	}
+
+	return false;
 }
 
 

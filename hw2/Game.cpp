@@ -48,6 +48,21 @@ bool Game::checkBlockage(const Object_location_t & caller_location, const Object
 	return false;
 }
 
+bool Game::HasShipReachedExitPoint(Ship * ship)
+{
+	vector<Object_location_t> & ship_locations = ship->get_locations();
+	for (vector<Object_location_t>::iterator it_ship_loc = ship_locations.begin(); it_ship_loc != ship_locations.end(); ++it_ship_loc)
+	{
+		Object_location_t & ship_location = *it_ship_loc;
+		if (exit_point->IsAtExitPoint(ship_location))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //According to the specs , items one level above the ship should be carried with it. Ship carried only one item at a time.
 bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags)
 {
@@ -87,6 +102,7 @@ bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_
 bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags)
 {
 	bool can_move = true;
+	vector<Object_location_t> asking_object_locations = obj->get_locations();
 	//check for wall blockage
 	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
 	{
@@ -94,9 +110,9 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 		wall_loc.x = it->getXstart();
 		wall_loc.y = it->getYstart();
 
-		vector<Object_location_t> obj_locations = obj->get_locations();
+		//vector<Object_location_t> obj_locations = obj->get_locations();
 
-		for (vector<Object_location_t>::iterator it_obj_loc = obj_locations.begin(); it_obj_loc != obj_locations.end(); ++it_obj_loc)
+		for (vector<Object_location_t>::iterator it_obj_loc = asking_object_locations.begin(); it_obj_loc != asking_object_locations.end(); ++it_obj_loc)
 		{
 			Object_location_t & obj_loc = *it_obj_loc;
 			if (checkBlockage(obj_loc, wall_loc, direction))
@@ -113,10 +129,10 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 		Item & cur_item = *it;
 		if (&cur_item != obj)
 		{
-			vector<Object_location_t> my_obj_locations = obj->get_locations();
+			//vector<Object_location_t> my_obj_locations = obj->get_locations();
 			vector<Object_location_t> other_item_locations = it->get_locations();
 
-			for (vector<Object_location_t>::iterator my_obj_loc_it = my_obj_locations.begin(); my_obj_loc_it != my_obj_locations.end(); ++my_obj_loc_it)
+			for (vector<Object_location_t>::iterator my_obj_loc_it = asking_object_locations.begin(); my_obj_loc_it != asking_object_locations.end(); ++my_obj_loc_it)
 			{
 				for (vector<Object_location_t>::iterator other_item_loc_it = other_item_locations.begin(); other_item_loc_it != other_item_locations.end(); ++other_item_loc_it)
 				{
@@ -149,8 +165,8 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 	vector<Object_location_t> smallship_loc = small_ship->get_locations();
 	vector<Object_location_t> bigship_loc = big_ship->get_locations();
 
-	vector<Object_location_t> obj_locations = obj->get_locations();
-	for (vector<Object_location_t>::iterator it_obj_loc = obj_locations.begin(); it_obj_loc != obj_locations.end(); ++it_obj_loc)
+	//vector<Object_location_t> obj_locations = obj->get_locations();
+	for (vector<Object_location_t>::iterator it_obj_loc = asking_object_locations.begin(); it_obj_loc != asking_object_locations.end(); ++it_obj_loc)
 	{
 		Object_location_t MyItemLocation;
 		MyItemLocation.x = it_obj_loc->x;
@@ -189,6 +205,21 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 			}
 		}
 
+	}
+
+	//check blockage with exit point (not relevent to ships - ships should go thru exit points)
+	if (obj->get_type() != OBJECT_SHIP)
+	{
+		for (vector<Object_location_t>::iterator it_obj_loc = asking_object_locations.begin(); it_obj_loc != asking_object_locations.end(); ++it_obj_loc)
+		{
+			Object_location_t & cur_location = *it_obj_loc;
+			Object_location_t & exit_point_location = exit_point->get_location();
+			if (this->checkBlockage(cur_location, exit_point_location, direction))
+			{
+				can_move = false;
+				return can_move;
+			}
+		}
 	}
 
 	return can_move;
@@ -274,7 +305,7 @@ void Game::draw_all()
 
 	if (exit_point != NULL)
 	{
-		exit_point->Draw();
+		exit_point->draw(this->canvas);
 	}
 };
 
@@ -306,7 +337,7 @@ void Game::Run()
 	game_move_flags_t flags;
 	flags.is_carried_on_ship = false;
 	// esc (Ascii 27) ends the loop
-	while (!_kbhit() || (key = _getch()) != ESC)
+	while ((!_kbhit() || (key = _getch()) != ESC) && (small_ship->IsShipAlive() || big_ship->IsShipAlive()))
 	{
 
 		for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {

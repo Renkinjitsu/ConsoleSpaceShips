@@ -100,6 +100,8 @@ public:
 		return (this->canvas);
 	};
 
+	bool HasShipReachedExitPoint(Ship * ship);
+
 	bool MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags);
 	bool canMoveDown(Item * item);
 	bool canMoveUp(Item * item);

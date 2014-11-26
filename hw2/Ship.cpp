@@ -4,8 +4,10 @@
 
 Ship::Ship(unsigned xPositin, unsigned yPosition,
 	unsigned width, unsigned height,
-	char texture) : GameObject(xPositin, yPosition), texture(texture)
+	char texture) : GameObject(OBJECT_SHIP, xPositin, yPosition), texture(texture)
 {
+	this->is_alive = true;
+
 	this->width = width;
 	this->height = height;
 
@@ -24,6 +26,25 @@ Ship::Ship(unsigned xPositin, unsigned yPosition,
 	}
 
 	set_locations(locations);
+}
+
+bool Ship::IsShipAlive()
+{
+	return this->is_alive;
+}
+
+void Ship::SetShipAlive(bool is_alive)
+{
+	this->is_alive = is_alive;
+	if (!this->is_alive)
+	{
+		this->KillShip();
+	}
+}
+
+void Ship::KillShip()
+{
+	this->clear_locations();
 }
 
 bool Ship::canMoveDown(Game * game_screen, game_move_flags_t flags)
@@ -49,7 +70,7 @@ bool Ship::canMoveRight(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveDown(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveDown(game_screen, flags))
+	if (this->IsShipAlive() && this->canMoveDown(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
@@ -65,7 +86,11 @@ bool Ship::MoveDown(Game * game_screen, game_move_flags_t flags)
 			}
 		}
 
-		draw(game_screen->getCanvas());
+		if (game_screen->HasShipReachedExitPoint(this))
+		{
+			this->SetShipAlive(false);
+		}
+		else draw(game_screen->getCanvas());
 
 		return true;
 	}
@@ -75,7 +100,7 @@ bool Ship::MoveDown(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go up!
-	if (this->canMoveUp(game_screen, flags))
+	if (this->IsShipAlive() && this->canMoveUp(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
 		vector<Object_location_t> & locations = get_locations();
@@ -91,7 +116,11 @@ bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 			}
 		}
 
-		draw(game_screen->getCanvas());
+		if (game_screen->HasShipReachedExitPoint(this))
+		{
+			this->SetShipAlive(false);
+		}
+		else draw(game_screen->getCanvas());
 
 		return true;
 	}
@@ -101,7 +130,7 @@ bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveLeft(game_screen, flags))
+	if (this->IsShipAlive() && this->canMoveLeft(game_screen, flags))
 	{
 
 		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_LEFT, flags);
@@ -119,7 +148,11 @@ bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 			}
 		}
 
-		draw(game_screen->getCanvas());
+		if (game_screen->HasShipReachedExitPoint(this))
+		{
+			this->SetShipAlive(false);
+		}
+		else draw(game_screen->getCanvas());
 
 		return true;
 	}
@@ -129,7 +162,7 @@ bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->canMoveRight(game_screen, flags))
+	if (this->IsShipAlive() && this->canMoveRight(game_screen, flags))
 	{
 		game_screen->MoveItemsCarriedOnShip(this, DIRECTION_RIGHT, flags);
 
@@ -147,7 +180,11 @@ bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 			}
 		}
 
-		draw(game_screen->getCanvas());
+		if (game_screen->HasShipReachedExitPoint(this))
+		{
+			this->SetShipAlive(false);
+		}
+		else draw(game_screen->getCanvas());
 
 	
 

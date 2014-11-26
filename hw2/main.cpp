@@ -100,7 +100,7 @@ int main()
 	Item * item5 = new Item(3, location_arr5, 1);
 	game->add_item(*item5);
 
-	ExitPoint_location_t exit_location;
+	Object_location_t exit_location;
 	exit_location.x = 18;
 	exit_location.y = 5;
 	ExitPoint * exit = new ExitPoint(exit_location);

@@ -7,6 +7,7 @@ class Ship : public GameObject
 {
 private:
 	const char texture;
+	bool is_alive;
 
 protected:
 	unsigned width;
@@ -16,6 +17,11 @@ public:
 	Ship(unsigned xPositin, unsigned yPosition,
 		unsigned width, unsigned height,
 		char texture);
+
+	bool IsShipAlive();
+	void SetShipAlive(bool is_alive);
+
+	void KillShip();
 
 	bool canMoveDown(Game * game_screen, game_move_flags_t flags);
 	bool canMoveUp(Game * game_screen, game_move_flags_t flags);

@@ -19,6 +19,14 @@ typedef enum
 	MULTI_LOCATION_TEXTURE
 }texture_e;
 
+typedef enum
+{
+	OBJECT_ITEM,
+	OBJECT_SHIP,
+	OBJECT_WALL,
+	OBJECT_EXITP
+}Object_type_e;
+
 class GameObject
 {
 private:
@@ -26,18 +34,27 @@ private:
 	vector<Object_location_t> locations;
 
 	texture_e texture_type;
+	Object_type_e object_type;
 
 public:
 	//Single location
-	GameObject(unsigned x = 0, unsigned y = 0);
+	GameObject(Object_type_e object_type, unsigned x = 0, unsigned y = 0);
 
 	//Multi location
-	GameObject(vector<Object_location_t> & location);
+	GameObject(vector<Object_location_t> & location, Object_type_e object_type);
+
+	Object_type_e get_type()
+	{
+		return object_type;
+	};
 
 	void set_locations(unsigned x = 0, unsigned y = 0);
 	void set_locations(vector<Object_location_t> & locatio);
 
+	void clear_locations();
+
 	vector<Object_location_t> & GameObject::get_locations();
+	Object_location_t GameObject::get_location();
 
 	//only on single location
 	unsigned getXstart();
@@ -46,7 +63,7 @@ public:
 	void setPosition(unsigned x, unsigned y);
 
 	void moveUp();
-	virtual bool moveDown(Game * screen);
+	bool moveDown(Game * screen);
 	void moveLeft();
 	void moveRight();
 

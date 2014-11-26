@@ -7,33 +7,35 @@ using namespace std;
 
 class Ship;
 
-typedef struct
+/*typedef struct
 {
 	int x;
 	int y;
-}ExitPoint_location_t;
+}ExitPoint_location_t;*/
 
-class ExitPoint
+class ExitPoint : public GameObject
 {
 private:
-	ExitPoint_location_t location;
 public:
-	ExitPoint(ExitPoint_location_t exitpoint_start_location)
+	ExitPoint(Object_location_t exit_p_location) : GameObject(OBJECT_EXITP, exit_p_location.x, exit_p_location.y)
 	{
-		location = exitpoint_start_location;
+		//this->set_locations(exit_p_location.x, exit_p_location.y);
+		//location = exitpoint_start_location;
 	};
 
-	bool IsAtExitPoint(Ship * ship);
-
-	void Draw()
+	void draw(Canvas & canvas)
 	{
-		gotoxy(location.x, location.y);
-		cout << "X";
+		Object_location_t location = get_location();
+		canvas.setCharacter(location.x, location.y, 'X');
 	};
 
 	void EraseDrawing(Canvas & canvas)
 	{
+		Object_location_t location = get_location();
 		canvas.setCharacter(location.x, location.y, ' ');
 	};
+
+	bool IsAtExitPoint(const Object_location_t & loc);
 };
+
 #endif

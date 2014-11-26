@@ -1,6 +1,6 @@
 #include "Wall.h"
 
-Wall::Wall(unsigned x, unsigned y) : GameObject(x, y)
+Wall::Wall(unsigned x, unsigned y) : GameObject(OBJECT_WALL, x, y)
 {
 }
 
