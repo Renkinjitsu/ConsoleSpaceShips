@@ -48,7 +48,7 @@ bool Game::checkBlockage(const Object_location_t & caller_location, const Object
 	return false;
 }
 
-//According to the specs , items one level above the ship should be carried with it
+//According to the specs , items one level above the ship should be carried with it. Ship carried only one item at a time.
 bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags)
 {
 	vector<Object_location_t> & ship_locations = ship->get_locations();
@@ -86,6 +86,7 @@ bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_
 
 bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags)
 {
+	bool can_move = true;
 	//check for wall blockage
 	for (vector<Wall>::iterator it = walls_vec.begin(); it != walls_vec.end(); ++it)
 	{
@@ -100,7 +101,8 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 			Object_location_t & obj_loc = *it_obj_loc;
 			if (checkBlockage(obj_loc, wall_loc, direction))
 			{
-				return false;
+				can_move = false;
+				return can_move;
 			}
 		}
 	}
@@ -128,12 +130,15 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 
 					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 					{
-						if (it->MoveX(this, direction, flags))
+						if (!it->MoveX(this, direction, flags))
 						{
-							return true;
+							//return true;
+							can_move = false;
 						}
 
-						return false;
+						//can_move = false;
+
+						//return false;
 					}
 				}
 			}
@@ -162,7 +167,8 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 
 				if (checkBlockage(MyItemLocation, SmallShipLocation, direction))
 				{
-					return false;
+					can_move = false;
+					return can_move;
 				}
 			}
 		}
@@ -177,14 +183,15 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 
 				if (checkBlockage(MyItemLocation, BigShipLocation, direction))
 				{
-					return false;
+					can_move = false;
+					return can_move;
 				}
 			}
 		}
 
 	}
 
-	return true;
+	return can_move;
 }
 
 /*bool Game::canMoveX(Item * item, enum game_direction_e direction)
