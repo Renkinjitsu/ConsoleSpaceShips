@@ -101,7 +101,7 @@ void GameObject::moveLeft()
 	{
 		if (it->x == 0)
 		{
-			it->x = Canvas::getWidth();
+			it->x = Canvas::getWidth() - 1;
 		}
 		else
 		{
