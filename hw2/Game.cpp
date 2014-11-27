@@ -65,11 +65,11 @@ bool Game::HasShipReachedExitPoint(Ship * ship)
 
 bool Game::ExplodeShipOnFreefalling(Item * item_falling, game_move_flags_t flags)
 {
-
+	return true;
 }
 
 //According to the specs , items one level above the ship should be carried with it. Ship carried only one item at a time.
-bool Game::MoveItemsCarriedOnShip(Ship * ship, Direction direction, game_move_flags_t flags)
+bool Game::MoveItemsCarriedOnShip(vector<Object_location_t> & ship_locations, Direction direction, game_move_flags_t flags)
 {
 	for (vector<Object_location_t>::iterator it_ship_loc = ship_locations.begin(); it_ship_loc != ship_locations.end(); ++it_ship_loc)
 	{
@@ -104,7 +104,7 @@ bool Game::MoveItemsCarriedOnShip(Ship * ship, Direction direction, game_move_fl
 	return true;
 }
 
-bool Game::canMoveX(GameObject * obj, Direction direction)
+bool Game::canMoveX(GameObject * obj, Direction direction, game_move_flags_t flags)
 {
 	bool can_move = true;
 	vector<Object_location_t> asking_object_locations = obj->get_locations();
@@ -377,20 +377,20 @@ void Game::Run()
 
 		for(vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it)
 		{
-			if (it->canMoveDown(this))
+			if (it->canMoveDown(this, flags))
 			{
-				it->MoveX(this, DIRECTION_DOWN);
+				it->MoveX(this, DIRECTION_DOWN, flags);
 			}
 		}
 
-		if (small_ship->IsShipAlive() == false || big_ship->IsShipAlive() == false)
+		if (small_ship->IsShipAlive() == false && big_ship->IsShipAlive() == false)
 		{
 			this->isGameOver = true;
 		}
 
 		//for each ship do IsAtExitPoint and if so - quit the loop
 
-		Sleep(600);
+		Sleep(100);
 	} while (isGameOver == false);
 
 

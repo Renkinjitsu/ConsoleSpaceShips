@@ -13,10 +13,10 @@ class Item : public GameObject
 private:
 	int item_number;
 
-	bool MoveUp(Game * game_screen);
-	bool MoveDown(Game * game_screen);
-	bool MoveLeft(Game * game_screen);
-	bool MoveRight(Game * game_screen);
+	bool MoveUp(Game * game_screen, game_move_flags_t flags);
+	bool MoveDown(Game * game_screen, game_move_flags_t flags);
+	bool MoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool MoveRight(Game * game_screen, game_move_flags_t flags);
 public:
 	Item(int item_number, const Object_location_t locations_array[], size_t locations_array_len);
 
@@ -38,12 +38,12 @@ public:
 		}
 	}
 
-	bool canMoveDown(Game * screen);
-	bool canMoveUp(Game * game_screen);
-	bool canMoveLeft(Game * game_screen);
-	bool canMoveRight(Game * game_screen);
-	bool canItemMoveX(Game * game_screen, Direction direction);
+	bool canMoveDown(Game * screen, game_move_flags_t flags);
+	bool canMoveUp(Game * game_screen, game_move_flags_t flags);
+	bool canMoveLeft(Game * game_screen, game_move_flags_t flags);
+	bool canMoveRight(Game * game_screen, game_move_flags_t flags);
+	bool canItemMoveX(Game * game_screen, Direction direction, game_move_flags_t flags);
 
-	bool MoveX(Game * game_screen, Direction direction);
+	bool MoveX(Game * game_screen, Direction direction, game_move_flags_t flags);
 };
 #endif

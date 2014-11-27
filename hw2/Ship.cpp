@@ -47,34 +47,34 @@ void Ship::KillShip()
 	this->clear_locations();
 }
 
-bool Ship::canMoveDown(Game * game_screen)
+bool Ship::canMoveDown(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_DOWN);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_DOWN, flags);
 }
 
-bool Ship::canMoveUp(Game * game_screen)
+bool Ship::canMoveUp(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_UP);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_UP, flags);
 }
 
-bool Ship::canMoveLeft(Game * game_screen)
+bool Ship::canMoveLeft(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_LEFT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_LEFT, flags);
 }
 
-bool Ship::canMoveRight(Game * game_screen)
+bool Ship::canMoveRight(Game * game_screen, game_move_flags_t flags)
 {
-	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT);
+	return game_screen->canMoveX((GameObject *)this, DIRECTION_RIGHT, flags);
 }
 
 bool Ship::MoveDown(Game & game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->IsShipAlive() && this->canMoveDown(&game_screen))
+	if (this->IsShipAlive() && this->canMoveDown(&game_screen, flags))
 	{
 		vector<Object_location_t> & locations = get_locations();
 		vector<Object_location_t> prev_locations = locations;
-		EraseDrawing(game_screen->getCanvas());
+		EraseDrawing(game_screen.getCanvas());
 		GameObject::moveDown();
 
 		/* MoveItemsCarriedOnShip checks the "carried items" location via the previous locations of the ship (cuz it just went down)
@@ -83,9 +83,9 @@ bool Ship::MoveDown(Game & game_screen, game_move_flags_t flags)
 
 		// explosion_allowed is false because they said an item falling after the ship went down doesnt mean "free falling" => the ship shouldnt explode
 		flags.explosion_allowed = false;
-		game_screen->MoveItemsCarriedOnShip(prev_locations, DIRECTION_DOWN, flags);
+		game_screen.MoveItemsCarriedOnShip(prev_locations, DIRECTION_DOWN, flags);
 
-		if (game_screen->HasShipReachedExitPoint(this))
+		if (game_screen.HasShipReachedExitPoint(this))
 		{
 			this->SetShipAlive(false);
 		}
@@ -102,7 +102,7 @@ bool Ship::MoveDown(Game & game_screen, game_move_flags_t flags)
 bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go up!
-	if (this->IsShipAlive() && this->canMoveUp(game_screen))
+	if (this->IsShipAlive() && this->canMoveUp(game_screen, flags))
 	{
 		vector<Object_location_t> & locations = get_locations();
 		game_screen->MoveItemsCarriedOnShip(locations, DIRECTION_UP, flags);
@@ -123,7 +123,7 @@ bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->IsShipAlive() && this->canMoveLeft(game_screen))
+	if (this->IsShipAlive() && this->canMoveLeft(game_screen, flags))
 	{
 		vector<Object_location_t> & locations = get_locations();
 		game_screen->MoveItemsCarriedOnShip(locations, DIRECTION_LEFT, flags);
@@ -144,7 +144,7 @@ bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 {
 	//Lets go down!
-	if (this->IsShipAlive() && this->canMoveRight(game_screen))
+	if (this->IsShipAlive() && this->canMoveRight(game_screen, flags))
 	{
 		vector<Object_location_t> & locations = get_locations();
 		game_screen->MoveItemsCarriedOnShip(locations, DIRECTION_RIGHT, flags);
