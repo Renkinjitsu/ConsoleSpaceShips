@@ -23,11 +23,12 @@ public:
 
 	void KillShip();
 
-	bool canMoveDown(Game * game_screen, game_move_flags_t flags);
-	bool canMoveUp(Game * game_screen, game_move_flags_t flags);
-	bool canMoveLeft(Game * game_screen, game_move_flags_t flags);
-	bool canMoveRight(Game * game_screen, game_move_flags_t flags);
-	bool MoveDown(Game * game_screen, game_move_flags_t flags);
+	bool canMoveDown(Game * game_screen);
+	bool canMoveUp(Game * game_screen);
+	bool canMoveLeft(Game * game_screen);
+	bool canMoveRight(Game * game_screen);
+
+	bool MoveDown(Game & game, game_move_flags_t flags);
 	bool MoveUp(Game * game_screen, game_move_flags_t flags);
 	bool MoveLeft(Game * game_screen, game_move_flags_t flags);
 	bool MoveRight(Game * game_screen, game_move_flags_t flags);

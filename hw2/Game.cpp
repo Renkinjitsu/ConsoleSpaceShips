@@ -3,7 +3,7 @@
 
 #define ESC 27
 
-bool Game::checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type)
+bool Game::checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, Direction block_type)
 {
 	switch (block_type)
 	{
@@ -64,7 +64,7 @@ bool Game::HasShipReachedExitPoint(Ship * ship)
 }
 
 //According to the specs , items one level above the ship should be carried with it. Ship carried only one item at a time.
-bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags)
+bool Game::MoveItemsCarriedOnShip(Ship * ship, Direction direction, game_move_flags_t flags)
 {
 	vector<Object_location_t> & ship_locations = ship->get_locations();
 	for (vector<Object_location_t>::iterator it_ship_loc = ship_locations.begin(); it_ship_loc != ship_locations.end(); ++it_ship_loc)
@@ -86,7 +86,7 @@ bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_
 				//Check if the ship carries the item from upwards
 				if (checkBlockage(ShipLocation, ItemLocation, DIRECTION_UP))
 				{
-					if (it_items->MoveX(this, direction, flags))
+					if (it_items->MoveX(this, direction))
 					{
 						return true;
 					}
@@ -99,7 +99,7 @@ bool Game::MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_
 	return true;
 }
 
-bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags)
+bool Game::canMoveX(GameObject * obj, Direction direction)
 {
 	bool can_move = true;
 	vector<Object_location_t> asking_object_locations = obj->get_locations();
@@ -146,7 +146,7 @@ bool Game::canMoveX(GameObject * obj, game_direction_e direction, game_move_flag
 
 					if (checkBlockage(MyItemLocation, OtherItemLocation, direction))
 					{
-						if (!it->MoveX(this, direction, flags))
+						if (!it->MoveX(this, direction))
 						{
 							//return true;
 							can_move = false;
@@ -311,8 +311,6 @@ void Game::draw_all()
 
 void Game::erase_all()
 {
-	size_t i;
-
 	for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
 		it->EraseDrawing(this->canvas);
 	}
@@ -330,84 +328,138 @@ void Game::erase_all()
 	}
 }
 
-void Game::Run()
+void Game::readUserInput()
 {
-	this->draw_all();
-	char key = ' ';
-	game_move_flags_t flags;
-	flags.is_carried_on_ship = false;
-	// esc (Ascii 27) ends the loop
-	while ((!_kbhit() || (key = _getch()) != ESC) && (small_ship->IsShipAlive() || big_ship->IsShipAlive()))
+	this->bigShipDir = DIRECTION_NONE;
+	this->smallShipDir = DIRECTION_NONE;
+
+	while (_kbhit() && this->isGameOver == false)
 	{
-
-		for (vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it) {
-			it->MoveDown(this, flags);
-		}
-
-		switch (key)
+		switch (_getch())
 		{
+			case ESC:
+			{
+				this->isGameOver = true;
+			}
+			break;
+
 			case 'x':
 			{
-				small_ship->MoveDown(this, flags);
-				key = ' ';
+				this->smallShipDir = DIRECTION_DOWN;
 			}
 			break;
 
 			case 'w':
 			{
-				small_ship->MoveUp(this, flags);
-				key = ' ';
-			}
-			break;
-
-			case 'd':
-			{
-				small_ship->MoveRight(this, flags);
-				key = ' ';
+				this->smallShipDir = DIRECTION_UP;
 			}
 			break;
 
 			case 'a':
 			{
-				small_ship->MoveLeft(this, flags);
-				key = ' ';
+				this->smallShipDir = DIRECTION_LEFT;
+			}
+			break;
+
+			case 'd':
+			{
+				this->smallShipDir = DIRECTION_RIGHT;
 			}
 			break;
 
 			case 'i':
 			{
-				big_ship->MoveUp(this, flags);
-				key = ' ';
-			}
-			break;
-
-			case 'j':
-			{
-				big_ship->MoveLeft(this, flags);
-				key = ' ';
-			}
-			break;
-
-			case 'l':
-			{
-				big_ship->MoveRight(this, flags);
-				key = ' ';
+				this->bigShipDir = DIRECTION_UP;
 			}
 			break;
 
 			case 'm':
 			{
-				big_ship->MoveDown(this, flags);
-				key = ' ';
+				this->bigShipDir = DIRECTION_DOWN;
 			}
+			break;
+
+			case 'j':
+			{
+				this->bigShipDir = DIRECTION_LEFT;
+			}
+			break;
+
+			case 'l':
+			{
+				this->bigShipDir = DIRECTION_RIGHT;
+			}
+			break;
+		} //End of 'switch'
+	} //End of loop
+}
+
+void Game::moveShip(Ship & ship, Direction direction, game_move_flags_t flags)
+{
+	switch (direction)
+	{
+		case DIRECTION_DOWN:
+		{
+			ship.MoveDown(*this, flags);
+		}
+		break;
+
+		case DIRECTION_UP:
+		{
+			ship.MoveUp(this, flags);
+		}
+		break;
+
+		case DIRECTION_LEFT:
+		{
+			ship.MoveLeft(this, flags);
+		}
+		break;
+
+		case DIRECTION_RIGHT:
+		{
+			ship.MoveRight(this, flags);
+		}
+		break;
+	}
+}
+
+void Game::Run()
+{
+	this->draw_all();
+
+	game_move_flags_t flags;
+	flags.is_carried_on_ship = false;
+
+	do
+	{
+		this->readUserInput();
+
+		if (this->isGameOver)
+		{
 			break;
 		}
 
+		this->moveShip(*this->small_ship, this->smallShipDir, flags);
+		this->moveShip(*this->big_ship, this->bigShipDir, flags);
+
+		for(vector<Item>::iterator it = items_vec.begin(); it != items_vec.end(); ++it)
+		{
+			if (it->canMoveDown(this))
+			{
+				it->MoveX(this, DIRECTION_DOWN);
+			}
+		}
+
+		if (small_ship->IsShipAlive() == false || big_ship->IsShipAlive() == false)
+		{
+			this->isGameOver = true;
+		}
 
 		//for each ship do IsAtExitPoint and if so - quit the loop
 
-		Sleep(150);
-	}
+		Sleep(600);
+	} while (isGameOver == false);
 
 
 	this->erase_all();

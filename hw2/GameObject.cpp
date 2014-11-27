@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Game.h"
+
 GameObject::GameObject(Object_type_e object_type, unsigned x, unsigned y)
 {
 	this->set_locations(x, y);
@@ -58,33 +59,4 @@ vector<Object_location_t> & GameObject::get_locations()
 Object_location_t GameObject::get_location()
 {
 	return this->start_location;
-}
-
-
-void GameObject::moveUp()
-{
-	/*for (size_t i = 0; i < screen.get_num_of_items(); i++)
-	{
-
-	}*/
-
-
-	//this->y--;
-}
-
-bool GameObject::moveDown(Game * screen)
-{
-
-	//this->y++;
-	return true;
-}
-
-void GameObject::moveLeft()
-{
-	//this->x--;
-}
-
-void GameObject::moveRight()
-{
-	//this->y++;
 }
