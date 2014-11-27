@@ -10,7 +10,6 @@
 #include "Canvas.h"
 using namespace std;
 
-// Forward dec
 class Item;
 class Ship;
 class BigShip;
@@ -30,10 +29,18 @@ private:
 
 	ExitPoint * exit_point;
 
+	Direction bigShipDir;
+	Direction smallShipDir;
+
 	Canvas canvas;
 
+	bool isGameOver;
+
 	void draw_all();
-	//void erase_all();
+
+	void readUserInput();
+	void moveShip(Ship & ship, Direction direction, game_move_flags_t flags);
+
 public:
 	void Run();
 
@@ -93,6 +100,7 @@ public:
 
 	Game() : exit_point(NULL), canvas(80, 24)
 	{
+		this->isGameOver = false;
 	};
 
 	Canvas & getCanvas()
@@ -107,8 +115,13 @@ public:
 
 	bool MoveItemsCarriedOnShip(vector<Object_location_t> & ship_locations, game_direction_e direction, game_move_flags_t flags);
 	bool canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags);
+	bool MoveItemsCarriedOnShip(Ship * ship, Direction direction, game_move_flags_t flags);
+	bool canMoveDown(Item * item);
+	bool canMoveUp(Item * item);
+	//bool canMoveX(Item * item, enum game_direction_e direction);
+	bool canMoveX(GameObject * obj, Direction direction);
 
-	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type);
+	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, Direction block_type);
 };
 
 #endif

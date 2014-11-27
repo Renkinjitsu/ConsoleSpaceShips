@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Game.h"
+
 GameObject::GameObject(Object_type_e object_type, unsigned x, unsigned y)
 {
 	this->set_locations(x, y);

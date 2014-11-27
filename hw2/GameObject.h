@@ -3,7 +3,6 @@
 
 #include "Canvas.h"
 #include <vector>
-using namespace std;
 
 class Game;
 
@@ -31,7 +30,7 @@ class GameObject
 {
 private:
 	Object_location_t start_location;
-	vector<Object_location_t> locations;
+	std::vector<Object_location_t> locations;
 
 	texture_e texture_type;
 	Object_type_e object_type;
@@ -41,7 +40,7 @@ public:
 	GameObject(Object_type_e object_type, unsigned x = 0, unsigned y = 0);
 
 	//Multi location
-	GameObject(vector<Object_location_t> & location, Object_type_e object_type);
+	GameObject(std::vector<Object_location_t> & location, Object_type_e object_type);
 
 	Object_type_e get_type()
 	{
@@ -49,11 +48,11 @@ public:
 	};
 
 	void set_locations(unsigned x = 0, unsigned y = 0);
-	void set_locations(vector<Object_location_t> & locatio);
+	void set_locations(std::vector<Object_location_t> & locatio);
 
 	void clear_locations();
 
-	vector<Object_location_t> & GameObject::get_locations();
+	std::vector<Object_location_t> & GameObject::get_locations();
 	Object_location_t GameObject::get_location();
 
 	//only on single location
