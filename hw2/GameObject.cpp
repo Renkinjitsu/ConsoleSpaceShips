@@ -60,3 +60,22 @@ Object_location_t GameObject::get_location()
 {
 	return this->start_location;
 }
+
+bool GameObject::isBlockedBy(const GameObject & other, Direction from)
+{
+	for(vector<Object_location_t>::iterator myPosition = this->locations.begin(); myPosition != this->locations.end(); ++myPosition)
+	{
+		Object_location_t translatedPosition = *myPosition;
+		translatedPosition.move(from);
+
+		for(vector<Object_location_t>::const_iterator othersPosition = other.locations.begin(); othersPosition != other.locations.end(); ++othersPosition)
+		{
+			if(translatedPosition.equals(*othersPosition))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}

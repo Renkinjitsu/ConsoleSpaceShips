@@ -1,16 +1,56 @@
 #ifndef GAME_OBJECT_H_
 #define GAME_OBJECT_H_
 
-#include "Canvas.h"
 #include <vector>
+
+#include "Canvas.h"
+
+#include "Definitions.h"
 
 class Game;
 
-typedef struct
+class Object_location_t
 {
+public:
 	int x;
 	int y;
-}Object_location_t;
+
+public:
+	void move(Direction direction)
+	{
+		switch(direction)
+		{
+			case DIRECTION_UP:
+			{
+				y = (y + 1) % Canvas::getHeight();
+			}
+			break;
+
+			case DIRECTION_DOWN:
+			{
+				y = (y + Canvas::getHeight() - 1) % Canvas::getHeight();
+			}
+			break;
+
+			case DIRECTION_LEFT:
+			{
+				x = (x + Canvas::getWidth() - 1) % Canvas::getWidth();
+			}
+			break;
+
+			case DIRECTION_RIGHT:
+			{
+				x = (x + 1) % Canvas::getWidth();
+			}
+			break;
+		}
+	}
+
+	bool equals(const Object_location_t & other)
+	{
+		return (this->x == other.x && this->y == other.y);
+	}
+};
 
 typedef enum
 {
@@ -60,6 +100,8 @@ public:
 	unsigned getYstart();
 
 	void setPosition(unsigned x, unsigned y);
+
+	bool isBlockedBy(const GameObject & other, Direction from);
 
 	virtual void draw(Canvas & canvas) = 0;
 };
