@@ -18,7 +18,7 @@ bool Game::checkBlockage(const Object_location_t & caller_location, const Object
 
 		case DIRECTION_DOWN:
 		{
-			if (possible_blocking_location.x == caller_location.x && possible_blocking_location.y == caller_location.y + 1)
+			if (possible_blocking_location.x == caller_location.x && ((possible_blocking_location.y + this->canvas.getHeight() - 1) % this->canvas.getHeight()) == caller_location.y)
 			{
 				return true;
 			}
