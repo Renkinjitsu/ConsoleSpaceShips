@@ -76,9 +76,9 @@ bool Ship::MoveDown(Game & game_screen, game_move_flags_t flags)
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			if (it->y == UPPER_Y)
+			if (it->y == Canvas::getHeight())
 			{
-				it->y = it->y % UPPER_Y;
+				it->y = it->y % Canvas::getHeight();
 			}
 			else
 			{
@@ -111,7 +111,7 @@ bool Ship::MoveUp(Game * game_screen, game_move_flags_t flags)
 		{
 			if (it->y == 0)
 			{
-				it->y = UPPER_Y;
+				it->y = Canvas::getHeight();
 			}
 			else
 			{
@@ -143,7 +143,7 @@ bool Ship::MoveLeft(Game * game_screen, game_move_flags_t flags)
 		{
 			if (it->x == 0)
 			{
-				it->x = UPPER_X;
+				it->x = Canvas::getWidth();
 			}
 			else
 			{
@@ -173,9 +173,9 @@ bool Ship::MoveRight(Game * game_screen, game_move_flags_t flags)
 		vector<Object_location_t> & locations = get_locations();
 		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 		{
-			if (it->x == UPPER_X)
+			if (it->x == Canvas::getWidth())
 			{
-				it->x = it->x % UPPER_X;
+				it->x = it->x % Canvas::getWidth();
 			}
 			else
 			{

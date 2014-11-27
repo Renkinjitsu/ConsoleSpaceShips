@@ -17,6 +17,7 @@ private:
 	bool MoveDown(Game * game_screen);
 	bool MoveLeft(Game * game_screen);
 	bool MoveRight(Game * game_screen);
+
 public:
 	Item(int item_number, const Object_location_t locations_array[], size_t locations_array_len);
 

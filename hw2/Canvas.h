@@ -4,18 +4,18 @@
 class Canvas
 {
 private:
-	unsigned width;
-	unsigned height;
+	static const unsigned width = 80;
+	static const unsigned height = 24;
 
 public:
-	Canvas(unsigned width, unsigned height);
+	static unsigned getWidth();
+	static unsigned getHeight();
+
+	Canvas();
 
 	void setCharacter(unsigned x, unsigned y, char character);
 	void setCharacter(unsigned x, unsigned y, int num_character);
 	void clear();
-
-	unsigned getWidth();
-	unsigned getHeight();
 };
 
 #endif /* CANVAS_H_ */

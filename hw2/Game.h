@@ -98,7 +98,7 @@ public:
 		return items_vec.end();
 	};
 
-	Game() : exit_point(NULL), canvas(80, 24)
+	Game() : exit_point(NULL), canvas()
 	{
 		this->isGameOver = false;
 	};
