@@ -100,7 +100,7 @@ bool Item::MoveDown(Game * game_screen, game_move_flags_t flags)
 
 		//TODO: check for explosion if flags.explosion_allowed
 		if (flags.explosion_allowed)
-		{
+			{
 
 		}
 

@@ -396,6 +396,6 @@ void Game::Run()
 
 	this->erase_all();
 
-	gotoxy(UPPER_X / 2, UPPER_Y / 2);
+	gotoxy(Canvas::getWidth() / 2, Canvas::getHeight() / 2);
 	cout << "GAME OVER!";
 }

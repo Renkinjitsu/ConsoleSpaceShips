@@ -2,10 +2,8 @@
 
 #include "io_utils.h"
 
-Canvas::Canvas(unsigned width, unsigned height)
+Canvas::Canvas()
 {
-	this->width = width;
-	this->height = height;
 }
 
 void Canvas::setCharacter(unsigned x, unsigned y, char character)
@@ -33,10 +31,10 @@ void Canvas::clear()
 
 unsigned Canvas::getWidth()
 {
-	return this->width;
+	return Canvas::width;
 }
 
 unsigned Canvas::getHeight()
 {
-	return this->height;
+	return Canvas::height;
 }
