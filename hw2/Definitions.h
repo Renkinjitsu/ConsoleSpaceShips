@@ -13,6 +13,7 @@ typedef enum
 typedef struct
 {
 	bool is_carried_on_ship;
+	bool explosion_allowed;
 }game_move_flags_t;
 
 #endif

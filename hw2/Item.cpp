@@ -6,7 +6,6 @@ Item::Item(int item_number, const Object_location_t locations_array[], size_t lo
 {
 	this->item_number = item_number;
 
-
 	vector<Object_location_t> locations;
 	for (size_t i = 0; i < locations_array_len; i++)
 	{
@@ -80,18 +79,7 @@ bool Item::MoveUp(Game * game_screen, game_move_flags_t flags)
 	if (this->canMoveUp(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
-		vector<Object_location_t> & locations = get_locations();
-		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
-		{
-			if (it->y == 0)
-			{
-				it->y = UPPER_Y;
-			}
-			else
-			{
-				it->y--;
-			}
-		}
+		GameObject::moveUp();
 
 		draw(game_screen->getCanvas());
 
@@ -107,17 +95,13 @@ bool Item::MoveDown(Game * game_screen, game_move_flags_t flags)
 	if (this->canMoveDown(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
-		vector<Object_location_t> & locations = get_locations();
-		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+		GameObject::moveDown();
+
+
+		//TODO: check for explosion if flags.explosion_allowed
+		if (flags.explosion_allowed)
 		{
-			if (it->y == UPPER_Y)
-			{
-				it->y = it->y % UPPER_Y;
-			}
-			else
-			{
-				it->y++;
-			}
+
 		}
 
 		draw(game_screen->getCanvas());
@@ -133,19 +117,7 @@ bool Item::MoveLeft(Game * game_screen, game_move_flags_t flags)
 	if (this->canMoveLeft(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
-		vector<Object_location_t> & locations = get_locations();
-		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
-		{
-			if (it->x == 0)
-			{
-				it->x = UPPER_X;
-			}
-			else
-			{
-				it->x--;
-			}
-		}
-
+		GameObject::moveLeft();
 		draw(game_screen->getCanvas());
 
 		return true;
@@ -159,19 +131,7 @@ bool Item::MoveRight(Game * game_screen, game_move_flags_t flags)
 	if (this->canMoveRight(game_screen, flags))
 	{
 		EraseDrawing(game_screen->getCanvas());
-		vector<Object_location_t> & locations = get_locations();
-		for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
-		{
-			if (it->x == UPPER_X)
-			{
-				it->x = it->x % UPPER_X;
-			}
-			else
-			{
-				it->x++;
-			}
-		}
-
+		GameObject::moveRight();
 		draw(game_screen->getCanvas());
 
 		return true;

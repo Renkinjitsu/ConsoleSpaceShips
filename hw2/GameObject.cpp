@@ -63,28 +63,64 @@ Object_location_t GameObject::get_location()
 
 void GameObject::moveUp()
 {
-	/*for (size_t i = 0; i < screen.get_num_of_items(); i++)
+	vector<Object_location_t> & locations = get_locations();
+	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-
-	}*/
-
-
-	//this->y--;
+		if (it->y == 0)
+		{
+			it->y = UPPER_Y;
+		}
+		else
+		{
+			it->y--;
+		}
+	}
 }
 
-bool GameObject::moveDown(Game * screen)
+void GameObject::moveDown()
 {
-
-	//this->y++;
-	return true;
+	vector<Object_location_t> & locations = get_locations();
+	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+	{
+		if (it->y == UPPER_Y)
+		{
+			it->y = it->y % UPPER_Y;
+		}
+		else
+		{
+			it->y++;
+		}
+	}
 }
 
 void GameObject::moveLeft()
 {
-	//this->x--;
+	vector<Object_location_t> & locations = get_locations();
+	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+	{
+		if (it->x == 0)
+		{
+			it->x = UPPER_X;
+		}
+		else
+		{
+			it->x--;
+		}
+	}
 }
 
 void GameObject::moveRight()
 {
-	//this->y++;
+	vector<Object_location_t> & locations = get_locations();
+	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+	{
+		if (it->x == UPPER_X)
+		{
+			it->x = it->x % UPPER_X;
+		}
+		else
+		{
+			it->x++;
+		}
+	}
 }

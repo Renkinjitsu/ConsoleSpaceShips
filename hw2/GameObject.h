@@ -63,7 +63,7 @@ public:
 	void setPosition(unsigned x, unsigned y);
 
 	void moveUp();
-	bool moveDown(Game * screen);
+	void moveDown();
 	void moveLeft();
 	void moveRight();
 

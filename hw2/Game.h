@@ -102,10 +102,10 @@ public:
 
 	bool HasShipReachedExitPoint(Ship * ship);
 
-	bool MoveItemsCarriedOnShip(Ship * ship, game_direction_e direction, game_move_flags_t flags);
-	bool canMoveDown(Item * item);
-	bool canMoveUp(Item * item);
-	//bool canMoveX(Item * item, enum game_direction_e direction);
+
+	bool ExplodeShipOnFreefalling(Item * item_falling, game_move_flags_t flags);
+
+	bool MoveItemsCarriedOnShip(vector<Object_location_t> & ship_locations, game_direction_e direction, game_move_flags_t flags);
 	bool canMoveX(GameObject * obj, game_direction_e direction, game_move_flags_t flags);
 
 	bool checkBlockage(const Object_location_t & caller_location, const Object_location_t & possible_blocking_location, game_direction_e block_type);

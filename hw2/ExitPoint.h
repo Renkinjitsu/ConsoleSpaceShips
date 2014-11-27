@@ -19,8 +19,6 @@ private:
 public:
 	ExitPoint(Object_location_t exit_p_location) : GameObject(OBJECT_EXITP, exit_p_location.x, exit_p_location.y)
 	{
-		//this->set_locations(exit_p_location.x, exit_p_location.y);
-		//location = exitpoint_start_location;
 	};
 
 	void draw(Canvas & canvas)
