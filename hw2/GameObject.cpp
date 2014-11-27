@@ -69,7 +69,7 @@ void GameObject::moveUp()
 	{
 		if (it->y == 0)
 		{
-			it->y = UPPER_Y;
+			it->y = Canvas::getHeight();
 		}
 		else
 		{
@@ -83,9 +83,9 @@ void GameObject::moveDown()
 	vector<Object_location_t> & locations = get_locations();
 	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-		if (it->y == UPPER_Y)
+		if (it->y == Canvas::getHeight())
 		{
-			it->y = it->y % UPPER_Y;
+			it->y = it->y % Canvas::getHeight();
 		}
 		else
 		{
@@ -101,7 +101,7 @@ void GameObject::moveLeft()
 	{
 		if (it->x == 0)
 		{
-			it->x = UPPER_X;
+			it->x = Canvas::getWidth();
 		}
 		else
 		{
@@ -115,9 +115,9 @@ void GameObject::moveRight()
 	vector<Object_location_t> & locations = get_locations();
 	for (vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
 	{
-		if (it->x == UPPER_X)
+		if (it->x == Canvas::getWidth())
 		{
-			it->x = it->x % UPPER_X;
+			it->x = it->x % Canvas::getWidth();
 		}
 		else
 		{
