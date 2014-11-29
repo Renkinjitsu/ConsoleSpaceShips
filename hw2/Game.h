@@ -63,7 +63,9 @@ private:
 
 	Canvas _canvas;
 
+	static bool isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool);
 	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects);
+	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects, const std::vector<GameObject *> & ignore);
 
 	void moveItems(std::vector<Item *> & items, Direction direction);
 
@@ -79,7 +81,8 @@ private:
 	void calculateChanges();
 	void applyChanges(); //The actual moving/translation/advancment of the game
 
-	void getPiledItems(const GameObject & gameObjectm, std::vector<Item *> & result) const;
+	void getPiledItems(const GameObject & gameObject, std::vector<Item *> & result) const;
+	void pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers);
 	void removeShip(Ship & ship);
 public:
 	Game(SmallShip & smallShip, BigShip & bigShip);

@@ -29,7 +29,7 @@ int main()
 	item2.setLocations(11, 6);
 	item2.setLocations(10, 7);
 	item2.setLocations(11, 7);
-	game.addGameObject(&item2);
+	//game.addGameObject(&item2);
 
 	Item item3('3');
 	item3.setLocations(41, 21);
