@@ -32,6 +32,8 @@ public:
 	bool isPushable();
 	bool collidesWith(const GameObject & other) const;
 
+	unsigned getMass();
+
 	void move(Direction direction);
 
 	void draw(Canvas & canvas);

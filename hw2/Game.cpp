@@ -19,6 +19,19 @@ bool Game::isInPool(const GameObject & gameObject, const std::vector<GameObject 
 	return false;
 }
 
+bool Game::isInPool(const Item & item, const std::vector<Item *> & pool)
+{
+	for(std::vector<Item *>::const_iterator iter = pool.begin(); iter != pool.end(); ++iter)
+	{
+		if(*iter == &item)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects)
 {
 	std::vector<GameObject *> empty_ignore;
@@ -56,30 +69,14 @@ void Game::getPiledItems(const GameObject & gameObject, std::vector<Item *> & re
 {
 	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
 	{
-		if(&gameObject != *itemIter)
+		if(&gameObject != *itemIter &&
+			gameObject.isBlockedBy(**itemIter, DIRECTION_UP) &&
+			Game::isInPool(**itemIter, result) == false)
 		{
-			if(gameObject.isBlockedBy(**itemIter, DIRECTION_UP))
-			{
-				bool isAlreadyContained = false;
-				for(size_t i = 0; i < result.size(); ++i)
-				{
-					if(result[i] == *itemIter)
-					{
-						isAlreadyContained = true;
-						break;
-					}
-				}
-
-				if(isAlreadyContained == false)
-				{
-					result.push_back(*itemIter);
-					this->getPiledItems(**itemIter, result);
-				}
-			}
+			result.push_back(*itemIter);
+			this->getPiledItems(**itemIter, result);
 		}
 	}
-
-	//TODO: Remove duplicates
 }
 
 void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers, std::vector<GameObject *> & pushableMembers)
@@ -155,6 +152,80 @@ void Game::moveItems(std::vector<Item *> & items, Direction direction)
 	}
 }
 
+void Game::listCrashPotentialItems(ShipState & shipState)
+{
+	shipState._crashPotentialItems.clear();
+
+	std::vector<Item *> & items = this->_gameObjects._items;
+	for(unsigned i = 0; i < items.size(); i++)
+	{
+		Item & item = *(items[i]);
+		if(item.isBlockedBy(shipState._ship, DIRECTION_DOWN) == false)
+		{
+			shipState._crashPotentialItems.push_back(&item);
+		}
+	}
+}
+
+void Game::listFreeFallingItems()
+{
+	this->_updateArgs._freeFallingItems.clear();
+
+	std::vector<Item *> & items = this->_gameObjects._items;
+
+	for(unsigned i = 0; i < items.size(); i++)
+	{
+		Item & item = *(items[i]);
+		if(Game::isBlockedByAny(item, DIRECTION_DOWN, this->_gameObjects._blocking) == false)
+		{
+			this->_updateArgs._freeFallingItems.push_back(&item);
+		}
+	}
+}
+
+void Game::refineCrashPotentialItems(ShipState & shipState)
+{
+	std::vector<Item *>::iterator potentialItem = shipState._crashPotentialItems.begin();
+
+	while(potentialItem != shipState._crashPotentialItems.end())
+	{
+		if(shipState._ship.isBlockedBy(**potentialItem, DIRECTION_UP) == false ||
+			this->isInPool(**potentialItem, this->_updateArgs._freeFallingItems) == false)
+		{
+			shipState._crashPotentialItems.erase(potentialItem);
+			potentialItem = shipState._crashPotentialItems.begin();
+		}
+		else
+		{
+			++potentialItem;
+		}
+	}
+}
+
+void Game::expandCrashPotentialItems(ShipState & shipState)
+{
+	std::vector<Item *> & crushedItems = shipState._crashPotentialItems;
+
+	const unsigned originalLength = crushedItems.size();
+
+	for(unsigned i = 0; i < originalLength; i++)
+	{
+		this->getPiledItems(*crushedItems[i], crushedItems);
+	}
+}
+
+unsigned Game::getTotalMass(const std::vector<Item *> & pool) const
+{
+	unsigned result = 0;
+
+	for(unsigned i = 0; i < pool.size(); i++)
+	{
+		result += pool[i]->getMass();
+	}
+
+	return result;
+}
+
 void Game::setInitialState()
 {
 	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++) //For each ship do:
@@ -165,6 +236,8 @@ void Game::setInitialState()
 		{
 			shipState._shipDirection = DIRECTION_NONE;
 		}
+
+		this->listCrashPotentialItems(shipState);
 	}
 
 	this->_updateArgs._rotateSmallShip = false;
@@ -247,13 +320,14 @@ void Game::update()
 	/*
 	 * Items that falls on (A.K.A "crash-into") each ship are detected thus:
 	 *
-	 * 1. List potential items (items before advancment of items by gravity, that are not blocking the ship from above but may do so after advancment).
-	 * 2. After the 'update' stage, get a list of all of the items that block the ship from above.
-	 * 3. Get a list (Called "crashPile") that is the intersection of the lists from steps 1 & 2.
-	 * 4. Expand crashPile to contain a pile of the items.
-	 * 5. Calculate the mass of crashPile.
-	 * 6. If the intersection of smallShip's crashPile and bigShip's crashPile isn't empty, explode the ships if the mass is too great.
-	 * 7. Else, explode the ship if the mass is too great.
+	 * 1. List crash-potential-items (items that do not block the ship from above).
+	 * 2. List 'free-falling' items.
+	 * 3. From the crash-potential-items, remove the items that are not 'free-falling'.
+	 * 4. From the crash-potential-items, remove the items that do not block the ship from above.
+	 * 5. Expand crash-potential-items to 'crash-pile' by piling all contained items.
+	 * 6. Calculate the mass of the crash-pile.
+	 * 7. If the intersection of smallShip's crashPile and bigShip's crashPile isn't empty, explode the ships if the mass is too great.
+	 * 8. Else, explode the ship if the mass is too great.
 	*/
 
 	this->processUserInput();
@@ -347,7 +421,21 @@ void Game::applyChanges()
 		}
 	}
 
+	this->listFreeFallingItems();
 	this->moveItems(this->_gameObjects._items, DIRECTION_DOWN); //Advance free-falling items
+
+	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++)
+	{
+		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
+
+		this->refineCrashPotentialItems(shipState);
+		this->expandCrashPotentialItems(shipState);
+
+		if(this->getTotalMass(shipState._crashPotentialItems) >= (shipState._ship.getMass() / 2))
+		{
+			shipState._ship.explode();
+		}
+	}
 }
 
 Game::Game(SmallShip & smallShip, BigShip & bigShip) : _canvas(), _gameObjects(smallShip, bigShip)

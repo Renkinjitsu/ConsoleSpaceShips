@@ -89,6 +89,11 @@ bool GameObject::collidesWith(const GameObject & other) const
 	return false;
 }
 
+unsigned GameObject::getMass()
+{
+	return this->_locations.size();
+}
+
 void GameObject::move(Direction direction)
 {
 	for(std::vector<Point>::iterator locationIter = this->_locations.begin(); locationIter != this->_locations.end(); ++locationIter)

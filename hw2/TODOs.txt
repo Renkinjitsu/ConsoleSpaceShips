@@ -3,8 +3,9 @@ Known bugs:
 Example: 777
          667
          777
+- Item that falls indirectly on the ship is not detected.
+- Ships can move items with too-great a mass.
 
 General:
-- Ship-blows-up detection
 - Ship-blows-up visual effects
 - Make a challenging screen

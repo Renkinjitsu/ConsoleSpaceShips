@@ -17,6 +17,7 @@ public:
 	Ship & _ship;
 	Direction _shipDirection;
 
+	std::vector<Item *> _crashPotentialItems;
 
 	ShipState(Ship & ship) : _ship(ship)
 	{
@@ -58,15 +59,23 @@ private:
 		(ShipState *) _shipStates[Game::SHIPS_COUNT];
 
 		bool _rotateSmallShip;
+		std::vector<Item *> _freeFallingItems;
 	}_updateArgs;
 
 	Canvas _canvas;
 
 	static bool isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool);
+	static bool isInPool(const Item & item, const std::vector<Item *> & pool);
 	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects);
 	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects, const std::vector<GameObject *> & ignore);
 
 	void moveItems(std::vector<Item *> & items, Direction direction);
+
+	void listCrashPotentialItems(ShipState & shipState);
+	void listFreeFallingItems();
+	void refineCrashPotentialItems(ShipState & shipState);
+	void expandCrashPotentialItems(ShipState & shipState);
+	unsigned getTotalMass(const std::vector<Item *> & pool) const;
 
 	void setInitialState();
 	void readUserInput();
