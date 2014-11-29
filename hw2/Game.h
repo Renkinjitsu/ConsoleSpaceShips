@@ -83,6 +83,8 @@ private:
 	void update();
 	void draw();
 
+	void gameOverScreen();
+
 	bool isGameOver();
 
 	//The following functions are the various sections of the "update(...)" function's implementation

@@ -31,12 +31,17 @@ void GameObject::setLocations(const Point & point)
 	this->_locations.push_back(point);
 }
 
-	void GameObject::setLocations(std::vector<Point> & locations)
+void GameObject::setLocations(std::vector<Point> & locations)
 {
 	for(std::vector<Point>::const_iterator locationIter = locations.begin(); locationIter != locations.end(); ++locationIter)
 	{
 		this->_locations.push_back(*locationIter);
 	}
+}
+
+void GameObject::setTexture(char texture)
+{
+	this->_texture = texture;
 }
 
 void GameObject::clearLocations()

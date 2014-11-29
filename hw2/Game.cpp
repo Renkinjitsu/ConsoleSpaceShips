@@ -344,7 +344,50 @@ void Game::draw()
 	}
 
 	this->_canvas.end();
-};
+}
+
+void Game::gameOverScreen()
+{
+	this->_canvas.save();
+
+	const char * const endMessage = "Game OVER!";
+	unsigned endMessageEffectIndex = 0;
+
+	const char * const explodedShipAnimation = "*+X";
+	unsigned explodedShipAnimationIndex = 0;
+
+	Ship * ships[Game::SHIPS_COUNT];
+	ships[0] = &(this->_gameObjects._smallShip);
+	ships[1] = &(this->_gameObjects._bigShip);
+
+	while(!(this->_state._exit))
+	{
+		this->_canvas.restore();
+
+		for(unsigned i = 0; i < Game::SHIPS_COUNT; i++)
+		{
+			Ship & ship = *(ships[i]);
+
+			if(ship.isAlive() == false)
+			{
+				ship.setTexture(explodedShipAnimation[explodedShipAnimationIndex]);
+				ship.draw(this->_canvas);
+			}
+		}
+
+		this->_canvas.draw((Canvas::getWidth() - strlen(endMessage)) / 2, Canvas::getHeight() / 2, endMessage);
+		this->_canvas.draw((Canvas::getWidth() - strlen(endMessage)) / 2 + endMessageEffectIndex, Canvas::getHeight() / 2, ' ');
+
+		this->_canvas.end();
+
+		endMessageEffectIndex = (endMessageEffectIndex + 1) % strlen(endMessage);
+		explodedShipAnimationIndex = (explodedShipAnimationIndex + 1) % strlen(explodedShipAnimation);
+
+		Sleep(75);
+
+		this->readUserInput();
+	}
+}
 
 bool Game::isGameOver()
 {
@@ -470,23 +513,7 @@ void Game::run()
 		Sleep(50);
 	}
 
-	this->_canvas.save();
-
-	const char * endMessage = "Game OVER!";
-	unsigned endMessageEffectIndex = 0;
-
-	while(!(this->_state._exit))
-	{
-		this->_canvas.restore();
-		this->_canvas.draw((Canvas::getWidth() - strlen(endMessage)) / 2, Canvas::getHeight() / 2, endMessage);
-		this->_canvas.draw((Canvas::getWidth() - strlen(endMessage)) / 2 + endMessageEffectIndex, Canvas::getHeight() / 2, ' ');
-		this->_canvas.end();
-
-		endMessageEffectIndex = (endMessageEffectIndex + 1) % strlen(endMessage);
-		Sleep(50);
-
-		this->readUserInput();
-	}
+	this->gameOverScreen();
 }
 
 void Game::addGameObject(Item * item)

@@ -7,5 +7,4 @@ Example: 777
 - Ships can move items with too-great a mass.
 
 General:
-- Ship-blows-up visual effects
 - Make a challenging screen

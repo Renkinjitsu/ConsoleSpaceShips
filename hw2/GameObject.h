@@ -28,6 +28,8 @@ public:
 	void setLocations(const Point & point);
 	void setLocations(std::vector<Point> & locations);
 
+	void setTexture(char texture);
+
 	bool isBlockedBy(const GameObject & other, Direction from) const;
 	bool isPushable();
 	bool collidesWith(const GameObject & other) const;
