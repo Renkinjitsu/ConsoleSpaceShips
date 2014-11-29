@@ -82,7 +82,7 @@ private:
 	void applyChanges(); //The actual moving/translation/advancment of the game
 
 	void getPiledItems(const GameObject & gameObject, std::vector<Item *> & result) const;
-	void pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers);
+	void pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers, std::vector<GameObject *> & pushableMembers);
 	void removeShip(Ship & ship);
 public:
 	Game(SmallShip & smallShip, BigShip & bigShip);

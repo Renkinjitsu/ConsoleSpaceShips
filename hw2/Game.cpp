@@ -82,27 +82,32 @@ void Game::getPiledItems(const GameObject & gameObject, std::vector<Item *> & re
 	//TODO: Remove duplicates
 }
 
-void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers)
+void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers, std::vector<GameObject *> & pushableMembers)
 {
+	if(this->isBlockedByAny(gameObject, direction, this->_gameObjects._blocking, pileMembers))
+	{
+		return;
+	}
+
 	pileMembers.push_back(&gameObject);
 
-	if(this->isBlockedByAny(gameObject, direction, this->_gameObjects._all, pileMembers) == false)
+	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
 	{
-		for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
+		if(&gameObject != *itemIter)
 		{
-			if(&gameObject != *itemIter)
+			bool shouldBePushed = gameObject.isBlockedBy(**itemIter, DIRECTION_UP);
+			/*
+			shouldBePushed |= (direction == DIRECTION_RIGHT) && gameObject.isBlockedBy(**itemIter, DIRECTION_RIGHT);
+			shouldBePushed |= (direction == DIRECTION_LEFT) && gameObject.isBlockedBy(**itemIter, DIRECTION_LEFT);
+			*/
+			if(shouldBePushed)
 			{
-				//TODO: Remove duplicates
-
-				if(gameObject.isBlockedBy(**itemIter, DIRECTION_UP))
-				{
-					Game::pushPile(**itemIter, direction, pileMembers);
-				}
+				Game::pushPile(**itemIter, direction, pileMembers, pushableMembers);
 			}
 		}
-
-		gameObject.move(direction);
 	}
+
+	pushableMembers.push_back(&gameObject);//	gameObject.move(direction);
 }
 
 void Game::removeShip(Ship & ship)
@@ -324,7 +329,13 @@ void Game::applyChanges()
 			if(shipState._shipDirection != DIRECTION_NONE)
 			{
 				std::vector<GameObject *> pileMembers;
-				this->pushPile(shipState._ship, shipState._shipDirection, pileMembers);
+				std::vector<GameObject *> pushableMembers;
+				this->pushPile(shipState._ship, shipState._shipDirection, pileMembers, pushableMembers);
+
+				for(unsigned i = 0; i < pushableMembers.size(); i++)
+				{
+					pushableMembers[i]->move(shipState._shipDirection);
+				}
 			}
 
 			if(this->_gameObjects._exitPoint->collidesWith(shipState._ship))
