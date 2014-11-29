@@ -326,8 +326,7 @@ void Game::update()
 	 * 4. From the crash-potential-items, remove the items that do not block the ship from above.
 	 * 5. Expand crash-potential-items to 'crash-pile' by piling all contained items.
 	 * 6. Calculate the mass of the crash-pile.
-	 * 7. If the intersection of smallShip's crashPile and bigShip's crashPile isn't empty, explode the ships if the mass is too great.
-	 * 8. Else, explode the ship if the mass is too great.
+	 * 7. If the mass is too great, explode the ship.
 	*/
 
 	this->processUserInput();
