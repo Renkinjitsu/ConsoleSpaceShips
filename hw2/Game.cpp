@@ -62,6 +62,27 @@ void Game::getPiledItems(const GameObject & gameObject, std::vector<Item *> & re
 	//TODO: Remove duplicates
 }
 
+void Game::removeShip(Ship & ship)
+{
+	for(std::vector<GameObject *>::iterator iter = this->_gameObjects._all.begin(); iter != this->_gameObjects._all.end(); ++iter)
+	{
+		if(*iter == &ship)
+		{
+			this->_gameObjects._all.erase(iter);
+			break;
+		}
+	}
+
+	for(std::vector<GameObject *>::iterator iter = this->_gameObjects._blocking.begin(); iter != this->_gameObjects._blocking.end(); ++iter)
+	{
+		if(*iter == &ship)
+		{
+			this->_gameObjects._blocking.erase(iter);
+			break;
+		}
+	}
+}
+
 void Game::moveItems(std::vector<Item *> & items, Direction direction)
 {
 	for(std::vector<Item *>::iterator item = items.begin(); item != items.end(); ++item)
@@ -251,7 +272,7 @@ void Game::applyChanges()
 		}
 	}
 
-	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++) //For each ship do:
+	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++)
 	{
 		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
 
@@ -263,6 +284,7 @@ void Game::applyChanges()
 			if(this->_gameObjects._exitPoint->collidesWith(shipState._ship))
 			{
 				shipState._ship.disappear();
+				this->removeShip(shipState._ship);
 			}
 		}
 	}
