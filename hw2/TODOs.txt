@@ -3,7 +3,6 @@ Known bugs:
 Example: 777
          667
          777
-- For item-on-item-on-ship
 
 General:
 - Ship-blows-up detection
