@@ -247,9 +247,13 @@ void Game::update()
 	/*
 	 * Items that falls on (A.K.A "crash-into") each ship are detected thus:
 	 *
-	 * 1. Before advancment of items by gravity - get a list of all of the items that are not blocking the ship from above.
-	 * 2. After the advancment: get a list of all of the items that do block the ship from above.
-	 * 3. Get a list that is the intersection of the lists from step (1) & step (2).
+	 * 1. List potential items (items before advancment of items by gravity, that are not blocking the ship from above but may do so after advancment).
+	 * 2. After the 'update' stage, get a list of all of the items that block the ship from above.
+	 * 3. Get a list (Called "crashPile") that is the intersection of the lists from steps 1 & 2.
+	 * 4. Expand crashPile to contain a pile of the items.
+	 * 5. Calculate the mass of crashPile.
+	 * 6. If the intersection of smallShip's crashPile and bigShip's crashPile isn't empty, explode the ships if the mass is too great.
+	 * 7. Else, explode the ship if the mass is too great.
 	*/
 
 	this->processUserInput();
