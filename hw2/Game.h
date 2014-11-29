@@ -15,7 +15,6 @@ class ShipState
 {
 public:
 	Ship & _ship;
-	std::vector<Item *> _piledObjects;
 	Direction _shipDirection;
 
 

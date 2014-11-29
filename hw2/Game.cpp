@@ -88,7 +88,12 @@ void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<Ga
 	{
 		return;
 	}
+	else if(Game::isInPool(gameObject, pushableMembers))
+	{
+		return;
+	}
 
+	pushableMembers.push_back(&gameObject);
 	pileMembers.push_back(&gameObject);
 
 	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
@@ -96,18 +101,16 @@ void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<Ga
 		if(&gameObject != *itemIter)
 		{
 			bool shouldBePushed = gameObject.isBlockedBy(**itemIter, DIRECTION_UP);
-			/*
+
 			shouldBePushed |= (direction == DIRECTION_RIGHT) && gameObject.isBlockedBy(**itemIter, DIRECTION_RIGHT);
 			shouldBePushed |= (direction == DIRECTION_LEFT) && gameObject.isBlockedBy(**itemIter, DIRECTION_LEFT);
-			*/
+
 			if(shouldBePushed)
 			{
 				Game::pushPile(**itemIter, direction, pileMembers, pushableMembers);
 			}
 		}
 	}
-
-	pushableMembers.push_back(&gameObject);//	gameObject.move(direction);
 }
 
 void Game::removeShip(Ship & ship)
@@ -160,7 +163,6 @@ void Game::setInitialState()
 
 		if(shipState._ship.isPresent())
 		{
-			shipState._piledObjects.clear();
 			shipState._shipDirection = DIRECTION_NONE;
 		}
 	}
@@ -292,11 +294,6 @@ void Game::processUserInput()
 			if(this->isBlockedByAny(shipState._ship, shipState._shipDirection, this->_gameObjects._blocking))
 			{
 				shipState._shipDirection = DIRECTION_NONE;
-			}
-
-			if(shipState._shipDirection != DIRECTION_NONE)
-			{
-				this->getPiledItems(shipState._ship, shipState._piledObjects);
 			}
 		}
 	}
