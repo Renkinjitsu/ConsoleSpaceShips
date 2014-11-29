@@ -11,48 +11,82 @@
 #include "ExitPoint.h"
 #include "Canvas.h"
 
+class ShipState
+{
+public:
+	Ship & _ship;
+	std::vector<Item *> _piledObjects;
+	Direction _shipDirection;
+
+
+	ShipState(Ship & ship) : _ship(ship)
+	{
+	}
+};
+
 class Game
 {
 private:
-	std::vector<GameObject *> _allGameObjects;
-	std::vector<GameObject *> _allBlockingObjects;
+	static const unsigned SMALL_SHIP_INDEX = 0;
+	static const unsigned BIG_SHIP_INDEX = 1;
+	static const unsigned SHIPS_COUNT = 2;
 
-	std::vector<Item *> _items;
-	std::vector<Wall *> _walls;
+	struct GameObjects
+	{
+		std::vector<GameObject *> _all;
+		std::vector<GameObject *> _blocking;
 
-	BigShip * _bigShip;
-	SmallShip * _smallShip;
-	unsigned _presentShipsCount;
+		std::vector<Item *> _items;
+		std::vector<Wall *> _walls;
 
-	ExitPoint * _exitPoint;
+		BigShip & _bigShip;
+		SmallShip & _smallShip;
 
-	Direction _bigShipDirection;
-	Direction _smallShipDirection;
-	bool _smallShipTryRotate;
+		ExitPoint * _exitPoint;
+
+		GameObjects(SmallShip & smallShip, BigShip & bigShip) : _smallShip(smallShip), _bigShip(bigShip)
+		{
+		}
+	}_gameObjects;
+
+	struct
+	{
+		bool _exit;
+	}_state;
+
+	struct
+	{
+		(ShipState *) _shipStates[Game::SHIPS_COUNT];
+
+		bool _rotateSmallShip;
+	}_updateArgs;
 
 	Canvas _canvas;
-
-	bool _exit;
 
 	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects);
 
 	void moveItems(std::vector<Item *> & items, Direction direction);
 
+	void setInitialState();
 	void readUserInput();
+	void processUserInput();
 	void update();
-	void draw_all();
+	void draw();
 
 	bool isGameOver();
 
+	//The following functions are the various sections of the "update(...)" function's implementation
+	void calculateChanges();
+	void applyChanges(); //The actual moving/translation/advancment of the game
+
 	void getPiledItems(const GameObject & gameObjectm, std::vector<Item *> & result) const;
 public:
-	Game();
+	Game(SmallShip & smallShip, BigShip & bigShip);
+	~Game();
 
 	void run();
 
 	void addGameObject(Item * item);
-	void addGameObject(BigShip * bigShip);
-	void addGameObject(SmallShip * smallShip);
 	void addGameObject(Wall * wall);
 	void addGameObject(ExitPoint * exit);
 };

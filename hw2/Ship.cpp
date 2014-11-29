@@ -20,6 +20,11 @@ bool Ship::isAlive()
 	return this->_isAlive;
 }
 
+bool Ship::isPresent()
+{
+	return this->_isPresent;
+}
+
 void Ship::explode()
 {
 	this->_isAlive = false;
@@ -29,5 +34,5 @@ void Ship::explode()
 
 void Ship::disappear()
 {
-	this->clearLocations();
+	this->_isPresent = false;
 }

@@ -7,6 +7,7 @@ class Ship : public GameObject
 {
 private:
 	bool _isAlive;
+	bool _isPresent;
 
 public:
 	Ship(unsigned xPosition, unsigned yPosition,
@@ -14,6 +15,7 @@ public:
 		char texture);
 
 	bool isAlive();
+	bool isPresent();
 
 	void explode();
 	void disappear();

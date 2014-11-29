@@ -1,10 +1,10 @@
 Known bugs:
-- Visual bug when pushing up an item above the maximum height with a ship
-- Visual bug when an item tries to fall from the bottom of the canvas and a ship blocks it from the top of the canvas
-- 777
-  667
-  777
+- When pushing the below example from the right, an infinite recursion occurs.
+Example: 777
+         667
+         777
+- For item-on-item-on-ship
 
 General:
 - Ship-blows-up visual effects
-- Make a chalanging screen
+- Make a challenging screen

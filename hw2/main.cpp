@@ -8,7 +8,10 @@
 
 int main()
 {
-	Game game;
+	SmallShip smallShip(12, 12);
+	BigShip bigShip(18, 12);
+
+	Game game(smallShip, bigShip);
 
 	Item item1('1');
 	item1.setLocations(10, 5);
@@ -53,12 +56,6 @@ int main()
 
 	ExitPoint exitPoint(68, 6);
 	game.addGameObject(&exitPoint);
-
-	SmallShip smallShip(12, 12);
-	game.addGameObject(&smallShip);
-
-	BigShip bigShip(18, 12);
-	game.addGameObject(&bigShip);
 
 	const unsigned wallWidth = 8;
 	const unsigned wallHeight = 5;

@@ -8,6 +8,7 @@ SmallShip::SmallShip(unsigned xPositin, unsigned yPosition) : Ship(xPositin, yPo
 bool SmallShip::isRotationPossible(const std::vector<GameObject *> & otherObjects)
 {
 	std::vector<Point> locations = this->getLocations();
+
 	unsigned x = locations[0].getX();
 	unsigned y = locations[0].getY();
 
