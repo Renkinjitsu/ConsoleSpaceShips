@@ -1,74 +1,62 @@
 #include "GameObject.h"
-#include "Game.h"
 
-GameObject::GameObject(Object_type_e object_type, unsigned x, unsigned y)
+GameObject::GameObject(char texture, bool isPushable)
 {
-	this->set_locations(x, y);
-	this->object_type = object_type;
+	this->_texture = texture;
+	this->_isPushable = isPushable;
 }
 
-GameObject::GameObject(vector<Object_location_t> & location, Object_type_e object_type)
+GameObject::GameObject(char texture, unsigned x, unsigned y, bool isPushable)
 {
-	this->set_locations(location);
-	this->object_type = object_type;
+	this->setLocations(x, y);
+	this->_texture = texture;
+	this->_isPushable = isPushable;
 }
 
-void GameObject::set_locations(unsigned x , unsigned y)
+GameObject::GameObject(char texture, std::vector<Point> & location, bool isPushable)
 {
-	Object_location_t loc;
-	loc.x = x;
-	loc.y = y;
-	this->locations.push_back(loc);
-
-	start_location.x = x;
-	start_location.y = y;
-
-	this->texture_type = SINGLE_LOCATION_TEXTURE;
+	this->setLocations(location);
+	this->_texture = texture;
+	this->_isPushable = isPushable;
 }
 
-
-void GameObject::set_locations(vector<Object_location_t> & location)
+void GameObject::setLocations(unsigned x , unsigned y)
 {
-	this->locations = location;
-
-	this->texture_type = MULTI_LOCATION_TEXTURE;
+	Point point(x, y);
+	this->_locations.push_back(point);
 }
 
-void GameObject::clear_locations()
+void GameObject::setLocations(const Point & point)
 {
-	this->locations.clear();
+	this->_locations.push_back(point);
 }
 
-unsigned GameObject::getXstart()
+	void GameObject::setLocations(std::vector<Point> & locations)
 {
-	// only for SQUARE_TEXTURE
-	return this->start_location.x;
-}
-
-
-unsigned GameObject::getYstart()
-{
-	// only for SQUARE_TEXTURE
-	return this->start_location.y;
-}
-vector<Object_location_t> & GameObject::get_locations()
-{
-	return this->locations;
-}
-
-Object_location_t GameObject::get_location()
-{
-	return this->start_location;
-}
-
-bool GameObject::isBlockedBy(const GameObject & other, Direction from)
-{
-	for(vector<Object_location_t>::iterator myPosition = this->locations.begin(); myPosition != this->locations.end(); ++myPosition)
+	for(std::vector<Point>::const_iterator locationIter = locations.begin(); locationIter != locations.end(); ++locationIter)
 	{
-		Object_location_t translatedPosition = *myPosition;
+		this->_locations.push_back(*locationIter);
+	}
+}
+
+void GameObject::clearLocations()
+{
+	this->_locations.clear();
+}
+
+std::vector<Point> GameObject::getLocations()
+{
+	return this->_locations;
+}
+
+bool GameObject::isBlockedBy(const GameObject & other, Direction from) const
+{
+	for(std::vector<Point>::const_iterator myPosition = this->_locations.begin(); myPosition != this->_locations.end(); ++myPosition)
+	{
+		Point translatedPosition = *myPosition;
 		translatedPosition.move(from);
 
-		for(vector<Object_location_t>::const_iterator othersPosition = other.locations.begin(); othersPosition != other.locations.end(); ++othersPosition)
+		for(std::vector<Point>::const_iterator othersPosition = other._locations.begin(); othersPosition != other._locations.end(); ++othersPosition)
 		{
 			if(translatedPosition.equals(*othersPosition))
 			{
@@ -78,4 +66,41 @@ bool GameObject::isBlockedBy(const GameObject & other, Direction from)
 	}
 
 	return false;
+}
+
+bool GameObject::isPushable()
+{
+	return this->_isPushable;
+}
+
+bool GameObject::collidesWith(const GameObject & other) const
+{
+	for(std::vector<Point>::const_iterator myPosition = this->_locations.begin(); myPosition != this->_locations.end(); ++myPosition)
+	{
+		for(std::vector<Point>::const_iterator othersPosition = other._locations.begin(); othersPosition != other._locations.end(); ++othersPosition)
+		{
+			if((*myPosition).equals(*othersPosition))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void GameObject::move(Direction direction)
+{
+	for(std::vector<Point>::iterator locationIter = this->_locations.begin(); locationIter != this->_locations.end(); ++locationIter)
+	{
+		(*locationIter).move(direction);
+	}
+}
+
+void GameObject::draw(Canvas & canvas)
+{
+	for(std::vector<Point>::const_iterator locationIter = this->_locations.begin(); locationIter != this->_locations.end(); ++locationIter)
+	{
+		canvas.draw((*locationIter).getX(), (*locationIter).getY(), this->_texture);
+	}
 }

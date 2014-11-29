@@ -7,15 +7,27 @@ private:
 	static const unsigned width = 80;
 	static const unsigned height = 24;
 
+	static const unsigned bufferLength = width * height;
+
+	char _buffer[bufferLength + 1];
+	char _bufferBackup[bufferLength + 1];
+
+	static unsigned calculateIndexFromPosition(unsigned x, unsigned y);
+
 public:
 	static unsigned getWidth();
 	static unsigned getHeight();
 
 	Canvas();
 
-	void setCharacter(unsigned x, unsigned y, char character);
-	void setCharacter(unsigned x, unsigned y, int num_character);
-	void clear();
+	void draw(unsigned x, unsigned y, char character);
+	void draw(unsigned x, unsigned y, const char * string);
+
+	void save();
+	void restore();
+
+	void begin();
+	void end();
 };
 
 #endif /* CANVAS_H_ */

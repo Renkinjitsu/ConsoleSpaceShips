@@ -1,24 +1,12 @@
 #include "Wall.h"
 
-Wall::Wall(unsigned x, unsigned y) : GameObject(OBJECT_WALL, x, y)
+Wall::Wall(unsigned bottomLeftX, unsigned bottomLeftY, unsigned width, unsigned height) : GameObject('+', false)
 {
-}
-
-void Wall::EraseDrawing(Canvas & canvas)
-{
-	std::vector<Object_location_t> & locations = get_locations();
-	for (std::vector<Object_location_t>::iterator it = locations.begin(); it != locations.end(); ++it)
+	for(unsigned i = 0; i < width; ++i)
 	{
-		canvas.setCharacter(it->x, it->y, ' ');
-	}
-}
-
-void Wall::draw(Canvas & canvas)
-{
-	std::vector<Object_location_t> location = this->get_locations();
-
-	for (std::vector<Object_location_t>::iterator it = location.begin(); it != location.end(); ++it)
-	{
-		canvas.setCharacter(it->x, it->y, '+');
+		for(unsigned j = 0; j < height; ++j)
+		{
+			this->setLocations(bottomLeftX + i, bottomLeftY + j);
+		}
 	}
 }

@@ -8,11 +8,7 @@ class Wall : public GameObject
 private:
 
 public:
-	Wall(unsigned x, unsigned y);
-
-	void draw(Canvas & canvas);
-
-	void EraseDrawing(Canvas & canvas);
-	};
+	Wall(unsigned bottomLeftX, unsigned bottomLeftY, unsigned width, unsigned height);
+};
 
 #endif /* WALL_H_ */

@@ -1,0 +1,14 @@
+
+#ifndef DIRECTION_H_
+#define DIRECTION_H_
+
+enum Direction
+{
+	DIRECTION_UP,
+	DIRECTION_DOWN,
+	DIRECTION_LEFT,
+	DIRECTION_RIGHT,
+	DIRECTION_NONE
+};
+
+#endif /* DIRECTION */

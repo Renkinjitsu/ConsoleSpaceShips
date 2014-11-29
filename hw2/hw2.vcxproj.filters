@@ -39,13 +39,16 @@
     <ClCompile Include="BigShip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SmallShip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SmallShip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +86,10 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Definitions.h">
+    <ClInclude Include="Direction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,6 +19,7 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="SmallShip.cpp" />
     <ClCompile Include="Wall.cpp" />
@@ -27,12 +28,13 @@
     <ClInclude Include="BigShip.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="Definitions.h" />
+    <ClInclude Include="Direction.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SmallShip.h" />
     <ClInclude Include="Wall.h" />

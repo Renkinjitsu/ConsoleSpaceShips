@@ -1,40 +1,22 @@
 #ifndef SHIP_H_
 #define SHIP_H_
-#include "Definitions.h"
+
 #include "GameObject.h"
 
 class Ship : public GameObject
 {
 private:
-	const char texture;
-	bool is_alive;
-
-protected:
-	unsigned width;
-	unsigned height;
+	bool _isAlive;
 
 public:
-	Ship(unsigned xPositin, unsigned yPosition,
+	Ship(unsigned xPosition, unsigned yPosition,
 		unsigned width, unsigned height,
 		char texture);
 
-	bool IsShipAlive();
-	void SetShipAlive(bool is_alive);
+	bool isAlive();
 
-	void KillShip();
-
-	bool canMoveDown(Game * game_screen);
-	bool canMoveUp(Game * game_screen);
-	bool canMoveLeft(Game * game_screen);
-	bool canMoveRight(Game * game_screen);
-
-	bool MoveDown(Game & game, game_move_flags_t flags);
-	bool MoveUp(Game * game_screen, game_move_flags_t flags);
-	bool MoveLeft(Game * game_screen, game_move_flags_t flags);
-	bool MoveRight(Game * game_screen, game_move_flags_t flags);
-
-	void draw(Canvas & canvas);
-	void EraseDrawing(Canvas & canvas);
+	void explode();
+	void disappear();
 };
 
 #endif /* SHIP_H_ */

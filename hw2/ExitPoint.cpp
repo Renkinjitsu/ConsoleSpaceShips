@@ -1,13 +1,6 @@
 #include "ExitPoint.h"
-#include "Game.h"
 
-bool ExitPoint::IsAtExitPoint(const Object_location_t & loc)
+ExitPoint::ExitPoint(unsigned x, unsigned y) : GameObject('X', x, y, false)
 {
-	Object_location_t location = get_location();
-	if (loc.x == location.x && loc.y == location.y)
-	{
-		return true;
-	}
-
-	return false;
+	//Nothing to do
 }
