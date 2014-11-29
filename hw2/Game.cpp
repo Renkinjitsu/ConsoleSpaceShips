@@ -319,16 +319,8 @@ void Game::run()
 	{
 		this->setInitialState();
 		this->readUserInput();
-
-		if(this->isGameOver() == false)
-		{
-			this->update();
-		}
-
-		if(this->isGameOver() == false)
-		{
-			this->draw();
-		}
+		this->update();
+		this->draw();
 
 		Sleep(50);
 	}
