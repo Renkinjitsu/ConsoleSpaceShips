@@ -398,6 +398,8 @@ bool Game::isGameOver()
 		isGameOver |= (this->_updateArgs._shipStates[i]->_ship.isAlive() == false);
 	}
 
+	isGameOver |= (this->_gameObjects._smallShip.isPresent() == false) && (this->_gameObjects._bigShip.isPresent() == false);
+
 	return isGameOver;
 }
 
