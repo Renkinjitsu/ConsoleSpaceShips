@@ -32,26 +32,8 @@ int main()
 	game.addGameObject(&item2);
 
 	Item item3('3');
-	item3.setLocations(4, 10);
-	item3.setLocations(4, 9);
-	item3.setLocations(4, 8);
-	item3.setLocations(4, 7);
-	item3.setLocations(5, 10);
-	item3.setLocations(5, 9);
-	item3.setLocations(5, 8);
-	item3.setLocations(5, 7);
-	item3.setLocations(3, 10);
-	item3.setLocations(3, 9);
-	item3.setLocations(3, 8);
-	item3.setLocations(3, 7);
-	item3.setLocations(2, 10);
-	item3.setLocations(2, 9);
-	item3.setLocations(2, 8);
-	item3.setLocations(2, 7);
-	item3.setLocations(6, 10);
-	item3.setLocations(6, 9);
 	item3.setLocations(6, 8);
-	item3.setLocations(6, 7);
+	item3.setLocations(6, 9);
 	game.addGameObject(&item3);
 
 	Item item4('4');
@@ -123,6 +105,10 @@ int main()
 
 	walls.push_back(new Wall(16, 4, secondWallWidth, 1));
 	walls.push_back(new Wall(16 + secondWallWidth + 4, 4, ThirdWallWidth, 1));
+
+	//Item 3 ramp
+	walls.push_back(new Wall(5, 4, 2, 3));
+	walls.push_back(new Wall(7, 4, 1, 2));
 
 	//Register walls
 	for(std::vector<Wall *>::iterator wallIter = walls.begin(); wallIter != walls.end(); ++wallIter)
