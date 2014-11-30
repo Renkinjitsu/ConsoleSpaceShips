@@ -46,6 +46,7 @@
     <ProjectGuid>{0CCE840E-8D46-4F6C-BE97-8A580CEE92EA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>hw2</RootNamespace>
+    <ProjectName>ConsoleSpaceShip</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
