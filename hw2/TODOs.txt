@@ -3,8 +3,11 @@ Known bugs:
 Example: 777
          667
          777
-- Item that falls indirectly on the ship is not detected.
-- Ships can move items with too-great a mass.
 
-General:
-- Make a challenging screen
+Unmet requirements:
+- A ship can only push up to it's mass.
+- The ships can combine their force on a single item when pushing.
+
+Student dependent decisions:
+- An item that falls indirectly on a ship is not considered as crashed into the ship.
+- The small ship may rotate in the same cycle as moving/advancing/position-changing.
