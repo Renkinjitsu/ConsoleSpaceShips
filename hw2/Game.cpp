@@ -1,5 +1,7 @@
 #include "Game.h"
 
+#include <string.h>
+
 #include "io_utils.h"
 
 #include "Direction.h"

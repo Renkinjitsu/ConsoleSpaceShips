@@ -56,7 +56,7 @@ private:
 
 	struct
 	{
-		(ShipState *) _shipStates[Game::SHIPS_COUNT];
+		ShipState * _shipStates[Game::SHIPS_COUNT];
 
 		bool _rotateSmallShip;
 		std::vector<Item *> _freeFallingItems;
