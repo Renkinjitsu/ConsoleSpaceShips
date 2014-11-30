@@ -8,6 +8,18 @@
 
 #define ESC 27
 
+bool Game::isEqual(const std::vector<GameObject *> & a, const std::vector<GameObject *> & b)
+{
+	bool result = (a.size() == b.size());
+
+	for(std::vector<GameObject *>::const_iterator iter = a.begin(); iter != a.end() && result; ++iter)
+	{
+		result &= Game::isInPool(**iter, b);
+	}
+
+	return result;
+}
+
 bool Game::isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool)
 {
 	for(std::vector<GameObject *>::const_iterator iter = pool.begin(); iter != pool.end(); ++iter)
@@ -67,8 +79,13 @@ bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const s
 	return false;
 }
 
-void Game::getPiledItems(const GameObject & gameObject, std::vector<Item *> & result) const
+void Game::getPiledItems(const Item & gameObject, std::vector<Item *> & result) const
 {
+	if(Game::isInPool(gameObject, result))
+	{
+		return;
+	}
+
 	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
 	{
 		if(&gameObject != *itemIter &&
@@ -81,32 +98,33 @@ void Game::getPiledItems(const GameObject & gameObject, std::vector<Item *> & re
 	}
 }
 
-void Game::pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers, std::vector<GameObject *> & pushableMembers)
+void Game::getPushPile(GameObject & currentPileElement, Direction direction, std::vector<GameObject *> & pileMembers) const
 {
-	if(this->isBlockedByAny(gameObject, direction, this->_gameObjects._blocking, pileMembers))
+	if(this->isBlockedByAny(currentPileElement, direction, this->_gameObjects._blocking, pileMembers))
 	{
 		return;
 	}
-	else if(Game::isInPool(gameObject, pushableMembers))
+	else if(Game::isInPool(currentPileElement, pileMembers))
 	{
 		return;
 	}
 
-	pushableMembers.push_back(&gameObject);
-	pileMembers.push_back(&gameObject);
+	pileMembers.push_back(&currentPileElement);
 
 	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
 	{
-		if(&gameObject != *itemIter)
+		if(&currentPileElement != *itemIter)
 		{
-			bool shouldBePushed = gameObject.isBlockedBy(**itemIter, DIRECTION_UP);
+			bool shouldBePushed = currentPileElement.isBlockedBy(**itemIter, DIRECTION_UP);
 
-			shouldBePushed |= (direction == DIRECTION_RIGHT) && gameObject.isBlockedBy(**itemIter, DIRECTION_RIGHT);
-			shouldBePushed |= (direction == DIRECTION_LEFT) && gameObject.isBlockedBy(**itemIter, DIRECTION_LEFT);
+			if(direction == DIRECTION_RIGHT || direction == DIRECTION_LEFT)
+			{
+				shouldBePushed |= currentPileElement.isBlockedBy(**itemIter, direction);
+			}
 
 			if(shouldBePushed)
 			{
-				Game::pushPile(**itemIter, direction, pileMembers, pushableMembers);
+				Game::getPushPile(**itemIter, direction, pileMembers);
 			}
 		}
 	}
@@ -216,7 +234,7 @@ void Game::expandCrashPotentialItems(ShipState & shipState)
 	}
 }
 
-unsigned Game::getTotalMass(const std::vector<Item *> & pool) const
+unsigned Game::getTotalMass(const std::vector<GameObject *> & pool) const
 {
 	unsigned result = 0;
 
@@ -233,6 +251,8 @@ void Game::setInitialState()
 	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++) //For each ship do:
 	{
 		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
+
+		shipState._pushPile.clear();
 
 		if(shipState._ship.isPresent())
 		{
@@ -332,7 +352,6 @@ void Game::update()
 	*/
 
 	this->processUserInput();
-	this->calculateChanges();
 	this->applyChanges();
 }
 
@@ -407,9 +426,12 @@ bool Game::isGameOver()
 
 void Game::processUserInput()
 {
+	unsigned totalShipsMass = 0;
+
 	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++) //For each ship do:
 	{
 		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
+		std::vector<Item *> & items = this->_gameObjects._items;
 
 		if(shipState._ship.isPresent())
 		{
@@ -417,12 +439,49 @@ void Game::processUserInput()
 			{
 				shipState._shipDirection = DIRECTION_NONE;
 			}
+			else
+			{
+				if(shipState._shipDirection == DIRECTION_LEFT || shipState._shipDirection == DIRECTION_RIGHT)
+				{
+					for(unsigned i = 0; i < items.size(); i++)
+					{
+						Item & item = *(items[i]);
+
+						if(shipState._ship.isBlockedBy(item, shipState._shipDirection))
+						{
+							this->getPushPile(item, shipState._shipDirection, shipState._pushPile);
+						}
+					}
+				}
+			}
+
+			totalShipsMass += shipState._ship.getMass();
 		}
 	}
-}
 
-void Game::calculateChanges()
-{
+	ShipState & smallShipState = *(this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX]);
+	ShipState & bigShipState = *(this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX]);
+
+	if(Game::isEqual(smallShipState._pushPile, bigShipState._pushPile))
+	{
+		if(totalShipsMass < Game::getTotalMass(bigShipState._pushPile))
+		{
+			bigShipState._shipDirection = smallShipState._shipDirection = DIRECTION_NONE;
+		}
+	}
+	else
+	{
+		for(unsigned i = 0; i < Game::SHIPS_COUNT; i++)
+		{
+			ShipState & shipState = *(this->_updateArgs._shipStates[i]);
+
+			if(shipState._ship.getMass() < Game::getTotalMass(shipState._pushPile))
+			{
+				shipState._shipDirection = DIRECTION_NONE;
+			}
+		}
+	}
+
 	if(this->_gameObjects._smallShip.isPresent())
 	{
 		this->_updateArgs._rotateSmallShip &= this->_gameObjects._smallShip.isRotationPossible(this->_gameObjects._blocking);
@@ -448,12 +507,11 @@ void Game::applyChanges()
 			if(shipState._shipDirection != DIRECTION_NONE)
 			{
 				std::vector<GameObject *> pileMembers;
-				std::vector<GameObject *> pushableMembers;
-				this->pushPile(shipState._ship, shipState._shipDirection, pileMembers, pushableMembers);
+				this->getPushPile(shipState._ship, shipState._shipDirection, pileMembers);
 
-				for(unsigned i = 0; i < pushableMembers.size(); i++)
+				for(unsigned i = 0; i < pileMembers.size(); i++)
 				{
-					pushableMembers[i]->move(shipState._shipDirection);
+					pileMembers[i]->move(shipState._shipDirection);
 				}
 			}
 
@@ -472,12 +530,16 @@ void Game::applyChanges()
 	{
 		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
 
-		this->refineCrashPotentialItems(shipState);
-		this->expandCrashPotentialItems(shipState);
-
-		if(this->getTotalMass(shipState._crashPotentialItems) >= (shipState._ship.getMass() / 2))
+		if(shipState._ship.isPresent())
 		{
-			shipState._ship.explode();
+			this->refineCrashPotentialItems(shipState);
+			this->expandCrashPotentialItems(shipState);
+
+			std::vector<GameObject *> crashPile(shipState._crashPotentialItems.begin(), shipState._crashPotentialItems.end());
+			if(this->getTotalMass(crashPile) >= (shipState._ship.getMass() / 2))
+			{
+				shipState._ship.explode();
+			}
 		}
 	}
 }

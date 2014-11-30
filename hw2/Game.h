@@ -18,6 +18,7 @@ public:
 	Direction _shipDirection;
 
 	std::vector<Item *> _crashPotentialItems;
+	std::vector<GameObject *> _pushPile; //A pile that the ship is currently tring to push
 
 	ShipState(Ship & ship) : _ship(ship)
 	{
@@ -64,6 +65,7 @@ private:
 
 	Canvas _canvas;
 
+	static bool isEqual(const std::vector<GameObject *> & a, const std::vector<GameObject *> & b);
 	static bool isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool);
 	static bool isInPool(const Item & item, const std::vector<Item *> & pool);
 	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects);
@@ -75,10 +77,9 @@ private:
 	void listFreeFallingItems();
 	void refineCrashPotentialItems(ShipState & shipState);
 	void expandCrashPotentialItems(ShipState & shipState);
-	unsigned getTotalMass(const std::vector<Item *> & pool) const;
+	unsigned getTotalMass(const std::vector<GameObject *> & pool) const;
 
 	void setInitialState();
-	void readUserInput();
 	void processUserInput();
 	void update();
 	void draw();
@@ -87,12 +88,11 @@ private:
 
 	bool isGameOver();
 
-	//The following functions are the various sections of the "update(...)" function's implementation
-	void calculateChanges();
+	void readUserInput();
 	void applyChanges(); //The actual moving/translation/advancment of the game
 
-	void getPiledItems(const GameObject & gameObject, std::vector<Item *> & result) const;
-	void pushPile(GameObject & gameObject, Direction direction, std::vector<GameObject *> & pileMembers, std::vector<GameObject *> & pushableMembers);
+	void getPiledItems(const Item & gameObject, std::vector<Item *> & result) const;
+	void getPushPile(GameObject & currentPileElement, Direction direction, std::vector<GameObject *> & pileMembers) const;
 	void removeShip(Ship & ship);
 public:
 	Game(SmallShip & smallShip, BigShip & bigShip);
