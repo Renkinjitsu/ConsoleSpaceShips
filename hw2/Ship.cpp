@@ -28,8 +28,6 @@ bool Ship::isPresent()
 void Ship::explode()
 {
 	this->_isAlive = false;
-
-	//TODO: Implement
 }
 
 void Ship::disappear()
