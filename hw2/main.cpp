@@ -8,7 +8,7 @@
 
 int main()
 {
-	SmallShip smallShip(12, 12);
+	SmallShip smallShip(2, 2);
 	BigShip bigShip(18, 12);
 
 	Game game(smallShip, bigShip);
@@ -25,21 +25,42 @@ int main()
 	game.addGameObject(&item1);
 
 	Item item2('2');
-	item2.setLocations(10, 6);
-	item2.setLocations(11, 6);
-	item2.setLocations(10, 7);
-	item2.setLocations(11, 7);
-	//game.addGameObject(&item2);
+	item2.setLocations(13, 7);
+	item2.setLocations(13, 6);
+	item2.setLocations(13, 5);
+	item2.setLocations(13, 4);
+	game.addGameObject(&item2);
 
 	Item item3('3');
-	item3.setLocations(41, 21);
-	item3.setLocations(42, 22);
-	item3.setLocations(43, 23);
-	item3.setLocations(44, 24);
+	item3.setLocations(4, 10);
+	item3.setLocations(4, 9);
+	item3.setLocations(4, 8);
+	item3.setLocations(4, 7);
+	item3.setLocations(5, 10);
+	item3.setLocations(5, 9);
+	item3.setLocations(5, 8);
+	item3.setLocations(5, 7);
+	item3.setLocations(3, 10);
+	item3.setLocations(3, 9);
+	item3.setLocations(3, 8);
+	item3.setLocations(3, 7);
+	item3.setLocations(2, 10);
+	item3.setLocations(2, 9);
+	item3.setLocations(2, 8);
+	item3.setLocations(2, 7);
+	item3.setLocations(6, 10);
+	item3.setLocations(6, 9);
+	item3.setLocations(6, 8);
+	item3.setLocations(6, 7);
 	game.addGameObject(&item3);
 
 	Item item4('4');
-	item4.setLocations(29, 7);
+	item4.setLocations(69, 7);
+	item4.setLocations(69, 8);
+	item4.setLocations(69, 9);
+	item4.setLocations(70, 7);
+	item4.setLocations(70, 8);
+	item4.setLocations(70, 9);
 	game.addGameObject(&item4);
 
 	Item item5('5');
@@ -51,31 +72,57 @@ int main()
 	game.addGameObject(&item6);
 
 	Item item7('7');
-	item7.setLocations(69, 20);
+	item7.setLocations(41, 20);
 	game.addGameObject(&item7);
+
+	Item item8('8');
+	item8.setLocations(42, 5);
+	item8.setLocations(42, 6);
+	item8.setLocations(42, 7);
+	item8.setLocations(41, 5);
+	item8.setLocations(41, 6);
+	game.addGameObject(&item8);
 
 	ExitPoint exitPoint(68, 6);
 	game.addGameObject(&exitPoint);
 
-	const unsigned wallWidth = 8;
-	const unsigned wallHeight = 5;
+	const unsigned vertWallWidth = 8;
+	const unsigned horiWallHeight = 20;
+
+
+	const unsigned secondWallWidth = 25;
+	const unsigned ThirdWallWidth = 19;
+
+	const unsigned vertSecondWallHeight = 7;
+	const unsigned vertThirdWallHeight = 16;
+	const unsigned vertFourthWallHeight = 15;
+	const unsigned vertFifthWallHeight = 3;
+	const unsigned vertSixthWallHeight = 20;
 
 	std::vector<Wall *> walls;
 
 	//Allocate vertical border walls
-	walls.push_back(new Wall(0, 0, wallWidth, 1));
-	walls.push_back(new Wall(0, Canvas::getHeight() - 1, wallWidth, 1));
-	walls.push_back(new Wall(Canvas::getWidth() - wallWidth, 0, wallWidth, 1));
-	walls.push_back(new Wall(Canvas::getWidth() - wallWidth, Canvas::getHeight() - 1, wallWidth, 1));
+	walls.push_back(new Wall(1, 4, 8, 1));
+	walls.push_back(new Wall(Canvas::getWidth() - vertWallWidth, 0, vertWallWidth, 5));
+	walls.push_back(new Wall(Canvas::getWidth() - vertWallWidth, Canvas::getHeight() - 1, vertWallWidth, 1));
+
 
 	//Allocate horizontal border walls
-	walls.push_back(new Wall(0, 1, 1, wallHeight));
-	walls.push_back(new Wall(Canvas::getWidth() - 1, 1, 1, wallHeight));
-	walls.push_back(new Wall(0, Canvas::getHeight() - 1 - wallHeight, 1, wallHeight));
-	walls.push_back(new Wall(Canvas::getWidth() - 1, Canvas::getHeight() - 1 - wallHeight, 1, wallHeight));
+	walls.push_back(new Wall(Canvas::getWidth() - 1, 1, 1, horiWallHeight));
+	walls.push_back(new Wall(0, Canvas::getHeight() - 1 - horiWallHeight, 1, horiWallHeight));
+	walls.push_back(new Wall(Canvas::getWidth() - 1, Canvas::getHeight() - 1 - horiWallHeight, 1, horiWallHeight));
 
 	//Allocate non-border walls
 	walls.push_back(new Wall(66, 6, 2, 2));
+
+	walls.push_back(new Wall(8, 0, 1, vertSecondWallHeight));
+	walls.push_back(new Wall(8, 8, 1, vertThirdWallHeight));
+	walls.push_back(new Wall(13, 8, 1, vertFourthWallHeight));
+	walls.push_back(new Wall(13, 1, 1, vertFifthWallHeight));
+	walls.push_back(new Wall(64, 4, 1, vertSixthWallHeight));
+
+	walls.push_back(new Wall(16, 4, secondWallWidth, 1));
+	walls.push_back(new Wall(16 + secondWallWidth + 4, 4, ThirdWallWidth, 1));
 
 	//Register walls
 	for(std::vector<Wall *>::iterator wallIter = walls.begin(); wallIter != walls.end(); ++wallIter)
