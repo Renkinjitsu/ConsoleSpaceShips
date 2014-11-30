@@ -395,10 +395,8 @@ bool Game::isGameOver()
 
 	for(unsigned i = 0; i < Game::SHIPS_COUNT && isGameOver == false; i++)
 	{
-		isGameOver |= (this->_gameObjects._smallShip.isAlive() == false);
+		isGameOver |= (this->_updateArgs._shipStates[i]->_ship.isAlive() == false);
 	}
-
-	isGameOver |= ((this->_gameObjects._smallShip.isPresent() == false) && (this->_gameObjects._bigShip.isPresent() == false)); //All ships are safe
 
 	return isGameOver;
 }
