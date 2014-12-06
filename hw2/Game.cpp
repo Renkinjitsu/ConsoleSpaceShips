@@ -551,7 +551,7 @@ void Game::applyChanges()
 	}
 }
 
-Game::Game(SmallShip & smallShip, BigShip & bigShip) : _canvas(), _gameObjects(smallShip, bigShip)
+Game::Game(Canvas & _canvas, SmallShip & smallShip, BigShip & bigShip) : _canvas(_canvas), _gameObjects(smallShip, bigShip)
 {
 	this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX] = new ShipState(smallShip);
 	this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX] = new ShipState(bigShip);

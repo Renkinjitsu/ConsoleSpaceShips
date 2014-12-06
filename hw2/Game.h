@@ -63,7 +63,7 @@ private:
 		std::vector<Item *> _freeFallingItems;
 	}_updateArgs;
 
-	Canvas _canvas;
+	Canvas & _canvas;
 
 	static bool isEqual(const std::vector<GameObject *> & a, const std::vector<GameObject *> & b);
 	static bool isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool);
@@ -95,7 +95,7 @@ private:
 	void getPushPile(GameObject & currentPileElement, Direction direction, std::vector<GameObject *> & pileMembers) const;
 	void removeShip(Ship & ship);
 public:
-	Game(SmallShip & smallShip, BigShip & bigShip);
+	Game(Canvas & _canvas, SmallShip & smallShip, BigShip & bigShip);
 	~Game();
 
 	void run();

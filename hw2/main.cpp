@@ -8,10 +8,12 @@
 
 int main()
 {
+	Canvas canvas;
+
 	SmallShip smallShip(2, 2);
 	BigShip bigShip(18, 12);
 
-	Game game(smallShip, bigShip);
+	Game game(canvas, smallShip, bigShip);
 
 	Item item1('1');
 	item1.setLocations(10, 5);
