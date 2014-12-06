@@ -9,7 +9,7 @@ class SmallShip : public Ship
 public:
 	SmallShip(unsigned xPositin, unsigned yPosition);
 
-	bool isRotationPossible(const std::vector<GameObject *> & otherObjects);
+	bool isBlockingRotation(const GameObject & other);
 	void rotate();
 };
 

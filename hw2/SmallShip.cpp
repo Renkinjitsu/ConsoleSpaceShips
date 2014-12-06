@@ -5,7 +5,7 @@ SmallShip::SmallShip(unsigned xPositin, unsigned yPosition) : Ship(xPositin, yPo
 	//Do nothing
 }
 
-bool SmallShip::isRotationPossible(const std::vector<GameObject *> & otherObjects)
+bool SmallShip::isBlockingRotation(const GameObject & other)
 {
 	std::vector<Point> locations = this->getLocations();
 
@@ -18,15 +18,7 @@ bool SmallShip::isRotationPossible(const std::vector<GameObject *> & otherObject
 	rotationArea.setLocations(x + 0, y + 1);
 	rotationArea.setLocations(x + 1, y + 1);
 
-	for(std::vector<GameObject *>::const_iterator iter = otherObjects.begin(); iter != otherObjects.end(); iter++)
-	{
-		if(*iter != this && rotationArea.collidesWith(**iter))
-		{
-			return false;
-		}
-	}
-
-	return true;
+	return rotationArea.collidesWith(other);
 }
 
 void SmallShip::rotate()

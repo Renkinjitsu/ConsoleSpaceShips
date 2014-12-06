@@ -484,7 +484,14 @@ void Game::processUserInput()
 
 	if(this->_gameObjects._smallShip.isPresent())
 	{
-		this->_updateArgs._rotateSmallShip &= this->_gameObjects._smallShip.isRotationPossible(this->_gameObjects._blocking);
+		for(std::vector<GameObject *>::const_iterator iter = this->_gameObjects._blocking.begin();
+			iter != this->_gameObjects._blocking.end(); iter++)
+		{
+			if(*iter != &this->_gameObjects._smallShip)
+			{
+				this->_updateArgs._rotateSmallShip &= (this->_gameObjects._smallShip.isBlockingRotation(**iter) == false);
+			}
+		}
 	}
 }
 
