@@ -13,7 +13,7 @@ GameObject::GameObject(char texture, unsigned x, unsigned y, bool isPushable)
 	this->_isPushable = isPushable;
 }
 
-GameObject::GameObject(char texture, std::vector<Point> & location, bool isPushable)
+GameObject::GameObject(char texture, const std::vector<Point> & location, bool isPushable)
 {
 	this->setLocations(location);
 	this->_texture = texture;
@@ -31,15 +31,15 @@ void GameObject::setLocations(const Point & point)
 	this->_locations.push_back(point);
 }
 
-void GameObject::setLocations(std::vector<Point> & locations)
+void GameObject::setLocations(const std::vector<Point> & locations)
 {
-	for(std::vector<Point>::const_iterator locationIter = locations.begin(); locationIter != locations.end(); ++locationIter)
+	for(std::vector<Point>::const_iterator locationIter = locations.cbegin(); locationIter != locations.cend(); ++locationIter)
 	{
 		this->_locations.push_back(*locationIter);
 	}
 }
 
-void GameObject::setTexture(char texture)
+void GameObject::setTexture(const char texture)
 {
 	this->_texture = texture;
 }

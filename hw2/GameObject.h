@@ -4,6 +4,7 @@
 #include "Canvas.h"
 
 #include <vector>
+
 #include "Direction.h"
 #include "Point.h"
 
@@ -22,13 +23,13 @@ protected:
 public:
 	GameObject(char texture, bool isPushable);
 	GameObject(char texture, unsigned x, unsigned y, bool isPushable);
-	GameObject(char texture, std::vector<Point> & location, bool isPushable);
+	GameObject(char texture, const std::vector<Point> & location, bool isPushable);
 
 	void setLocations(unsigned x, unsigned y);
 	void setLocations(const Point & point);
-	void setLocations(std::vector<Point> & locations);
+	void setLocations(const std::vector<Point> & locations);
 
-	void setTexture(char texture);
+	void setTexture(const char texture);
 
 	bool isBlockedBy(const GameObject & other, Direction from) const;
 	bool isPushable();
