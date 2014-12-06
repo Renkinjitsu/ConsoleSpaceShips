@@ -11,6 +11,7 @@ class GameObjectSet
 	std::vector<GameObject *> _collection;
 public:
 	GameObjectSet();
+	GameObjectSet(const GameObjectSet & other);
 	~GameObjectSet();
 
 	void insert(GameObject * gameObject);
@@ -23,6 +24,7 @@ public:
 
 	bool isEqual(const GameObjectSet & other) const;
 	bool contains(const GameObject * const gameObject) const;
+	bool isEmpty() const;
 
 	//Iterator:
 

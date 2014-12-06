@@ -56,8 +56,8 @@ private:
 
 	Canvas & _canvas;
 
-	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects);
-	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects, const GameObjectSet & ignore);
+	bool isBlockedByAny(const GameObject & gameObject, Direction from) const;
+	bool isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & ignore) const;
 
 	void getPiledItems(const GameObject & gameObject, GameObjectSet & result) const;
 	void getPushPile(GameObject & currentPileElement, Direction direction, GameObjectSet & pileMembers) const;

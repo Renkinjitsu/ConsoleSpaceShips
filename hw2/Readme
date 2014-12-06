@@ -1,11 +1,8 @@
 Known bugs:
-- When pushing the below example from the right, an infinite recursion occurs.
-Example: 777
-         667
-         777
+- None.
 
 TODO:
-- Verify that ships can't push items downwards.
+- [Failed to] Verify that ships can't push items downwards.
 
 Unmet requirements:
 - A ship might get under a falling item without explode (when it shoudn't).

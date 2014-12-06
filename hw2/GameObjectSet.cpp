@@ -4,11 +4,17 @@
 
 GameObjectSet::GameObjectSet()
 {
+	//Do nothing
 }
 
+GameObjectSet::GameObjectSet(const GameObjectSet & other) : _collection(other._collection.cbegin(), other._collection.cend())
+{
+	//Do nothing
+}
 
 GameObjectSet::~GameObjectSet()
 {
+	//Do nothing
 }
 
 void GameObjectSet::insert(GameObject * gameObject)
@@ -74,6 +80,11 @@ bool GameObjectSet::isEqual(const GameObjectSet & other) const
 bool GameObjectSet::contains(const GameObject * const gameObject) const
 {
 	return std::find(this->_collection.begin(), this->_collection.end(), gameObject) != this->_collection.end();
+}
+
+bool GameObjectSet::isEmpty() const
+{
+	return this->_collection.empty();
 }
 
 GameObjectSet::iterator GameObjectSet::begin()

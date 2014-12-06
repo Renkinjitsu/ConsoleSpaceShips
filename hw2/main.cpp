@@ -15,6 +15,18 @@ int main()
 
 	Game game(canvas, smallShip, bigShip);
 
+	Item itemA('A');
+	itemA.setLocations(23, 12);
+	itemA.setLocations(24, 12);
+	itemA.setLocations(24, 11);
+	itemA.setLocations(24, 10);
+	itemA.setLocations(23, 10);
+	game.addGameObject(&itemA);
+
+	Item itemB('B');
+	itemB.setLocations(23, 11);
+	game.addGameObject(&itemB);
+
 	Item item1('1');
 	item1.setLocations(10, 5);
 	item1.setLocations(11, 5);

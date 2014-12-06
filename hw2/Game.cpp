@@ -8,15 +8,17 @@
 
 #define ESC 27
 
-bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects)
+bool Game::isBlockedByAny(const GameObject & gameObject, Direction from) const
 {
 	GameObjectSet empty_ignore;
 
-	return Game::isBlockedByAny(gameObject, from, blockingObjects, empty_ignore);
+	return this->isBlockedByAny(gameObject, from, empty_ignore);
 }
 
-bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects, const GameObjectSet & ignore)
+bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & ignore) const
 {
+	const GameObjectSet & blockingObjects = this->_blockingGameObjects;
+
 	for(GameObjectSet::const_iterator blockingObjectIter = blockingObjects.cbegin(); blockingObjectIter != blockingObjects.cend(); ++blockingObjectIter)
 	{
 		if((*blockingObjectIter) != &gameObject)
@@ -25,7 +27,7 @@ bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const G
 			{
 				if((*blockingObjectIter)->isPushable())
 				{
-					if(Game::isBlockedByAny(**blockingObjectIter, from, blockingObjects, ignore))
+					if(this->isBlockedByAny(**blockingObjectIter, from, ignore))
 					{
 						return true;
 					}
@@ -60,7 +62,7 @@ void Game::getPiledItems(const GameObject & gameObject, GameObjectSet & result) 
 
 void Game::getPushPile(GameObject & currentPileElement, Direction direction, GameObjectSet & pileMembers) const
 {
-	if(this->isBlockedByAny(currentPileElement, direction, this->_blockingGameObjects, pileMembers))
+	if(this->isBlockedByAny(currentPileElement, direction, pileMembers))
 	{
 		return;
 	}
