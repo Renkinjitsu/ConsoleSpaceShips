@@ -1,7 +1,9 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include <vector>
+#include "Canvas.h"
+
+#include "GameObjectSet.h"
 
 #include "Direction.h"
 #include "Item.h"
@@ -9,19 +11,19 @@
 #include "SmallShip.h"
 #include "Wall.h"
 #include "ExitPoint.h"
-#include "Canvas.h"
 
 class ShipState
 {
 public:
 	Ship & _ship;
-	Direction _shipDirection;
+	Direction _direction;
 
-	std::vector<Item *> _crashPotentialItems;
-	std::vector<GameObject *> _pushPile; //A pile that the ship is currently tring to push
+	GameObjectSet _crashPotentialItems;
+	GameObjectSet _pushPile; //A pile that the ship is currently tring to push
 
 	ShipState(Ship & ship) : _ship(ship)
 	{
+		//Do nothing
 	}
 };
 
@@ -32,23 +34,12 @@ private:
 	static const unsigned BIG_SHIP_INDEX = 1;
 	static const unsigned SHIPS_COUNT = 2;
 
-	struct GameObjects
-	{
-		std::vector<GameObject *> _all;
-		std::vector<GameObject *> _blocking;
-
-		std::vector<Item *> _items;
-		std::vector<Wall *> _walls;
-
-		BigShip & _bigShip;
-		SmallShip & _smallShip;
-
-		ExitPoint * _exitPoint;
-
-		GameObjects(SmallShip & smallShip, BigShip & bigShip) : _smallShip(smallShip), _bigShip(bigShip)
-		{
-		}
-	}_gameObjects;
+	GameObjectSet _allGameObjects;
+	GameObjectSet _blockingGameObjects;
+	GameObjectSet _items;
+	GameObject * _exitPoint;
+	BigShip & _bigShip;
+	SmallShip & _smallShip;
 
 	struct
 	{
@@ -60,24 +51,25 @@ private:
 		ShipState * _shipStates[Game::SHIPS_COUNT];
 
 		bool _rotateSmallShip;
-		std::vector<Item *> _freeFallingItems;
+		GameObjectSet _freeFallingItems;
 	}_updateArgs;
 
 	Canvas & _canvas;
 
-	static bool isEqual(const std::vector<GameObject *> & a, const std::vector<GameObject *> & b);
-	static bool isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool);
-	static bool isInPool(const Item & item, const std::vector<Item *> & pool);
-	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects);
-	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects, const std::vector<GameObject *> & ignore);
+	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects);
+	static bool isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects, const GameObjectSet & ignore);
 
-	void moveItems(std::vector<Item *> & items, Direction direction);
+	void getPiledItems(const GameObject & gameObject, GameObjectSet & result) const;
+	void getPushPile(GameObject & currentPileElement, Direction direction, GameObjectSet & pileMembers) const;
+
+	void removeShip(Ship & ship);
+	void moveItems(GameObjectSet & items, Direction direction);
 
 	void listCrashPotentialItems(ShipState & shipState);
 	void listFreeFallingItems();
-	void refineCrashPotentialItems(ShipState & shipState);
+	void refineCrashPotentialItems(ShipState & shipState); //Remove items that are not crashing into the ship
 	void expandCrashPotentialItems(ShipState & shipState);
-	unsigned getTotalMass(const std::vector<GameObject *> & pool) const;
+	unsigned getTotalMass(const GameObjectSet & gameObjects) const;
 
 	void setInitialState();
 	void processUserInput();
@@ -86,14 +78,11 @@ private:
 
 	void gameOverScreen();
 
-	bool isGameOver();
+	bool isGameOver() const;
 
 	void readUserInput();
 	void applyChanges(); //The actual moving/translation/advancment of the game
 
-	void getPiledItems(const Item & gameObject, std::vector<Item *> & result) const;
-	void getPushPile(GameObject & currentPileElement, Direction direction, std::vector<GameObject *> & pileMembers) const;
-	void removeShip(Ship & ship);
 public:
 	Game(Canvas & _canvas, SmallShip & smallShip, BigShip & bigShip);
 	~Game();

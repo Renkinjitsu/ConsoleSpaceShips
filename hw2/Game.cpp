@@ -8,58 +8,20 @@
 
 #define ESC 27
 
-bool Game::isEqual(const std::vector<GameObject *> & a, const std::vector<GameObject *> & b)
+bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects)
 {
-	bool result = (a.size() == b.size());
-
-	for(std::vector<GameObject *>::const_iterator iter = a.begin(); iter != a.end() && result; ++iter)
-	{
-		result &= Game::isInPool(**iter, b);
-	}
-
-	return result;
-}
-
-bool Game::isInPool(const GameObject & gameObject, const std::vector<GameObject *> & pool)
-{
-	for(std::vector<GameObject *>::const_iterator iter = pool.begin(); iter != pool.end(); ++iter)
-	{
-		if(*iter == &gameObject)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Game::isInPool(const Item & item, const std::vector<Item *> & pool)
-{
-	for(std::vector<Item *>::const_iterator iter = pool.begin(); iter != pool.end(); ++iter)
-	{
-		if(*iter == &item)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects)
-{
-	std::vector<GameObject *> empty_ignore;
+	GameObjectSet empty_ignore;
 
 	return Game::isBlockedByAny(gameObject, from, blockingObjects, empty_ignore);
 }
 
-bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const std::vector<GameObject *> & blockingObjects, const std::vector<GameObject *> & ignore)
+bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const GameObjectSet & blockingObjects, const GameObjectSet & ignore)
 {
-	for(std::vector<GameObject *>::const_iterator blockingObjectIter = blockingObjects.begin(); blockingObjectIter != blockingObjects.end(); ++blockingObjectIter)
+	for(GameObjectSet::const_iterator blockingObjectIter = blockingObjects.cbegin(); blockingObjectIter != blockingObjects.cend(); ++blockingObjectIter)
 	{
 		if((*blockingObjectIter) != &gameObject)
 		{
-			if(gameObject.isBlockedBy(**blockingObjectIter, from) && Game::isInPool(**blockingObjectIter, ignore) == false)
+			if(gameObject.isBlockedBy(**blockingObjectIter, from) && (ignore.contains(*blockingObjectIter) == false))
 			{
 				if((*blockingObjectIter)->isPushable())
 				{
@@ -79,39 +41,37 @@ bool Game::isBlockedByAny(const GameObject & gameObject, Direction from, const s
 	return false;
 }
 
-void Game::getPiledItems(const Item & gameObject, std::vector<Item *> & result) const
+void Game::getPiledItems(const GameObject & gameObject, GameObjectSet & result) const
 {
-	if(Game::isInPool(gameObject, result))
+	if(result.contains(&gameObject))
 	{
 		return;
 	}
 
-	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
+	for(GameObjectSet::const_iterator itemIter = this->_items.cbegin(); itemIter != this->_items.cend(); ++itemIter)
 	{
-		if(&gameObject != *itemIter &&
-			gameObject.isBlockedBy(**itemIter, DIRECTION_UP) &&
-			Game::isInPool(**itemIter, result) == false)
+		if(&gameObject != *itemIter && gameObject.isBlockedBy(**itemIter, DIRECTION_UP))
 		{
-			result.push_back(*itemIter);
+			result.insertUnique(*itemIter);
 			this->getPiledItems(**itemIter, result);
 		}
 	}
 }
 
-void Game::getPushPile(GameObject & currentPileElement, Direction direction, std::vector<GameObject *> & pileMembers) const
+void Game::getPushPile(GameObject & currentPileElement, Direction direction, GameObjectSet & pileMembers) const
 {
-	if(this->isBlockedByAny(currentPileElement, direction, this->_gameObjects._blocking, pileMembers))
+	if(this->isBlockedByAny(currentPileElement, direction, this->_blockingGameObjects, pileMembers))
 	{
 		return;
 	}
-	else if(Game::isInPool(currentPileElement, pileMembers))
+	else if(pileMembers.contains(&currentPileElement))
 	{
 		return;
 	}
 
-	pileMembers.push_back(&currentPileElement);
+	pileMembers.insert(&currentPileElement);
 
-	for(std::vector<Item *>::const_iterator itemIter = this->_gameObjects._items.begin(); itemIter != this->_gameObjects._items.end(); ++itemIter)
+	for(GameObjectSet::const_iterator itemIter = this->_items.cbegin(); itemIter != this->_items.cend(); ++itemIter)
 	{
 		if(&currentPileElement != *itemIter)
 		{
@@ -132,32 +92,17 @@ void Game::getPushPile(GameObject & currentPileElement, Direction direction, std
 
 void Game::removeShip(Ship & ship)
 {
-	for(std::vector<GameObject *>::iterator iter = this->_gameObjects._all.begin(); iter != this->_gameObjects._all.end(); ++iter)
-	{
-		if(*iter == &ship)
-		{
-			this->_gameObjects._all.erase(iter);
-			break;
-		}
-	}
-
-	for(std::vector<GameObject *>::iterator iter = this->_gameObjects._blocking.begin(); iter != this->_gameObjects._blocking.end(); ++iter)
-	{
-		if(*iter == &ship)
-		{
-			this->_gameObjects._blocking.erase(iter);
-			break;
-		}
-	}
+	this->_allGameObjects.remove(&ship);
+	this->_blockingGameObjects.remove(&ship);
 }
 
-void Game::moveItems(std::vector<Item *> & items, Direction direction)
+void Game::moveItems(GameObjectSet & items, Direction direction)
 {
-	for(std::vector<Item *>::iterator item = items.begin(); item != items.end(); ++item)
+	for(GameObjectSet::iterator item = items.begin(); item != items.end(); ++item)
 	{
 		bool isBlocked = false;
 
-		for(std::vector<GameObject *>::const_iterator gameObject = this->_gameObjects._all.begin(); gameObject != this->_gameObjects._all.end(); ++gameObject)
+		for(GameObjectSet::const_iterator gameObject = this->_allGameObjects.cbegin(); gameObject != this->_allGameObjects.end(); ++gameObject)
 		{
 			if((*item) != *gameObject && (*item)->isBlockedBy(*(*gameObject), direction))
 			{
@@ -176,13 +121,11 @@ void Game::listCrashPotentialItems(ShipState & shipState)
 {
 	shipState._crashPotentialItems.clear();
 
-	std::vector<Item *> & items = this->_gameObjects._items;
-	for(unsigned i = 0; i < items.size(); i++)
+	for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter)
 	{
-		Item & item = *(items[i]);
-		if(item.isBlockedBy(shipState._ship, DIRECTION_DOWN) == false)
+		if((*itemIter)->isBlockedBy(shipState._ship, DIRECTION_DOWN) == false)
 		{
-			shipState._crashPotentialItems.push_back(&item);
+			shipState._crashPotentialItems.insert(*itemIter);
 		}
 	}
 }
@@ -191,28 +134,25 @@ void Game::listFreeFallingItems()
 {
 	this->_updateArgs._freeFallingItems.clear();
 
-	std::vector<Item *> & items = this->_gameObjects._items;
-
-	for(unsigned i = 0; i < items.size(); i++)
+	for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter)
 	{
-		Item & item = *(items[i]);
-		if(Game::isBlockedByAny(item, DIRECTION_DOWN, this->_gameObjects._blocking) == false)
+		if(Game::isBlockedByAny(**itemIter, DIRECTION_DOWN, this->_blockingGameObjects) == false)
 		{
-			this->_updateArgs._freeFallingItems.push_back(&item);
+			this->_updateArgs._freeFallingItems.insert(*itemIter);
 		}
 	}
 }
 
 void Game::refineCrashPotentialItems(ShipState & shipState)
 {
-	std::vector<Item *>::iterator potentialItem = shipState._crashPotentialItems.begin();
+	GameObjectSet::iterator potentialItem = shipState._crashPotentialItems.begin();
 
 	while(potentialItem != shipState._crashPotentialItems.end())
 	{
 		if(shipState._ship.isBlockedBy(**potentialItem, DIRECTION_UP) == false ||
-			this->isInPool(**potentialItem, this->_updateArgs._freeFallingItems) == false)
+			this->_updateArgs._freeFallingItems.contains(*potentialItem) == false)
 		{
-			shipState._crashPotentialItems.erase(potentialItem);
+			shipState._crashPotentialItems.remove(*potentialItem);
 			potentialItem = shipState._crashPotentialItems.begin();
 		}
 		else
@@ -224,23 +164,19 @@ void Game::refineCrashPotentialItems(ShipState & shipState)
 
 void Game::expandCrashPotentialItems(ShipState & shipState)
 {
-	std::vector<Item *> & crushedItems = shipState._crashPotentialItems;
-
-	const unsigned originalLength = crushedItems.size();
-
-	for(unsigned i = 0; i < originalLength; i++)
+	for(GameObjectSet::iterator iter = shipState._crashPotentialItems.begin(); iter != shipState._crashPotentialItems.end(); ++iter)
 	{
-		this->getPiledItems(*crushedItems[i], crushedItems);
+		this->getPiledItems(**iter, shipState._crashPotentialItems);
 	}
 }
 
-unsigned Game::getTotalMass(const std::vector<GameObject *> & pool) const
+unsigned Game::getTotalMass(const GameObjectSet & gameObjects) const
 {
 	unsigned result = 0;
 
-	for(unsigned i = 0; i < pool.size(); i++)
+	for(GameObjectSet::const_iterator iter = gameObjects.cbegin(); iter != gameObjects.cend(); ++iter)
 	{
-		result += pool[i]->getMass();
+		result += (*iter)->getMass();
 	}
 
 	return result;
@@ -256,7 +192,7 @@ void Game::setInitialState()
 
 		if(shipState._ship.isPresent())
 		{
-			shipState._shipDirection = DIRECTION_NONE;
+			shipState._direction = DIRECTION_NONE;
 		}
 
 		this->listCrashPotentialItems(shipState);
@@ -267,8 +203,8 @@ void Game::setInitialState()
 
 void Game::readUserInput()
 {
-	Direction & smallShipDirection = this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX]->_shipDirection;
-	Direction & bigShipDirection = this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX]->_shipDirection;
+	Direction & smallShipDirection = this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX]->_direction;
+	Direction & bigShipDirection = this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX]->_direction;
 
 	while(_kbhit())
 	{
@@ -359,9 +295,9 @@ void Game::draw()
 {
 	this->_canvas.begin();
 
-	for(std::vector<GameObject *>::iterator gameObjectIter = this->_gameObjects._all.begin(); gameObjectIter != this->_gameObjects._all.end(); ++gameObjectIter)
+	for(GameObjectSet::const_iterator iter = this->_allGameObjects.cbegin(); iter != this->_allGameObjects.cend(); ++iter)
 	{
-		(*gameObjectIter)->draw(this->_canvas);
+		(*iter)->draw(this->_canvas);
 	}
 
 	this->_canvas.end();
@@ -378,8 +314,8 @@ void Game::gameOverScreen()
 	unsigned explodedShipAnimationIndex = 0;
 
 	Ship * ships[Game::SHIPS_COUNT];
-	ships[0] = &(this->_gameObjects._smallShip);
-	ships[1] = &(this->_gameObjects._bigShip);
+	ships[0] = &(this->_smallShip);
+	ships[1] = &(this->_bigShip);
 
 	while(!(this->_state._exit))
 	{
@@ -410,7 +346,7 @@ void Game::gameOverScreen()
 	}
 }
 
-bool Game::isGameOver()
+bool Game::isGameOver() const
 {
 	bool isGameOver = this->_state._exit;
 
@@ -419,7 +355,7 @@ bool Game::isGameOver()
 		isGameOver |= (this->_updateArgs._shipStates[i]->_ship.isAlive() == false);
 	}
 
-	isGameOver |= (this->_gameObjects._smallShip.isPresent() == false) && (this->_gameObjects._bigShip.isPresent() == false);
+	isGameOver |= (this->_smallShip.isPresent() == false) && (this->_bigShip.isPresent() == false);
 
 	return isGameOver;
 }
@@ -431,25 +367,23 @@ void Game::processUserInput()
 	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++) //For each ship do:
 	{
 		ShipState & shipState = *(this->_updateArgs._shipStates[i]);
-		std::vector<Item *> & items = this->_gameObjects._items;
+		GameObjectSet & items = this->_items;
 
 		if(shipState._ship.isPresent())
 		{
-			if(this->isBlockedByAny(shipState._ship, shipState._shipDirection, this->_gameObjects._blocking))
+			if(this->isBlockedByAny(shipState._ship, shipState._direction, this->_blockingGameObjects))
 			{
-				shipState._shipDirection = DIRECTION_NONE;
+				shipState._direction = DIRECTION_NONE;
 			}
 			else
 			{
-				if(shipState._shipDirection == DIRECTION_LEFT || shipState._shipDirection == DIRECTION_RIGHT)
+				if(shipState._direction == DIRECTION_LEFT || shipState._direction == DIRECTION_RIGHT)
 				{
-					for(unsigned i = 0; i < items.size(); i++)
+					for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter)
 					{
-						Item & item = *(items[i]);
-
-						if(shipState._ship.isBlockedBy(item, shipState._shipDirection))
+						if(shipState._ship.isBlockedBy(**itemIter, shipState._direction))
 						{
-							this->getPushPile(item, shipState._shipDirection, shipState._pushPile);
+							this->getPushPile(**itemIter, shipState._direction, shipState._pushPile);
 						}
 					}
 				}
@@ -462,11 +396,11 @@ void Game::processUserInput()
 	ShipState & smallShipState = *(this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX]);
 	ShipState & bigShipState = *(this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX]);
 
-	if(Game::isEqual(smallShipState._pushPile, bigShipState._pushPile))
+	if(smallShipState._pushPile.isEqual(bigShipState._pushPile))
 	{
 		if(totalShipsMass < Game::getTotalMass(bigShipState._pushPile))
 		{
-			bigShipState._shipDirection = smallShipState._shipDirection = DIRECTION_NONE;
+			bigShipState._direction = smallShipState._direction = DIRECTION_NONE;
 		}
 	}
 	else
@@ -477,19 +411,19 @@ void Game::processUserInput()
 
 			if(shipState._ship.getMass() < Game::getTotalMass(shipState._pushPile))
 			{
-				shipState._shipDirection = DIRECTION_NONE;
+				shipState._direction = DIRECTION_NONE;
 			}
 		}
 	}
 
-	if(this->_gameObjects._smallShip.isPresent())
+	//Verify no item blocks the small ship from rotating
+	if(this->_smallShip.isPresent() && this->_updateArgs._rotateSmallShip)
 	{
-		for(std::vector<GameObject *>::const_iterator iter = this->_gameObjects._blocking.begin();
-			iter != this->_gameObjects._blocking.end(); iter++)
+		for(GameObjectSet::const_iterator iter = this->_blockingGameObjects.begin(); iter != this->_blockingGameObjects.end(); iter++)
 		{
-			if(*iter != &this->_gameObjects._smallShip)
+			if(*iter != &this->_smallShip)
 			{
-				this->_updateArgs._rotateSmallShip &= (this->_gameObjects._smallShip.isBlockingRotation(**iter) == false);
+				this->_updateArgs._rotateSmallShip &= (this->_smallShip.isBlockingRotation(**iter) == false);
 			}
 		}
 	}
@@ -497,11 +431,11 @@ void Game::processUserInput()
 
 void Game::applyChanges()
 {
-	if(this->_gameObjects._smallShip.isPresent())
+	if(this->_smallShip.isPresent())
 	{
 		if(this->_updateArgs._rotateSmallShip)
 		{
-			this->_gameObjects._smallShip.rotate();
+			this->_smallShip.rotate();
 		}
 	}
 
@@ -511,18 +445,18 @@ void Game::applyChanges()
 
 		if(shipState._ship.isPresent())
 		{
-			if(shipState._shipDirection != DIRECTION_NONE)
+			if(shipState._direction != DIRECTION_NONE)
 			{
-				std::vector<GameObject *> pileMembers;
-				this->getPushPile(shipState._ship, shipState._shipDirection, pileMembers);
+				GameObjectSet pileMembers;
+				this->getPushPile(shipState._ship, shipState._direction, pileMembers);
 
-				for(unsigned i = 0; i < pileMembers.size(); i++)
+				for(GameObjectSet::iterator iter = pileMembers.begin(); iter != pileMembers.end(); iter++)
 				{
-					pileMembers[i]->move(shipState._shipDirection);
+					(*iter)->move(shipState._direction);
 				}
 			}
 
-			if(this->_gameObjects._exitPoint->collidesWith(shipState._ship))
+			if(this->_exitPoint->collidesWith(shipState._ship))
 			{
 				shipState._ship.disappear();
 				this->removeShip(shipState._ship);
@@ -531,7 +465,7 @@ void Game::applyChanges()
 	}
 
 	this->listFreeFallingItems();
-	this->moveItems(this->_gameObjects._items, DIRECTION_DOWN); //Advance free-falling items
+	this->moveItems(this->_items, DIRECTION_DOWN); //Advance free-falling items
 
 	for(unsigned i = 0; i < Game::SHIPS_COUNT; i++)
 	{
@@ -542,8 +476,7 @@ void Game::applyChanges()
 			this->refineCrashPotentialItems(shipState);
 			this->expandCrashPotentialItems(shipState);
 
-			std::vector<GameObject *> crashPile(shipState._crashPotentialItems.begin(), shipState._crashPotentialItems.end());
-			if(this->getTotalMass(crashPile) >= (shipState._ship.getMass() / 2))
+			if(this->getTotalMass(shipState._crashPotentialItems) >= (shipState._ship.getMass() / 2))
 			{
 				shipState._ship.explode();
 			}
@@ -551,15 +484,15 @@ void Game::applyChanges()
 	}
 }
 
-Game::Game(Canvas & _canvas, SmallShip & smallShip, BigShip & bigShip) : _canvas(_canvas), _gameObjects(smallShip, bigShip)
+Game::Game(Canvas & _canvas, SmallShip & smallShip, BigShip & bigShip) : _canvas(_canvas), _smallShip(smallShip), _bigShip(bigShip)
 {
 	this->_updateArgs._shipStates[Game::SMALL_SHIP_INDEX] = new ShipState(smallShip);
 	this->_updateArgs._shipStates[Game::BIG_SHIP_INDEX] = new ShipState(bigShip);
 
-	this->_gameObjects._all.push_back(&bigShip);
-	this->_gameObjects._blocking.push_back(&bigShip);
-	this->_gameObjects._all.push_back(&smallShip);
-	this->_gameObjects._blocking.push_back(&smallShip);
+	this->_allGameObjects.insert(&bigShip);
+	this->_blockingGameObjects.insert(&bigShip);
+	this->_allGameObjects.insert(&smallShip);
+	this->_blockingGameObjects.insert(&smallShip);
 
 	this->_state._exit = false;
 };
@@ -589,20 +522,19 @@ void Game::run()
 
 void Game::addGameObject(Item * item)
 {
-	this->_gameObjects._items.push_back(item);
-	this->_gameObjects._all.push_back(item);
-	this->_gameObjects._blocking.push_back(item);
+	this->_items.insert(item);
+	this->_allGameObjects.insert(item);
+	this->_blockingGameObjects.insert(item);
 }
 
 void Game::addGameObject(Wall * wall)
 {
-	this->_gameObjects._walls.push_back(wall);
-	this->_gameObjects._all.push_back(wall);
-	this->_gameObjects._blocking.push_back(wall);
+	this->_allGameObjects.insert(wall);
+	this->_blockingGameObjects.insert(wall);
 }
 
 void Game::addGameObject(ExitPoint * exit)
 {
-	this->_gameObjects._exitPoint = exit;
-	this->_gameObjects._all.push_back(exit);
+	this->_exitPoint = exit;
+	this->_allGameObjects.insert(exit);
 }
