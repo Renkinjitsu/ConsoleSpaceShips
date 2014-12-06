@@ -1,0 +1,19 @@
+Known bugs:
+- When pushing the below example from the right, an infinite recursion occurs.
+Example: 777
+         667
+         777
+
+TODO:
+- Verify that ships can't push items downwards.
+
+Unmet requirements:
+- A ship might get under a falling item without explode (when it shoudn't).
+- Ships may push upwards an item pile that is too heavy.
+
+Student dependent decisions:
+- An item that falls indirectly on a ship is not considered as crashed into the ship.
+- The small ship may rotate in the same cycle as moving/advancing/position-changing.
+- A ship may push a free-falling item.
+- Only a ship can go through the exit point.
+- A ship can't push another ship.
