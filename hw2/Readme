@@ -1,14 +1,23 @@
-Known bugs:
-- None.
-
-TODO:
-- [Failed to] Verify that ships can't push items downwards.
-
-Unmet requirements:
+==========
+Known bugs
+==========
+- Non-falling items also crash a ship
 - A ship might get under a falling item without explode (when it shoudn't).
 - Ships may push upwards an item pile that is too heavy.
 
-Student dependent decisions:
+====
+TODO
+====
+- [Failed to] Verify that ships can't push items downwards.
+
+==================
+Unmet requirements
+==================
+- None (Need to read the requirements of 2nd work block).
+
+===========================
+Student dependent decisions
+===========================
 - An item that falls indirectly on a ship is not considered as crashed into the ship.
 - The small ship may rotate in the same cycle as moving/advancing/position-changing.
 - A ship may push a free-falling item.
