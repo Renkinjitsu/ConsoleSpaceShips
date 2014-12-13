@@ -15,6 +15,7 @@
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameAlgorithm.cpp" />
     <ClCompile Include="GameObjectSet.cpp" />
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="Direction.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameObjectSet.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />
