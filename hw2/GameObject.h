@@ -32,10 +32,10 @@ public:
 	void setTexture(const char texture);
 
 	bool isBlockedBy(const GameObject & other, Direction from) const;
-	bool isPushable() const;
+	bool isPushable();
 	bool collidesWith(const GameObject & other) const;
 
-	unsigned getMass() const;
+	unsigned getMass();
 
 	void move(Direction direction);
 
