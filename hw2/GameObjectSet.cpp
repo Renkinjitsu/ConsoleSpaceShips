@@ -32,22 +32,35 @@ void GameObjectSet::insertUnique(GameObject * gameObject)
 	}
 }
 
+void GameObjectSet::merge(const GameObjectSet & other)
+{
+	for(std::vector<GameObject *>::const_iterator iter = other._collection.begin();
+		iter != other._collection.end(); ++iter)
+	{
+		this->insertUnique(*iter);
+	}
+}
+
 void GameObjectSet::remove(const GameObject * const gameObject)
 {
-	GameObjectSet::iterator iter = this->_collection.begin();
+	GameObjectSet::iterator iter =
+		std::find(this->_collection.begin(), this->_collection.end(), gameObject);
 
-	while(iter != this->_collection.end())
+	if(iter != this->_collection.end())
 	{
-		if(*iter == gameObject)
-		{
-			this->_collection.erase(iter);
-			iter = this->_collection.begin();
-		}
-		else
-		{
-			++iter;
-		}
+		this->_collection.erase(iter);
+		assert(this->contains(gameObject) == false);
 	}
+}
+
+GameObjectSet::iterator GameObjectSet::remove(const GameObjectSet::iterator & gameObjectIter)
+{
+	const GameObject * const gameObject = *gameObjectIter;
+
+	GameObjectSet::iterator next = this->_collection.erase(gameObjectIter);
+	assert(this->contains(gameObject) == false);
+
+	return next;
 }
 
 void GameObjectSet::remove(const GameObjectSet & other)
@@ -85,6 +98,32 @@ bool GameObjectSet::contains(const GameObject * const gameObject) const
 bool GameObjectSet::isEmpty() const
 {
 	return this->_collection.empty();
+}
+
+bool GameObjectSet::isPushable() const
+{
+	bool isPushable = true;
+
+	for(GameObjectSet::const_iterator iter = this->_collection.begin();
+		iter != this->_collection.end() && isPushable; ++iter)
+	{
+		isPushable &= (*iter)->isPushable();
+	}
+
+	return isPushable;
+}
+
+unsigned GameObjectSet::getTotalMass() const
+{
+	unsigned totalMass = 0;
+
+	for(GameObjectSet::const_iterator iter = this->_collection.begin();
+		iter != this->_collection.end(); ++iter)
+	{
+		totalMass += (*iter)->getMass();
+	}
+
+	return totalMass;
 }
 
 GameObjectSet::iterator GameObjectSet::begin()
