@@ -73,7 +73,7 @@ bool GameObject::isBlockedBy(const GameObject & other, Direction from) const
 	return false;
 }
 
-bool GameObject::isPushable()
+bool GameObject::isPushable() const
 {
 	return this->_isPushable;
 }
@@ -94,7 +94,7 @@ bool GameObject::collidesWith(const GameObject & other) const
 	return false;
 }
 
-unsigned GameObject::getMass()
+unsigned GameObject::getMass() const
 {
 	return this->_locations.size();
 }
