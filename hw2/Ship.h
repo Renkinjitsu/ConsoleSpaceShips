@@ -14,8 +14,8 @@ public:
 		unsigned width, unsigned height,
 		char texture);
 
-	bool isAlive();
-	bool isPresent();
+	bool isAlive() const;
+	bool isPresent() const;
 
 	void explode();
 	void disappear();

@@ -15,12 +15,12 @@ Ship::Ship(unsigned xPosition, unsigned yPosition,
 	}
 }
 
-bool Ship::isAlive()
+bool Ship::isAlive() const
 {
 	return this->_isAlive;
 }
 
-bool Ship::isPresent()
+bool Ship::isPresent() const
 {
 	return this->_isPresent;
 }
