@@ -16,6 +16,7 @@ public:
 
 	void insert(GameObject * gameObject);
 	void insertUnique(GameObject * gameObject);
+	void merge(const GameObjectSet & other);
 
 	void remove(const GameObject * const gameObject);
 	void remove(const GameObjectSet & other);
@@ -25,6 +26,9 @@ public:
 	bool isEqual(const GameObjectSet & other) const;
 	bool contains(const GameObject * const gameObject) const;
 	bool isEmpty() const;
+
+	bool isPushable() const;
+	unsigned getTotalMass() const;
 
 	//Iterator:
 
@@ -36,6 +40,8 @@ public:
 
 	GameObjectSet::iterator end();
 	GameObjectSet::const_iterator cend() const;
+
+	GameObjectSet::iterator remove(const GameObjectSet::iterator & gameObjectIter);
 };
 
 #endif /* GAME_OBJECT_SET_H_ */
