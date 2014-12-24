@@ -13,15 +13,24 @@
   <ItemGroup>
     <ClCompile Include="BigShip.cpp" />
     <ClCompile Include="Canvas.cpp" />
+    <ClCompile Include="ErrorsScreen.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameOverScreen.cpp" />
+    <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameAlgorithm.cpp" />
     <ClCompile Include="GameObjectSet.cpp" />
+    <ClCompile Include="GameScreenBuilder.cpp" />
+    <ClCompile Include="InstructionsScreen.cpp" />
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="MainMenuScreen.cpp" />
     <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="SmallShip.cpp" />
     <ClCompile Include="Wall.cpp" />
@@ -31,20 +40,33 @@
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="ErrorsScreen.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameOverScreen.h" />
+    <ClInclude Include="GameScreen.h" />
     <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameObjectSet.h" />
+    <ClInclude Include="GameScreenBuilder.h" />
+    <ClInclude Include="InstructionsScreen.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Screen.h" />
+    <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SmallShip.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme" />
+    <Text Include="Test2.spg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Test1.spg" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0CCE840E-8D46-4F6C-BE97-8A580CEE92EA}</ProjectGuid>

@@ -29,6 +29,7 @@ public:
 	void setLocations(const Point & point);
 	void setLocations(const std::vector<Point> & locations);
 
+	char getTexture() const;
 	void setTexture(const char texture);
 
 	bool isBlockedBy(const GameObject & other, Direction from) const;

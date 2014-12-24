@@ -34,6 +34,11 @@ void Canvas::draw(unsigned x, unsigned y, const char * string)
 	}
 }
 
+void Canvas::draw(unsigned x, unsigned y, const std::string & string)
+{
+	this->draw(x, y, string.c_str());
+}
+
 void Canvas::save()
 {
 	for(unsigned i = 0; i < Canvas::bufferLength; i++)

@@ -1,6 +1,7 @@
 #include "SmallShip.h"
 
-SmallShip::SmallShip(unsigned xPositin, unsigned yPosition) : Ship(xPositin, yPosition, 2, 1, '@')
+SmallShip::SmallShip(unsigned xPositin, unsigned yPosition, bool horizontal)
+	: Ship(xPositin, yPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, '@')
 {
 	//Do nothing
 }

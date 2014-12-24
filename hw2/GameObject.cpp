@@ -39,6 +39,11 @@ void GameObject::setLocations(const std::vector<Point> & locations)
 	}
 }
 
+char GameObject::getTexture() const
+{
+	return this->_texture;
+}
+
 void GameObject::setTexture(const char texture)
 {
 	this->_texture = texture;

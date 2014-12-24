@@ -1,6 +1,8 @@
 #ifndef CANVAS_H_
 #define CANVAS_H_
 
+#include <string>
+
 class Canvas
 {
 private:
@@ -22,6 +24,7 @@ public:
 
 	void draw(unsigned x, unsigned y, char character);
 	void draw(unsigned x, unsigned y, const char * string);
+	void draw(unsigned x, unsigned y, const std::string & string);
 
 	void save();
 	void restore();
