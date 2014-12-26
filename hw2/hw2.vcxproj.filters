@@ -167,12 +167,12 @@
     <Text Include="Readme">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Test2.spg">
+    <Text Include="Level 002.spg">
       <Filter>Resource Files\Levels</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Test1.spg">
+    <None Include="Level 001.spg">
       <Filter>Resource Files\Levels</Filter>
     </None>
   </ItemGroup>

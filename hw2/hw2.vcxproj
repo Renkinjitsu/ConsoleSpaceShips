@@ -63,10 +63,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme" />
-    <Text Include="Test2.spg" />
+    <Text Include="Level 002.spg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Test1.spg" />
+    <None Include="Level 001.spg" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0CCE840E-8D46-4F6C-BE97-8A580CEE92EA}</ProjectGuid>
