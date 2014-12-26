@@ -84,7 +84,6 @@ void Game::startLevel()
 	{
 		GameScreenBuilder builder;
 		builder.loadFromFile(nextLevelFileName);
-		//builder.loadTestLevel();
 		ScreenManager::add(builder.build());
 	}
 	else

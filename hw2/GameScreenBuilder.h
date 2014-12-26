@@ -37,7 +37,6 @@ public:
 	GameScreenBuilder();
 	~GameScreenBuilder();
 
-	void loadTestLevel();
 	void loadFromFile(const std::string & filePath);
 
 	bool isValid() const;
