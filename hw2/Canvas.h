@@ -3,13 +3,12 @@
 
 #include <string>
 
+#include "GameConfig.h"
+
 class Canvas
 {
 private:
-	static const unsigned width = 80;
-	static const unsigned height = 24;
-
-	static const unsigned bufferLength = width * height;
+	static const unsigned bufferLength = GameConfig::SCREEN_WIDTH * GameConfig::SCREEN_HEIGHT;
 
 	char _buffer[bufferLength + 1];
 	char _bufferBackup[bufferLength + 1];

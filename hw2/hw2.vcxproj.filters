@@ -87,7 +87,12 @@
     <ClCompile Include="ScreenManager.cpp">
       <Filter>Others</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Game.cpp">
+      <Filter>Others</Filter>
+    </ClCompile>
+    <ClCompile Include="GameConfig.cpp">
+      <Filter>Others</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h">
@@ -160,6 +165,9 @@
       <Filter>Libs</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="GameConfig.h">
       <Filter>Others</Filter>
     </ClInclude>
   </ItemGroup>

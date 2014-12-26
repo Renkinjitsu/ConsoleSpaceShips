@@ -12,8 +12,7 @@
 #include "SmallShip.h"
 #include "ExitPoint.h"
 
-#define GAME_HEIGHT 24
-#define GAME_WIDTH 80
+#include "GameConfig.h"
 
 class GameScreenBuilder
 {
@@ -30,7 +29,7 @@ private:
 	bool _isCleared;
 
 	static bool isValidCharacter(char character);
-	static void floodFill4Way(char board[GAME_HEIGHT][GAME_WIDTH], char character, unsigned x, unsigned y, std::vector<Point> & points);
+	static void floodFill4Way(char board[GameConfig::SCREEN_HEIGHT][GameConfig::SCREEN_WIDTH], char character, unsigned x, unsigned y, std::vector<Point> & points);
 
 	void clear();
 

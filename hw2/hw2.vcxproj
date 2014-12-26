@@ -16,6 +16,7 @@
     <ClCompile Include="ErrorsScreen.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="GameOverScreen.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameAlgorithm.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="ErrorsScreen.h" />
     <ClInclude Include="ExitPoint.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameOverScreen.h" />
     <ClInclude Include="GameScreen.h" />
     <ClInclude Include="GameAlgorithm.h" />

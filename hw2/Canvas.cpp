@@ -6,7 +6,7 @@
 
 unsigned Canvas::calculateIndexFromPosition(unsigned x, unsigned y)
 {
-	unsigned index = ((Canvas::height - y - 1) * Canvas::width) + x;
+	unsigned index = ((GameConfig::SCREEN_HEIGHT - y - 1) * GameConfig::SCREEN_WIDTH) + x;
 
 	assert(index < 1920);
 
@@ -77,10 +77,10 @@ void Canvas::end()
 
 unsigned Canvas::getWidth()
 {
-	return Canvas::width;
+	return GameConfig::SCREEN_WIDTH;
 }
 
 unsigned Canvas::getHeight()
 {
-	return Canvas::height;
+	return GameConfig::SCREEN_HEIGHT;
 }
