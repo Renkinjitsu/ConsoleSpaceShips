@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "GameConfig.h"
 #include "ScreenManager.h"
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
@@ -23,9 +24,11 @@ void Game::startLevel()
 		std::vector<std::string> fileNames;
 		{
 			std::string spgs("spgList");
+
+			//Build command
 			std::string command("dir /b ");
-			command += "C:\\Users\\Snow\\Source\\Repos\\ConsoleSpaceShips\\hw2";
-			command += "\\*.spg > ";
+			command += GameConfig::getLevelsPath();
+			command += "*.spg > ";
 			command += spgs;
 
 			system(command.c_str());

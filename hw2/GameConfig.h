@@ -17,7 +17,7 @@ public:
 	static const unsigned SCREEN_HEIGHT = 24;
 
 	static const std::string & getLevelsPath();
-	static void getLevelsPath(const char * const newPath);
+	static void setLevelsPath(const char * const newPath);
 };
 
 #endif /* GAME_CONFIG_H_ */
