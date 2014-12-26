@@ -9,11 +9,15 @@ Known bugs
 TODO
 ====
 - [Failed to] Verify that ships can't push items downwards.
+- Verify small ship can't rotate while carring items
 
 ==================
 Unmet requirements
 ==================
-- None (Need to read the requirements of 2nd work block).
+- At the (successful) end of a level, go to the next.
+- If the last level is completed, show a message and wait for a keypress. then, return to the main menu.
+- The levels are ordered by their ID.
+- Need to read the requirements of 2nd work block.
 
 ===========================
 Student dependent decisions
@@ -23,3 +27,8 @@ Student dependent decisions
 - A ship may push a free-falling item.
 - Only a ship can go through the exit point.
 - A ship can't push another ship.
+
+
+
+
+system("dir /b somedir\\*.spg\"");
