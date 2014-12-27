@@ -27,7 +27,12 @@ void Game::startLevel()
 			for(unsigned i = 0; i < fileNames.size(); ++i)
 			{
 				const std::string filePath = GameConfig::getLevelsPath() +  fileNames[i];
-				ids.push_back(FilesManager::getScreenId(filePath));
+
+				unsigned id;
+				if(FilesManager::getScreenId(filePath, id))
+				{
+					ids.push_back(id);
+				}
 			}
 		}
 

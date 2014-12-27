@@ -1,6 +1,8 @@
 #include "BigShip.h"
 
-BigShip::BigShip(const Point & bottoLeftPosition) : Ship(bottoLeftPosition, 2, 2, '#')
+#include "GameConfig.h"
+
+BigShip::BigShip(const Point & bottoLeftPosition) : Ship(bottoLeftPosition, 2, 2, GameConfig::TEXTURES_BIG_SPACESHIP)
 {
 	//Nothing to do
 }
@@ -14,7 +16,7 @@ bool BigShip::isBlockingRotation(const GameObject & other) const
 	Point point(left, top);
 	point.move(Point::UP);
 
-	GameObject blockingArea(' ', false);
+	GameObject blockingArea(GameConfig::TEXTURES_EMPTY, false);
 	blockingArea.setPoints(point);
 
 	point.move(Point::RIGHT);

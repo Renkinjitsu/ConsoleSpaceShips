@@ -62,5 +62,5 @@ void GameOverScreen::draw(Canvas & canvas) const
 	canvas.restore();
 
 	canvas.draw(this->_drawOffset, GameOverScreen::_endMessage);
-	canvas.draw(this->_highlightPosition, ' ');
+	canvas.draw(this->_highlightPosition, GameOverScreen::_highlightSymbol);
 }

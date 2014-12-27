@@ -1,7 +1,9 @@
 #include "SmallShip.h"
 
+#include "GameConfig.h"
+
 SmallShip::SmallShip(const Point & bottoLeftPosition, bool horizontal)
-	: Ship(bottoLeftPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, '@')
+	: Ship(bottoLeftPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, GameConfig::TEXTURES_SMALL_SPACESHIP)
 {
 	//Do nothing
 }
@@ -14,7 +16,7 @@ bool SmallShip::isBlockingRotation(const GameObject & other) const
 	const unsigned top = Point::getTop(points[0], points[1]);
 	Point point(left, top);
 
-	GameObject blockingArea(' ', false);
+	GameObject blockingArea(GameConfig::TEXTURES_EMPTY, false);
 
 	point.move(Point::UP);
 	blockingArea.setPoints(point);

@@ -5,19 +5,19 @@
 #include <cctype>
 #include <string.h>
 
+#include "GameConfig.h"
 #include "GameScreen.h"
 #include "MenuScreen.h"
 #include "Point.h"
-
-const char * const GameScreenBuilder::_validGameCaracters = "X +123456789@#";
+#include "FilesManager.h"
 
 bool GameScreenBuilder::isValidCharacter(char character)
 {
 	bool isValid = false;
 
-	for(unsigned i = 0; GameScreenBuilder::_validGameCaracters[i] != '\0'; ++i)
+	for(unsigned i = 0; i < GameConfig::allowedTexturesCount; ++i)
 	{
-		isValid |= (GameScreenBuilder::_validGameCaracters[i] == character);
+		isValid |= (GameConfig::allowedTextures[i] == character);
 	}
 
 	return isValid;
@@ -29,7 +29,7 @@ void GameScreenBuilder::floodFill4Way(char * const serializedCanvas, const char 
 
 	if(currentCharacter == targetCharacter)
 	{
-		currentCharacter = ' '; //Replace with a "neutral" symbol, so it will be ignored next time it is visited
+		currentCharacter = GameConfig::TEXTURES_EMPTY; //Replace with a "neutral" symbol, so it will be ignored next time it is visited
 
 		points.push_back(coordinate);
 
@@ -72,6 +72,25 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		{
 			this->_errors.push_back("Corrupted screen ID line");
 		}
+		else
+		{
+			const std::vector<std::string> & fileNames = FilesManager::getFileNames();
+			for(unsigned i = 0; i < fileNames.size(); ++i)
+			{
+				std::string path = GameConfig::getLevelsPath() + fileNames[i];
+				if(path != filePath)
+				{
+					unsigned otherId;
+					if(FilesManager::getScreenId(path, otherId))
+					{
+						if(id == otherId)
+						{
+							this->_errors.push_back("Duplicate ID - \"" + path + "\"");
+						}
+					}
+				}
+			}
+		}
 	}
 
 	const unsigned lineOffset = 2; //First line is marked as '1', & is ocupied by the screen ID
@@ -93,7 +112,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 		for(unsigned i = 0; i < Canvas::getWidth(); ++i, ++serializedPosition)
 		{
-			const char character = (i < line.length()) ? toupper(line.c_str()[i]) : ' ';
+			const char character = (i < line.length()) ? toupper(line.c_str()[i]) : GameConfig::TEXTURES_EMPTY;
 
 			if(GameScreenBuilder::isValidCharacter(character))
 			{
@@ -101,13 +120,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 			}
 			else
 			{
-				serializedCanvas[serializedPosition] = ' '; //Put a "neutral" value as a place-holder
-
-				std::string error("Invalid character 0x");
-				error += std::to_string((unsigned)character);
-				error += " at line " + std::to_string(lineOffset + lineIndex);
-				error += ", character " + std::to_string(i);
-				this->_errors.push_back(error);
+				serializedCanvas[serializedPosition] = GameConfig::TEXTURES_WALL; //As instructed in the requirements documentation
 			}
 		}
 	}
@@ -120,7 +133,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 	for(unsigned serializedPosition = 0; serializedPosition < Canvas::MAX_SERIALIZED_LENGTH; ++serializedPosition)
 	{
 		const char character = serializedCanvas[serializedPosition];
-		if(character == ' ')
+		if(character == GameConfig::TEXTURES_EMPTY)
 		{
 			continue; //Skip
 		}
@@ -133,19 +146,19 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 		switch(character)
 		{
-			case '+':
+			case GameConfig::TEXTURES_WALL:
 			{
 				this->_walls.push_back(new Wall(points));
 			}
 			break;
 
-			case 'X':
+			case GameConfig::TEXTURES_EXIT:
 			{
 				this->_exitPoints.push_back(new ExitPoint(points));
 			}
 			break;
 
-			case '@':
+			case GameConfig::TEXTURES_SMALL_SPACESHIP:
 			{
 				if(points.size() != 2)
 				{
@@ -161,7 +174,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 			}
 			break;
 
-			case '#':
+			case GameConfig::TEXTURES_BIG_SPACESHIP:
 			{
 				if(points.size() != 4)
 				{

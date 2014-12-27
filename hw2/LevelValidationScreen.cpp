@@ -28,14 +28,23 @@ LevelValidationScreen::LevelValidationScreen()
 	{
 		++(indexingCache[0]);
 
-		const unsigned screenId = FilesManager::getScreenId(GameConfig::getLevelsPath() + availableFileNames[i]);
+		unsigned screenId;
+		bool isValidScreenId = FilesManager::getScreenId(GameConfig::getLevelsPath() + availableFileNames[i], screenId);
 
 		std::string option;
 		option += indexingCache;
 		option += availableFileNames[i];
-		option += " (Screen ID \'";
-		option += std::to_string(screenId);
-		option += "\')";
+
+		if(isValidScreenId)
+		{
+			option += " (Screen ID \'";
+			option += std::to_string(screenId);
+			option += "\')";
+		}
+		else
+		{
+			option += " (Currupted screen ID)";
+		}
 
 		this->_fileNames.push_back(availableFileNames[i]);
 		this->_options.push_back(option);

@@ -8,6 +8,7 @@ class GameOverScreen : public Screen
 private:
 	static const char * const _endMessage;
 	static const size_t _endMessageLength;
+	static const char _highlightSymbol = '_';
 
 	Point _drawOffset;
 	Point _highlightPosition;

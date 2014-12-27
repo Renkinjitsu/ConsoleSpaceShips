@@ -13,7 +13,7 @@ private:
 public:
 
 	static std::vector<std::string> getFileNames();
-	static unsigned getScreenId(const std::string & filePath);
+	static bool getScreenId(const std::string & filePath, unsigned & id);
 };
 
 #endif /* FILES_MANAGER_H_ */

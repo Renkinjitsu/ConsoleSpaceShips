@@ -17,8 +17,6 @@
 class GameScreenBuilder
 {
 private:
-	static const char * const _validGameCaracters;
-
 	std::vector<Wall *> _walls;
 	std::vector<Item *> _items;
 	std::vector<BigShip *> _bigShips;

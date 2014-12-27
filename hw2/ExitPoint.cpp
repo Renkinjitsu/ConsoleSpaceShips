@@ -1,6 +1,8 @@
 #include "ExitPoint.h"
 
-ExitPoint::ExitPoint(const std::vector<Point> & points) : GameObject('X', points, false)
+#include "GameConfig.h"
+
+ExitPoint::ExitPoint(const std::vector<Point> & points) : GameObject(GameConfig::TEXTURES_EXIT, points, false)
 {
 	//Nothing to do
 }

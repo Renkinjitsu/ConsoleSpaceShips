@@ -44,15 +44,12 @@ std::vector<std::string> FilesManager::getFileNames()
 	return fileNames;
 }
 
-unsigned FilesManager::getScreenId(const std::string & filePath)
+bool FilesManager::getScreenId(const std::string & filePath, unsigned & id)
 {
 	std::ifstream levelFile(filePath);
 	std::string idLine;
 	std::getline(levelFile, idLine);
 	levelFile.close();
 
-	unsigned id;
-	sscanf(idLine.c_str(), "ScreenID = %u", &id);
-
-	return id;
+	return (sscanf(idLine.c_str(), "ScreenID = %u", &id) == 1);
 }

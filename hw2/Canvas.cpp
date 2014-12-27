@@ -93,7 +93,7 @@ void Canvas::begin()
 {
 	for(unsigned i = 0; i < Canvas::bufferLength; i++)
 	{
-		this->_buffer[i] = ' ';
+		this->_buffer[i] = GameConfig::TEXTURES_EMPTY;
 	}
 
 	this->_buffer[Canvas::bufferLength] = '\0';
