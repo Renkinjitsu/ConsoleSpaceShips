@@ -1,6 +1,6 @@
 #include "ExitPoint.h"
 
-ExitPoint::ExitPoint(unsigned x, unsigned y) : GameObject('X', x, y, false)
+ExitPoint::ExitPoint(const std::vector<Point> & points) : GameObject('X', points, false)
 {
 	//Nothing to do
 }

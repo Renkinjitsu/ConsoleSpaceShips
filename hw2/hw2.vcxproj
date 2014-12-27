@@ -13,8 +13,8 @@
   <ItemGroup>
     <ClCompile Include="BigShip.cpp" />
     <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="ErrorsScreen.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
+    <ClCompile Include="FilesManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="GameOverScreen.cpp" />
@@ -26,9 +26,11 @@
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="LevelValidationScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MainMenuScreen.cpp" />
+    <ClCompile Include="MenuScreen.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
@@ -40,9 +42,8 @@
     <ClInclude Include="BigShip.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="Direction.h" />
-    <ClInclude Include="ErrorsScreen.h" />
     <ClInclude Include="ExitPoint.h" />
+    <ClInclude Include="FilesManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameOverScreen.h" />
@@ -55,20 +56,15 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="LevelValidationScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
+    <ClInclude Include="MenuScreen.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SmallShip.h" />
     <ClInclude Include="Wall.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme" />
-    <Text Include="Level 002.spg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Level 001.spg" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0CCE840E-8D46-4F6C-BE97-8A580CEE92EA}</ProjectGuid>

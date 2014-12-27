@@ -8,7 +8,7 @@ class ExitPoint : public GameObject
 private:
 
 public:
-	ExitPoint(unsigned x, unsigned y);
+	ExitPoint(const std::vector<Point> & points);
 };
 
 #endif

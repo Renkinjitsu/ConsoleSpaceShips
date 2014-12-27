@@ -8,7 +8,7 @@ class Item : public GameObject
 private:
 
 public:
-	Item(char texture);
+	Item(char texture, const std::vector<Point> & points);
 };
 
 #endif

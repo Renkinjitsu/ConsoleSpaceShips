@@ -1,16 +1,12 @@
 #ifndef INSTRUCTION_SCREEN_H_
 #define INSTRUCTION_SCREEN_H_
 
-#include "Screen.h"
+#include "MenuScreen.h"
 
-class InstructionsScreen : public Screen
+class InstructionsScreen : public MenuScreen
 {
 private:
-	static const char * const _instructions[];
-	static const size_t _instructionsCount;
-
-	unsigned _startX;
-	unsigned _startY;
+	//None
 
 public:
 	InstructionsScreen();
@@ -20,7 +16,6 @@ public:
 	void readUserInput(const Keyboard & keyboard);
 	void process();
 	void update();
-	void draw(Canvas & canvas) const;
 };
 
 #endif /* INSTRUCTION_SCREEN_H_ */

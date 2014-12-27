@@ -1,13 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\Levels">
-      <UniqueIdentifier>{b8c74c82-7533-481e-b006-9b0a92ff6c12}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObjects">
       <UniqueIdentifier>{2d3cab86-87f2-4110-8e93-60f4e9a6cdaf}</UniqueIdentifier>
     </Filter>
@@ -20,6 +13,9 @@
     <Filter Include="Others">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{1dc57010-20c9-4360-ad86-8b490aaa6ace}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,12 +39,6 @@
     </ClCompile>
     <ClCompile Include="Wall.cpp">
       <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Others</Filter>
-    </ClCompile>
-    <ClCompile Include="ErrorsScreen.cpp">
-      <Filter>Screens</Filter>
     </ClCompile>
     <ClCompile Include="GameOverScreen.cpp">
       <Filter>Screens</Filter>
@@ -81,9 +71,6 @@
     <ClCompile Include="Keyboard.cpp">
       <Filter>Others</Filter>
     </ClCompile>
-    <ClCompile Include="Point.cpp">
-      <Filter>Others</Filter>
-    </ClCompile>
     <ClCompile Include="ScreenManager.cpp">
       <Filter>Others</Filter>
     </ClCompile>
@@ -93,17 +80,23 @@
     <ClCompile Include="GameConfig.cpp">
       <Filter>Others</Filter>
     </ClCompile>
+    <ClCompile Include="LevelValidationScreen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="FilesManager.cpp">
+      <Filter>Others</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScreen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Canvas.h">
-      <Filter>Others</Filter>
-    </ClInclude>
-    <ClInclude Include="Direction.h">
-      <Filter>Others</Filter>
-    </ClInclude>
-    <ClInclude Include="Point.h">
-      <Filter>Others</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectSet.h">
       <Filter>Others</Filter>
     </ClInclude>
@@ -118,9 +111,6 @@
     </ClInclude>
     <ClInclude Include="Keyboard.h">
       <Filter>Others</Filter>
-    </ClInclude>
-    <ClInclude Include="ErrorsScreen.h">
-      <Filter>Screens</Filter>
     </ClInclude>
     <ClInclude Include="GameOverScreen.h">
       <Filter>Screens</Filter>
@@ -170,18 +160,20 @@
     <ClInclude Include="GameConfig.h">
       <Filter>Others</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Level 002.spg">
-      <Filter>Resource Files\Levels</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Level 001.spg">
-      <Filter>Resource Files\Levels</Filter>
-    </None>
+    <ClInclude Include="FilesManager.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScreen.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelValidationScreen.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

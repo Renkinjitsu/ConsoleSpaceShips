@@ -13,7 +13,7 @@ GameAlgorithm::~GameAlgorithm()
 	//Nothing to do
 }
 
-bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from, std::vector<const GameObject *> & ignore)
+bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, std::vector<const GameObject *> & ignore)
 {
 	if(std::find(ignore.begin(), ignore.end(), &gameObject) != ignore.end())
 	{
@@ -39,7 +39,7 @@ bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet
 	return false;
 }
 
-void GameAlgorithm::getTouchingObstacles(GameObject & current, Direction direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore)
+void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore)
 {
 	ignore.push_back(&current);
 
@@ -57,14 +57,14 @@ void GameAlgorithm::getTouchingObstacles(GameObject & current, Direction directi
 	}
 }
 
-bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from)
+bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from)
 {
 	GameObjectSet empty_ignore;
 
 	return GameAlgorithm::isBlocked(gameObject, blockingObjects, from, empty_ignore);
 }
 
-bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from, const GameObjectSet & ignore)
+bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, const GameObjectSet & ignore)
 {
 	std::vector<const GameObject *> internal_ignore;
 	for(GameObjectSet::const_iterator ignoreIter = ignore.cbegin(); ignoreIter != ignore.cend(); ++ignoreIter)
@@ -73,6 +73,19 @@ bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet
 	}
 
 	return GameAlgorithm::isBlocked(gameObject, blockingObjects, from, internal_ignore);
+}
+
+bool GameAlgorithm::collidesWith(const GameObject & colider, const GameObjectSet & colidees)
+{
+	for(GameObjectSet::const_iterator colidee = colidees.cbegin(); colidee != colidees.cend(); ++colidee)
+	{
+		if(colider.collidesWith(**colidee))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void GameAlgorithm::getPiledItems(const GameObject & pileBase, GameObjectSet & pile, const GameObjectSet & potentialPileMembers)
@@ -85,7 +98,7 @@ void GameAlgorithm::getPiledItems(const GameObject & pileBase, GameObjectSet & p
 	for(GameObjectSet::const_iterator potentialIter = potentialPileMembers.cbegin();
 		potentialIter != potentialPileMembers.cend(); ++potentialIter)
 	{
-		if(&pileBase != *potentialIter && pileBase.isBlockedBy(**potentialIter, DIRECTION_UP))
+		if(&pileBase != *potentialIter && pileBase.isBlockedBy(**potentialIter, Point::UP))
 		{
 			pile.insertUnique(*potentialIter);
 			GameAlgorithm::getPiledItems(**potentialIter, pile, potentialPileMembers);
@@ -106,16 +119,19 @@ void GameAlgorithm::expandToPile(GameObjectSet & gameObjects, const GameObjectSe
 	gameObjects.merge(piles);
 }
 
-void GameAlgorithm::expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, Direction pushDirection)
+void GameAlgorithm::expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, const Point & pushDirection)
 {
-	GameObjectSet pile(root);
-	GameAlgorithm::expandToPile(pile, obsticales);
-	GameAlgorithm::removeBlockedFrom(pile, obsticales, pushDirection);
+	if(pushDirection.notEquals(Point::ZERO))
+	{
+		GameObjectSet pile(root);
+		GameAlgorithm::expandToPile(pile, obsticales);
+		GameAlgorithm::removeBlockedFrom(pile, obsticales, pushDirection);
 
-	GameAlgorithm::expandToPile(root, pile);
+		GameAlgorithm::expandToPile(root, pile);
+	}
 }
 
-void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, Direction direction)
+void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, const Point & direction)
 {
 	GameObjectSet::iterator blockedIter = gameObjects.begin();
 	while(blockedIter != gameObjects.end())
@@ -132,7 +148,7 @@ void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObj
 	}
 }
 
-void GameAlgorithm::getTouchingObstacles(GameObject & root, Direction direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles)
+void GameAlgorithm::getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles)
 {
 	assert(touchingObstacles.isEmpty());
 
@@ -140,7 +156,7 @@ void GameAlgorithm::getTouchingObstacles(GameObject & root, Direction direction,
 	GameAlgorithm::getTouchingObstacles(root, direction, allObstacles, touchingObstacles, ignore);
 }
 
-void GameAlgorithm::move(GameObjectSet & gameObjects, Direction direction)
+void GameAlgorithm::move(GameObjectSet & gameObjects, const Point & direction)
 {
 	for(GameObjectSet::iterator iter = gameObjects.begin(); iter != gameObjects.end(); ++iter)
 	{
@@ -155,7 +171,7 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 	for(GameObjectSet::const_iterator itemIter = previouslyFreeFalingItems.cbegin();
 		itemIter != previouslyFreeFalingItems.cend(); ++itemIter)
 	{
-		if(ship.isBlockedBy(**itemIter, DIRECTION_UP))
+		if(ship.isBlockedBy(**itemIter, Point::UP))
 		{
 			GameObjectSet temp;
 			GameAlgorithm::getPiledItems(**itemIter, temp, previouslyFreeFalingItems);
@@ -167,7 +183,7 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 	return crashingPile.getTotalMass() >= (ship.getMass() / 2);
 }
 
-bool GameAlgorithm::isPushDirection(Direction direction)
+bool GameAlgorithm::isPushDirection(const Point & direction)
 {
-	return (direction == DIRECTION_LEFT) || (direction == DIRECTION_RIGHT) || (direction == DIRECTION_UP);
+	return direction.notEquals(Point::ZERO) & direction.notEquals(Point::DOWN);
 }

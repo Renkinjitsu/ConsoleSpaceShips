@@ -6,7 +6,10 @@
 class BigShip : public Ship
 {
 public:
-	BigShip(unsigned xPositin, unsigned yPosition);
+	BigShip(const Point & bottoLeftPosition);
+
+	bool isBlockingRotation(const GameObject & other) const;
+	void rotate();
 };
 
 #endif /* BIG_SHIP_H_ */

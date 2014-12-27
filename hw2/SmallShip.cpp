@@ -1,46 +1,66 @@
 #include "SmallShip.h"
 
-SmallShip::SmallShip(unsigned xPositin, unsigned yPosition, bool horizontal)
-	: Ship(xPositin, yPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, '@')
+SmallShip::SmallShip(const Point & bottoLeftPosition, bool horizontal)
+	: Ship(bottoLeftPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, '@')
 {
 	//Do nothing
 }
 
-bool SmallShip::isBlockingRotation(const GameObject & other)
+bool SmallShip::isBlockingRotation(const GameObject & other) const
 {
-	std::vector<Point> locations = this->getLocations();
+	const std::vector<Point> & points = this->getPoints();
 
-	unsigned x = locations[0].getX();
-	unsigned y = locations[0].getY();
+	const unsigned left = Point::getLeft(points[0], points[1]);
+	const unsigned top = Point::getTop(points[0], points[1]);
+	Point point(left, top);
 
-	GameObject rotationArea(' ', false);
-	rotationArea.setLocations(x + 0, y + 0);
-	rotationArea.setLocations(x + 1, y + 0);
-	rotationArea.setLocations(x + 0, y + 1);
-	rotationArea.setLocations(x + 1, y + 1);
+	GameObject blockingArea(' ', false);
 
-	return rotationArea.collidesWith(other);
+	point.move(Point::UP);
+	blockingArea.setPoints(point);
+
+	if(points[0].getX() == points[1].getX()) //Vertical
+	{
+		point.move(Point::RIGHT);
+		point.move(Point::DOWN);
+		blockingArea.setPoints(point);
+
+		point.move(Point::DOWN);
+		blockingArea.setPoints(point);
+	}
+	else //Horizontal
+	{
+		point.move(Point::RIGHT);
+		blockingArea.setPoints(point);
+	}
+
+	return other.collidesWith(blockingArea);
 }
 
 void SmallShip::rotate()
 {
-	std::vector<Point> locations = this->getLocations();
-	this->clearLocations();
+	std::vector<Point> points = this->getPoints();
+	this->clearPoints();
 
-	Point bottomLeft = locations[0];
-	Point other = locations[1];
+	const unsigned left = Point::getLeft(points[0], points[1]);
+	const unsigned bottom = Point::getBottom(points[0], points[1]);
+	const unsigned right = Point::getRight(points[0], points[1]);
+	const unsigned top = Point::getTop(points[0], points[1]);
 
-	if(bottomLeft.getX() == other.getX())
+	Point bottomLeft(left, bottom);
+	Point topRight(right, top);
+
+	if(bottomLeft.getX() == topRight.getX()) //Vertical
 	{
-		other.move(DIRECTION_RIGHT);
-		other.move(DIRECTION_DOWN);
+		topRight.move(Point::RIGHT);
+		topRight.move(Point::DOWN);
 	}
-	else
+	else //Horizontal
 	{
-		other.move(DIRECTION_UP);
-		other.move(DIRECTION_LEFT);
+		topRight.move(Point::UP);
+		topRight.move(Point::LEFT);
 	}
 
-	this->setLocations(bottomLeft);
-	this->setLocations(other);
+	this->setPoints(bottomLeft);
+	this->setPoints(topRight);
 };

@@ -7,9 +7,9 @@ class SmallShip : public Ship
 {
 
 public:
-	SmallShip(unsigned xPositin, unsigned yPosition, bool horizontal);
+	SmallShip(const Point & bottoLeftPosition, bool horizontal);
 
-	bool isBlockingRotation(const GameObject & other);
+	bool isBlockingRotation(const GameObject & other) const;
 	void rotate();
 };
 

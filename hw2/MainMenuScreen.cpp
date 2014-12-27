@@ -5,29 +5,17 @@
 #include "Game.h"
 #include "ScreenManager.h"
 #include "InstructionsScreen.h"
+#include "LevelValidationScreen.h"
 
 MainMenuScreen::MainMenuScreen()
 {
-	this->_menuItems.push_back("1. New game");
-	this->_menuItems.push_back("2. Instructions");
-	this->_menuItems.push_back("3. Validate level file");
-	this->_menuItems.push_back("4. Load saved game");
-	this->_menuItems.push_back("5. Start specific level");
-	this->_menuItems.push_back("");
-	this->_menuItems.push_back("9. Exit");
-
-	unsigned width = 0;
-	for(unsigned i = 0; i < this->_menuItems.size(); ++i)
-	{
-		const unsigned stringLength = (unsigned)strlen(this->_menuItems[i]);
-		if(stringLength > width)
-		{
-			width = stringLength;
-		}
-	}
-
-	this->_startX = (Canvas::getWidth() - width) / 2;
-	this->_startY = (Canvas::getHeight() - this->_menuItems.size()) / 2;
+	this->append("1. New game");
+	this->append("2. Instructions");
+	this->append("3. Validate level file");
+	this->append("4. Load saved game");
+	this->append("5. Start specific level");
+	this->append("");
+	this->append("9. Exit");
 }
 
 MainMenuScreen::~MainMenuScreen()
@@ -50,7 +38,7 @@ void MainMenuScreen::readUserInput(const Keyboard & keyboard)
 	}
 	else if(keyboard.isPressed(Keyboard::NUM3))
 	{
-		//ScreenManager::add(new LevelValidationScreen());
+		ScreenManager::add(new LevelValidationScreen());
 	}
 	else if(keyboard.isPressed(Keyboard::NUM4))
 	{
@@ -72,14 +60,4 @@ void MainMenuScreen::process()
 
 void MainMenuScreen::update()
 {
-}
-
-void MainMenuScreen::draw(Canvas & canvas) const
-{
-	for(unsigned i = 0; i < this->_menuItems.size(); ++i)
-	{
-		unsigned y = this->_startY + this->_menuItems.size() - i;
-
-		canvas.draw(this->_startX, y, this->_menuItems[i]);
-	}
 }

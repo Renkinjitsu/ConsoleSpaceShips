@@ -3,15 +3,12 @@
 
 #include <vector>
 
-#include "Screen.h"
+#include "MenuScreen.h"
 
-class MainMenuScreen : public Screen
+class MainMenuScreen : public MenuScreen
 {
 private:
-	std::vector<const char *> _menuItems;
-
-	unsigned _startX;
-	unsigned _startY;
+	//None
 
 public:
 	MainMenuScreen();
@@ -21,7 +18,6 @@ public:
 	void readUserInput(const Keyboard & keyboard);
 	void process();
 	void update();
-	void draw(Canvas & canvas) const;
 };
 
 #endif /* MAIN_MENU_SCREEN_H_ */

@@ -2,10 +2,9 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
-#include <fstream>
 
 #include "GameConfig.h"
+#include "FilesManager.h"
 #include "ScreenManager.h"
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
@@ -20,42 +19,15 @@ void Game::startLevel()
 
 	//Get closest-level file
 	{
-		//Get file-names-list
-		std::vector<std::string> fileNames;
-		{
-			std::string spgs("spgList");
-
-			//Build command
-			std::string command("dir /b ");
-			command += GameConfig::getLevelsPath();
-			command += "*.spg > ";
-			command += spgs;
-
-			system(command.c_str());
-
-			std::ifstream spgsFile(spgs);
-			std::string str;
-			while(std::getline(spgsFile, str))
-			{
-				fileNames.push_back(str);
-			}
-			spgsFile.close();
-		}
+		std::vector<std::string> fileNames = FilesManager::getFileNames();
 
 		//Get ID per SPG file
 		std::vector<unsigned> ids;
 		{
 			for(unsigned i = 0; i < fileNames.size(); ++i)
 			{
-				std::ifstream levelFile(fileNames[i]);
-				std::string idLine;
-				std::getline(levelFile, idLine);
-				levelFile.close();
-
-				unsigned id;
-				sscanf(idLine.c_str(), "ScreenID = %u", &id);
-
-				ids.push_back(id);
+				const std::string filePath = GameConfig::getLevelsPath() +  fileNames[i];
+				ids.push_back(FilesManager::getScreenId(filePath));
 			}
 		}
 
@@ -85,8 +57,10 @@ void Game::startLevel()
 
 	if(found)
 	{
+		const std::string levelFile = GameConfig::getLevelsPath() + nextLevelFileName;
+
 		GameScreenBuilder builder;
-		builder.loadFromFile(nextLevelFileName);
+		builder.loadFromFile(levelFile);
 		ScreenManager::add(builder.build());
 	}
 	else

@@ -10,7 +10,19 @@ const size_t GameOverScreen::_endMessageLength = strlen(GameOverScreen::_endMess
 
 GameOverScreen::GameOverScreen()
 {
-	this->_endMessageEffectIndex = 0;
+	Point correction;
+
+	this->_drawOffset = Canvas::CENTER;
+	correction = Point::LEFT;
+	correction.multiply(GameOverScreen::_endMessageLength / 2);
+	this->_drawOffset.move(correction);
+
+	this->_highlightPosition = this->_drawOffset;
+
+	this->_highlightEndPosition = this->_drawOffset;
+	correction = Point::RIGHT;
+	correction.multiply(GameOverScreen::_endMessageLength);
+	this->_highlightEndPosition.move(correction);
 }
 
 GameOverScreen::~GameOverScreen()
@@ -35,14 +47,20 @@ void GameOverScreen::process()
 
 void GameOverScreen::update()
 {
-	++(this->_endMessageEffectIndex);
-	GameOverScreen::_endMessageEffectIndex %= GameOverScreen::_endMessageLength;
+	if(this->_highlightPosition.equals(this->_highlightEndPosition))
+	{
+		this->_highlightPosition = this->_drawOffset;
+	}
+	else
+	{
+		this->_highlightPosition.move(Point::RIGHT);
+	}
 }
 
 void GameOverScreen::draw(Canvas & canvas) const
 {
 	canvas.restore();
 
-	canvas.draw((Canvas::getWidth() - GameOverScreen::_endMessageLength) / 2, Canvas::getHeight() / 2, GameOverScreen::_endMessage);
-	canvas.draw((Canvas::getWidth() - GameOverScreen::_endMessageLength) / 2 + this->_endMessageEffectIndex, Canvas::getHeight() / 2, ' ');
+	canvas.draw(this->_drawOffset, GameOverScreen::_endMessage);
+	canvas.draw(this->_highlightPosition, ' ');
 }

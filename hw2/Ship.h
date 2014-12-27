@@ -6,19 +6,15 @@
 class Ship : public GameObject
 {
 private:
-	bool _isAlive;
-	bool _isPresent;
+	//None
 
 public:
-	Ship(unsigned xPosition, unsigned yPosition,
-		unsigned width, unsigned height,
-		char texture);
+	Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, char texture);
 
-	bool isAlive() const;
-	bool isPresent() const;
+	virtual bool isBlockingRotation(const GameObject & other) const = 0;
 
 	void explode();
-	void disappear();
+	virtual void rotate() = 0;
 };
 
 #endif /* SHIP_H_ */

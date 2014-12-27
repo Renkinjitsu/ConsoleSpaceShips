@@ -17,8 +17,8 @@ private:
 	GameAlgorithm();
 	~GameAlgorithm();
 
-	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from, std::vector<const GameObject *> & ignore);
-	static void getTouchingObstacles(GameObject & current, Direction direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore);
+	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, std::vector<const GameObject *> & ignore);
+	static void getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore);
 public:
 
 	/*
@@ -27,8 +27,10 @@ public:
 	 *
 	 * ignore - An optional list of GameObject-s which are skipped if found in 'blockingObjects'.
 	 */
-	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from);
-	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, Direction from, const GameObjectSet & ignore);
+	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from);
+	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, const GameObjectSet & ignore);
+
+	static bool collidesWith(const GameObject & colider, const GameObjectSet & colidees);
 
 	/*
 	 * Finds & lits the members of a pile that 'pileBase' is it's base.
@@ -50,25 +52,25 @@ public:
 	 */
 	static void expandToPile(GameObjectSet & gameObjects, const GameObjectSet & potentialPileMembers);
 
-	static void expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, Direction pushDirection);
+	static void expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, const Point & pushDirection);
 
-	static void removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, Direction direction);
+	static void removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, const Point & direction);
 
 	/*
 	 * Returns a collection of obsticles that touch 'root' or other's in the collection from 'direction'.
 	 * 'touchingObsticles' (the collection) should be provided empty.
 	 */
-	static void getTouchingObstacles(GameObject & root, Direction direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles);
+	static void getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles);
 
 	/*
 	 * Moves the provided game objects 1 step in the provided direction.
 	 * No checks of movement validity are performed.
 	 */
-	static void move(GameObjectSet & gameObjects, Direction direction);
+	static void move(GameObjectSet & gameObjects, const Point & direction);
 
 	static bool isShipCrashed(const Ship & ship, const GameObjectSet & previouslyFreeFalingItems);
 
-	static bool isPushDirection(Direction direction);
+	static bool isPushDirection(const Point & direction);
 };
 
 #endif /* GAME_ALGORITHM_H_ */

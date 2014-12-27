@@ -5,40 +5,38 @@
 
 #include <vector>
 
-#include "Direction.h"
 #include "Point.h"
 
 class GameObject
 {
 private:
-	std::vector<Point> _locations;
+	std::vector<Point> _points;
 	char _texture;
 
 	bool _isPushable;
 
 protected:
-	void clearLocations();
-	std::vector<Point> getLocations();
+	void clearPoints();
+	std::vector<Point> getPoints() const;
 
 public:
 	GameObject(char texture, bool isPushable);
-	GameObject(char texture, unsigned x, unsigned y, bool isPushable);
-	GameObject(char texture, const std::vector<Point> & location, bool isPushable);
+	GameObject(char texture, const std::vector<Point> & points, bool isPushable);
 
-	void setLocations(unsigned x, unsigned y);
-	void setLocations(const Point & point);
-	void setLocations(const std::vector<Point> & locations);
+	void setPoints(unsigned x, unsigned y);
+	void setPoints(const Point & point);
+	void setPoints(const std::vector<Point> & points);
 
 	char getTexture() const;
 	void setTexture(const char texture);
 
-	bool isBlockedBy(const GameObject & other, Direction from) const;
+	bool isBlockedBy(const GameObject & other, const Point & fromDirection) const;
 	bool isPushable() const;
 	bool collidesWith(const GameObject & other) const;
 
 	unsigned getMass() const;
 
-	void move(Direction direction);
+	void move(const Point & offset);
 
 	void draw(Canvas & canvas);
 };

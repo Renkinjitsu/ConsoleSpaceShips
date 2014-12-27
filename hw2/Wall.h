@@ -8,7 +8,7 @@ class Wall : public GameObject
 private:
 
 public:
-	Wall(unsigned bottomLeftX, unsigned bottomLeftY, unsigned width, unsigned height);
+	Wall(const std::vector<Point> & points);
 };
 
 #endif /* WALL_H_ */

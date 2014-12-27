@@ -26,10 +26,9 @@ private:
 	std::vector<ExitPoint *> _exitPoints;
 
 	std::vector<std::string> _errors;
-	bool _isCleared;
 
 	static bool isValidCharacter(char character);
-	static void floodFill4Way(char board[GameConfig::SCREEN_HEIGHT][GameConfig::SCREEN_WIDTH], char character, unsigned x, unsigned y, std::vector<Point> & points);
+	static void floodFill4Way(char * const serializedCanvas, const char targetCharacter, const Point & coordinate, std::vector<Point> & points);
 
 	void clear();
 

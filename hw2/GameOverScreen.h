@@ -9,7 +9,9 @@ private:
 	static const char * const _endMessage;
 	static const size_t _endMessageLength;
 
-	unsigned _endMessageEffectIndex = 0;
+	Point _drawOffset;
+	Point _highlightPosition;
+	Point _highlightEndPosition;
 
 public:
 	GameOverScreen();

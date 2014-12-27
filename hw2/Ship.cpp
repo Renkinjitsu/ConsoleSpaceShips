@@ -1,36 +1,23 @@
 #include "Ship.h"
 
-Ship::Ship(unsigned xPosition, unsigned yPosition,
-	unsigned width, unsigned height,
-	char texture) : GameObject(texture, false)
+Ship::Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, char texture)
+	: GameObject(texture, false)
 {
-	this->_isAlive = true;
-
+	Point startingPoint(bottoLeftPosition);
 	for(size_t i = 0; i < width; i++)
 	{
+		startingPoint.move(Point::RIGHT);
+
+		Point current(startingPoint);
 		for(size_t j = 0; j < height; j++)
 		{
-			this->setLocations(xPosition + i, yPosition + j);
+			current.move(Point::UP);
+			this->setPoints(current);
 		}
 	}
 }
 
-bool Ship::isAlive() const
-{
-	return this->_isAlive;
-}
-
-bool Ship::isPresent() const
-{
-	return this->_isPresent;
-}
-
 void Ship::explode()
 {
-	this->_isAlive = false;
-}
-
-void Ship::disappear()
-{
-	this->_isPresent = false;
+	this->setTexture((char)13);
 }

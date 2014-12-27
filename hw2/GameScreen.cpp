@@ -3,197 +3,194 @@
 #include <string.h>
 #include <assert.h>
 
-#include "Direction.h"
-
 #include "ScreenManager.h"
 #include "GameAlgorithm.h"
 #include "Game.h"
 
-void GameScreen::insertShip(Ship * ship)
+void GameScreen::insertShip(Ship * ship, unsigned index)
 {
 	this->_allGameObjects.insert(ship);
 	this->_obstacles.insert(ship);
+
+	this->_ships[index] = ship;
+
+	this->_shipInfos[index]._velocity = Point::ZERO;
+	this->_shipInfos[index]._rotate = false;
+	this->_shipInfos[index]._pushPile.clear();
 }
 
-void GameScreen::removeShip(Ship * ship)
+void GameScreen::removeShip(unsigned index)
 {
+	Ship * & ship = this->_ships[index];
+
 	this->_allGameObjects.remove(ship);
 	this->_obstacles.remove(ship);
 
-	this->_objectsToDelete.insert(ship);
+	delete ship;
+	ship = NULL;
 }
 
 void GameScreen::setInitialState()
 {
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
-		ShipState & shipState = this->_updateArgs._shipStates[i];
-
-		shipState._pushPile.clear();
-		shipState._direction = DIRECTION_NONE;
+		this->_shipInfos[i]._pushPile.clear();
+		this->_shipInfos[i]._velocity = Point::ZERO;
+		this->_shipInfos[i]._rotate = false;
 	}
-
-	this->_updateArgs._rotateSmallShip = false;
 }
 
 void GameScreen::readUserInput(const Keyboard & keyboard)
 {
-	Direction & smallShipDirection = this->_updateArgs._shipStates[GameScreen::SMALL_SHIP_INDEX]._direction;
-	Direction & bigShipDirection = this->_updateArgs._shipStates[GameScreen::BIG_SHIP_INDEX]._direction;
+	ShipInfo & smallShipInfo = this->_shipInfos[GameScreen::SMALL_SHIP_INDEX];
+	ShipInfo & bigShipInfo = this->_shipInfos[GameScreen::BIG_SHIP_INDEX];
 
 	if(keyboard.isPressed(keyboard.ESC))
 	{
-		this->exit(EXIT_TYPE_QUIT);
+		this->setState(GameScreen::GAME_STATE_QUIT);
 	}
 
 	if(keyboard.isPressed(keyboard.Z))
 	{
-		this->_updateArgs._rotateSmallShip = true;
+		smallShipInfo._rotate = true;
 	}
 	else if(keyboard.isPressed(keyboard.X))
 	{
-		smallShipDirection = DIRECTION_DOWN;
+		smallShipInfo._velocity = Point::DOWN;
 	}
 	else if(keyboard.isPressed(keyboard.W))
 	{
-		smallShipDirection = DIRECTION_UP;
+		smallShipInfo._velocity = Point::UP;
 	}
 	else if(keyboard.isPressed(keyboard.A))
 	{
-		smallShipDirection = DIRECTION_LEFT;
+		smallShipInfo._velocity = Point::LEFT;
 	}
 	else if(keyboard.isPressed(keyboard.D))
 	{
-		smallShipDirection = DIRECTION_RIGHT;
+		smallShipInfo._velocity = Point::RIGHT;
 	}
 
 	if(keyboard.isPressed(keyboard.I))
 	{
-		bigShipDirection = DIRECTION_UP;
+		bigShipInfo._velocity = Point::UP;
 	}
 	else if(keyboard.isPressed(keyboard.M))
 	{
-		bigShipDirection = DIRECTION_DOWN;
+		bigShipInfo._velocity = Point::DOWN;
 	}
 	else if(keyboard.isPressed(keyboard.J))
 	{
-		bigShipDirection = DIRECTION_LEFT;
+		bigShipInfo._velocity = Point::LEFT;
 	}
 	else if(keyboard.isPressed(keyboard.L))
 	{
-		bigShipDirection = DIRECTION_RIGHT;
+		bigShipInfo._velocity = Point::RIGHT;
 	}
 }
 
 void GameScreen::process()
 {
-	this->_updateArgs._prevFreeFallingItems = this->_updateArgs._currFreeFallingItems;
+	this->_prevFreeFallingItems = this->_currFreeFallingItems;
 
 	unsigned totalShipsMass = 0;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
-		ShipState & shipState = this->_updateArgs._shipStates[i];
-		Ship & ship = *shipState._ship;
-
-		if(ship.isPresent())
+		Ship * const ship = this->_ships[i];
+		if(ship == NULL) //Ship not present
 		{
-			if(GameAlgorithm::isShipCrashed(ship, this->_updateArgs._prevFreeFallingItems))
-			{
-				ship.explode();
-				this->removeShip(&ship);
-				this->exit(EXIT_TYPE_LOSE);
-			}
-			else
-			{
-				GameAlgorithm::getTouchingObstacles(ship, shipState._direction, this->_obstacles, shipState._pushPile);
-				if(shipState._pushPile.isPushable() == false)
-				{
-					shipState._direction = DIRECTION_NONE;
-					shipState._pushPile.clear();
-				}
-
-				if(shipState._direction != DIRECTION_NONE)
-				{
-					GameAlgorithm::expandToPushablePile(shipState._pushPile, this->_allGameObjects, shipState._direction);
-				}
-
-				totalShipsMass += ship.getMass();
-			}
+			continue; //Skip the not-present ship
 		}
+
+		ShipInfo & shipInfo = this->_shipInfos[i];
+
+		if(GameAlgorithm::isShipCrashed(*ship, this->_prevFreeFallingItems))
+		{
+			ship->explode();
+			this->setState(GameScreen::GAME_STATE_LOST);
+
+			return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
+		}
+
+		GameAlgorithm::getTouchingObstacles(*ship, shipInfo._velocity, this->_obstacles, shipInfo._pushPile);
+		if(shipInfo._pushPile.isPushable() == false)
+		{
+			shipInfo._velocity = Point::ZERO;
+			shipInfo._pushPile.clear();
+		}
+
+		GameAlgorithm::expandToPushablePile(shipInfo._pushPile, this->_allGameObjects, shipInfo._velocity);
+
+		totalShipsMass += ship->getMass();
 	}
 
-	ShipState & smallShipState = this->_updateArgs._shipStates[GameScreen::SMALL_SHIP_INDEX];
-	ShipState & bigShipState = this->_updateArgs._shipStates[GameScreen::BIG_SHIP_INDEX];
+	ShipInfo & smallShipInfo = this->_shipInfos[GameScreen::SMALL_SHIP_INDEX];
+	ShipInfo & bigShipInfo = this->_shipInfos[GameScreen::BIG_SHIP_INDEX];
 
-	if(smallShipState._pushPile.isEqual(bigShipState._pushPile) &&
-		smallShipState._direction == bigShipState._direction &&
-		GameAlgorithm::isPushDirection(smallShipState._direction))
+	if(this->getActiveShipsCount() > 0 &&
+		smallShipInfo._pushPile.isEqual(bigShipInfo._pushPile) &&
+		smallShipInfo._velocity.equals(bigShipInfo._velocity) &&
+		smallShipInfo._velocity.notEquals(Point::ZERO))
 	{
-		if(bigShipState._pushPile.getTotalMass() > totalShipsMass)
+		if(bigShipInfo._pushPile.getTotalMass() > totalShipsMass)
 		{
-			bigShipState._direction = smallShipState._direction = DIRECTION_NONE;
+			bigShipInfo._velocity = smallShipInfo._velocity = Point::ZERO;
 		}
 		else
 		{
-			bigShipState._pushPile.clear(); //Both of the ships have the same pile
+			bigShipInfo._pushPile.clear(); //Both of the ships have the same pile,
 		}
 	}
 	else
 	{
 		for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 		{
-			ShipState & shipState = this->_updateArgs._shipStates[i];
-
-			assert(shipState._pushPile.contains(shipState._ship) == false);
-
-			if(GameAlgorithm::isPushDirection(shipState._direction) && shipState._ship->getMass() < shipState._pushPile.getTotalMass())
+			Ship * & ship = this->_ships[i];
+			if(ship == NULL) //Ship not present
 			{
-				shipState._direction = DIRECTION_NONE;
+				continue; //Skip the not-present ship
+			}
+
+			ShipInfo & shipInfo = this->_shipInfos[i];
+
+			assert(shipInfo._pushPile.contains(ship) == false);
+
+			/*
+			 * The test of the following expresion is valid only if 'shipState._direction' not equals 'Point::Zero',
+			 *  but it isn't tested, because there is no side effect to a 'false-positive'.
+			 */
+			if(ship->getMass() < shipInfo._pushPile.getTotalMass())
+			{
+				shipInfo._velocity = Point::ZERO;
 			}
 		}
 	}
 
-	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		ShipState & shipState = this->_updateArgs._shipStates[i];
-		Ship & ship = *shipState._ship;
-
-		if(ship.isPresent() && shipState._direction != DIRECTION_NONE)
+		Ship * & ship = this->_ships[i];
+		if(ship == NULL) //Ship not present
 		{
-			shipState._pushPile.insert(shipState._ship);
-			GameObjectSet pile(shipState._pushPile);
+			continue; //Skip the not-present ship
+		}
+
+		ShipInfo & shipInfo = this->_shipInfos[i];
+
+		if(shipInfo._velocity.notEquals(Point::ZERO))
+		{
+			shipInfo._pushPile.insert(ship);
+			GameObjectSet pile(shipInfo._pushPile);
 			GameAlgorithm::expandToPile(pile, this->_allGameObjects);
-			pile.remove(shipState._pushPile);
+			pile.remove(shipInfo._pushPile);
 
 			for(GameObjectSet::iterator iter = pile.begin(); iter != pile.end(); ++iter)
 			{
-				{
-					this->_updateArgs._rotateSmallShip &= (this->_smallShip->isBlockingRotation(**iter) == false);
-				}
+				shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
 			}
 
-			GameAlgorithm::removeBlockedFrom(pile, this->_allGameObjects, shipState._direction);
-			GameAlgorithm::expandToPile(shipState._pushPile, pile);
-
-		}
-	}
-
-	//Verify no item blocks the small ship from rotating
-	if(this->_smallShip->isPresent() && this->_updateArgs._rotateSmallShip)
-	{
-		GameObjectSet carriedItems;
-		GameAlgorithm::getPiledItems(*smallShipState._ship, carriedItems, this->_items);
-		this->_updateArgs._rotateSmallShip &= carriedItems.isEmpty();
-
-		for(GameObjectSet::const_iterator iter = this->_obstacles.begin();
-			iter != this->_obstacles.end() &&
-			this->_updateArgs._rotateSmallShip; ++iter)
-		{
-			if(*iter != this->_smallShip)
-			{
-				this->_updateArgs._rotateSmallShip &= (this->_smallShip->isBlockingRotation(**iter) == false);
-			}
+			GameAlgorithm::removeBlockedFrom(pile, this->_allGameObjects, shipInfo._velocity);
+			GameAlgorithm::expandToPile(shipInfo._pushPile, pile);
 		}
 	}
 }
@@ -205,54 +202,49 @@ void GameScreen::update()
 		return;
 	}
 
-	if(this->_smallShip->isPresent() &&
-		this->_updateArgs._rotateSmallShip)
-	{
-		this->_smallShip->rotate();
-	}
-
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		ShipState & shipState = this->_updateArgs._shipStates[i];
-
-		if(shipState._ship->isPresent())
+		Ship * & ship = this->_ships[i];
+		if(ship == NULL) //Ship not present
 		{
-			if(shipState._direction != DIRECTION_NONE)
-			{
-				GameAlgorithm::move(shipState._pushPile, shipState._direction);
-			}
+			continue; //Skip the not-present ship
+		}
 
-			for(GameObjectSet::iterator iter = this->_exitPoints.begin();
-				iter != this->_exitPoints.end(); ++iter)
-			{
-				if((*iter)->collidesWith(*shipState._ship))
-				{
-					shipState._ship->disappear();
-					this->removeShip(shipState._ship);
+		ShipInfo & shipInfo = this->_shipInfos[i];
 
-					if(this->isGameOver())
-					{
-						ScreenManager::remove(this);
-						Game::startNextLevel();
-					}
+		if(shipInfo._rotate)
+		{
+			ship->rotate();
+		}
+		else if(shipInfo._velocity.notEquals(Point::ZERO))
+		{
+			GameAlgorithm::move(shipInfo._pushPile, shipInfo._velocity);
+		}
 
-					break;
-				}
-			}
+		if(GameAlgorithm::collidesWith(*ship, this->_exitPoints))
+		{
+			this->removeShip(i);
 		}
 	}
 
-	//Should be after the moveing of the push-piles
-	this->_updateArgs._currFreeFallingItems.clear();
-	for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter) //List free-falling Item-s
+	if(this->getActiveShipsCount() == 0)
 	{
-		if(GameAlgorithm::isBlocked(**itemIter, this->_obstacles, DIRECTION_DOWN) == false)
-		{
-			this->_updateArgs._currFreeFallingItems.insert(*itemIter);
-		}
+		this->setState(GameScreen::GAME_STATE_WON);
 	}
+	else //Nope, the show goes on!
+	{
+		//List free-falling Item-s (should be after the moving of the push-piles)
+		this->_currFreeFallingItems.clear();
+		for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter)
+		{
+			if(GameAlgorithm::isBlocked(**itemIter, this->_obstacles, Point::DOWN) == false)
+			{
+				this->_currFreeFallingItems.insert(*itemIter);
+			}
+		}
 
-	GameAlgorithm::move(this->_updateArgs._currFreeFallingItems, DIRECTION_DOWN);
+		GameAlgorithm::move(this->_currFreeFallingItems, Point::DOWN);
+	}
 }
 
 void GameScreen::draw(Canvas & canvas) const
@@ -270,36 +262,32 @@ void GameScreen::draw(Canvas & canvas) const
 
 bool GameScreen::isGameOver() const
 {
-	bool isGameOver = this->_state._exit;
+	return (this->_gameState != GameScreen::GAME_STATE_ONGOING);
+}
 
-	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT && isGameOver == false; i++)
+unsigned GameScreen::getActiveShipsCount() const
+{
+	unsigned activeShipsCount = 0;
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		isGameOver |= (this->_updateArgs._shipStates[i]._ship->isAlive() == false);
+		if(this->_ships[i] != NULL)
+		{
+			++activeShipsCount;
+		}
 	}
 
-	isGameOver |= (this->_smallShip->isPresent() == false) && (this->_bigShip->isPresent() == false);
-
-	return isGameOver;
+	return activeShipsCount;
 }
 
 GameScreen::GameScreen()
 {
-	this->_bigShip = NULL;
-	this->_smallShip = NULL;
-
-	this->_state._exit = false;
+	this->_gameState = GameScreen::GAME_STATE_ONGOING;
 };
 
 GameScreen::~GameScreen()
 {
 	for(GameObjectSet::iterator iter = this->_allGameObjects.begin();
 		iter != this->_allGameObjects.end(); ++iter)
-	{
-		delete *iter;
-	}
-
-	for(GameObjectSet::iterator iter = this->_objectsToDelete.begin();
-		iter != this->_objectsToDelete.end(); ++iter)
 	{
 		delete *iter;
 	}
@@ -324,36 +312,46 @@ void GameScreen::addGameObject(ExitPoint * exit)
 	this->_allGameObjects.insert(exit);
 }
 
-void GameScreen::exit(ExitType exitType)
+void GameScreen::addGameObject(BigShip * ship)
 {
-	switch(exitType)
+	this->insertShip(ship, GameScreen::BIG_SHIP_INDEX);
+}
+
+void GameScreen::addGameObject(SmallShip * ship)
+{
+	this->insertShip(ship, GameScreen::SMALL_SHIP_INDEX);
+}
+
+void GameScreen::setState(GameScreen::GameState newState)
+{
+	switch(newState)
 	{
-		case EXIT_TYPE_LOSE:
+		case GameScreen::GAME_STATE_LOST:
 		{
 			ScreenManager::remove(this);
 			Game::gameOver();
 		}
 		break;
+
+		case GameScreen::GAME_STATE_WON:
+		{
+			ScreenManager::remove(this);
+			Game::startNextLevel();
+		}
+		break;
+
+		case GameScreen::GAME_STATE_QUIT:
+		{
+			ScreenManager::remove(this);
+		}
+		break;
+
+		default:
+		{
+			//Nothing to do
+		}
+		break;
 	}
 
-	ScreenManager::remove(this);
-	this->_state._exit = true;
-}
-
-void GameScreen::addGameObject(BigShip * ship)
-{
-	assert(this->_bigShip == NULL);
-
-	this->_bigShip = ship;
-	this->_updateArgs._shipStates[GameScreen::BIG_SHIP_INDEX]._ship = ship;
-	this->insertShip(ship);
-}
-
-void GameScreen::addGameObject(SmallShip * ship)
-{
-	assert(this->_smallShip == NULL);
-
-	this->_smallShip = ship;
-	this->_updateArgs._shipStates[GameScreen::SMALL_SHIP_INDEX]._ship = ship;
-	this->insertShip(ship);
+	this->_gameState = newState;
 }

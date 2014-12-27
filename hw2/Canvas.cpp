@@ -4,13 +4,42 @@
 
 #include <assert.h>
 
-unsigned Canvas::calculateIndexFromPosition(unsigned x, unsigned y)
-{
-	unsigned index = ((GameConfig::SCREEN_HEIGHT - y - 1) * GameConfig::SCREEN_WIDTH) + x;
+const Point Canvas::TOP_LEFT(0, 0);
+const Point Canvas::BOTTOM_LEFT(0, GameConfig::SCREEN_HEIGHT - 1);
+const Point Canvas::TOP_RIGHT(GameConfig::SCREEN_WIDTH - 1, 0);
+const Point Canvas::BOTTOM_RIGHT(GameConfig::SCREEN_WIDTH - 1, GameConfig::SCREEN_HEIGHT - 1);
+const Point Canvas::CENTER(GameConfig::SCREEN_WIDTH / 2, GameConfig::SCREEN_HEIGHT / 2);
 
-	assert(index < 1920);
+unsigned Canvas::getWidth()
+{
+	return GameConfig::SCREEN_WIDTH;
+}
+
+unsigned Canvas::getHeight()
+{
+	return GameConfig::SCREEN_HEIGHT;
+}
+
+unsigned Canvas::serialize(const Point & posititon)
+{
+	const unsigned x = posititon.getX();
+	const unsigned y = posititon.getY();
+
+	const unsigned index = (y * GameConfig::SCREEN_WIDTH) + x;
+
+	assert(index < Canvas::bufferLength);
 
 	return index;
+}
+
+Point Canvas::deserialize(const unsigned serializedPosititon)
+{
+	assert(serializedPosititon < Canvas::bufferLength);
+
+	const unsigned x = serializedPosititon % Canvas::getWidth();
+	const unsigned y = serializedPosititon / Canvas::getWidth();
+
+	return Point(x, y);
 }
 
 Canvas::Canvas()
@@ -18,25 +47,26 @@ Canvas::Canvas()
 	//Nothing to do
 }
 
-void Canvas::draw(unsigned x, unsigned y, char character)
+void Canvas::draw(const Point & posititon, char character)
 {
-	this->_buffer[Canvas::calculateIndexFromPosition(x, y)] = character;
+
+	this->_buffer[Canvas::serialize(posititon)] = character;
 }
 
-void Canvas::draw(unsigned x, unsigned y, const char * string)
+void Canvas::draw(const Point & posititon, const char * string)
 {
-	unsigned i = Canvas::calculateIndexFromPosition(x, y);
+	unsigned i = Canvas::serialize(posititon);
 
-	while (*string != '\0')
+	while(*string != '\0')
 	{
 		this->_buffer[i++] = *string;
 		++string;
 	}
 }
 
-void Canvas::draw(unsigned x, unsigned y, const std::string & string)
+void Canvas::draw(const Point & posititon, const std::string & string)
 {
-	this->draw(x, y, string.c_str());
+	this->draw(posititon, string.c_str());
 }
 
 void Canvas::save()
@@ -73,14 +103,4 @@ void Canvas::end()
 {
 	gotoxy(0, 0);
 	std::cout << this->_buffer;
-}
-
-unsigned Canvas::getWidth()
-{
-	return GameConfig::SCREEN_WIDTH;
-}
-
-unsigned Canvas::getHeight()
-{
-	return GameConfig::SCREEN_HEIGHT;
 }

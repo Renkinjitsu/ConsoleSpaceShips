@@ -6,36 +6,29 @@ GameObject::GameObject(char texture, bool isPushable)
 	this->_isPushable = isPushable;
 }
 
-GameObject::GameObject(char texture, unsigned x, unsigned y, bool isPushable)
+GameObject::GameObject(char texture, const std::vector<Point> & points, bool isPushable)
 {
-	this->setLocations(x, y);
+	this->setPoints(points);
 	this->_texture = texture;
 	this->_isPushable = isPushable;
 }
 
-GameObject::GameObject(char texture, const std::vector<Point> & location, bool isPushable)
-{
-	this->setLocations(location);
-	this->_texture = texture;
-	this->_isPushable = isPushable;
-}
-
-void GameObject::setLocations(unsigned x , unsigned y)
+void GameObject::setPoints(unsigned x, unsigned y)
 {
 	Point point(x, y);
-	this->_locations.push_back(point);
+	this->_points.push_back(point);
 }
 
-void GameObject::setLocations(const Point & point)
+void GameObject::setPoints(const Point & point)
 {
-	this->_locations.push_back(point);
+	this->_points.push_back(point);
 }
 
-void GameObject::setLocations(const std::vector<Point> & locations)
+void GameObject::setPoints(const std::vector<Point> & points)
 {
-	for(std::vector<Point>::const_iterator locationIter = locations.cbegin(); locationIter != locations.cend(); ++locationIter)
+	for(unsigned i = 0; i < points.size(); ++i)
 	{
-		this->_locations.push_back(*locationIter);
+		this->_points.push_back(points[i]);
 	}
 }
 
@@ -49,26 +42,26 @@ void GameObject::setTexture(const char texture)
 	this->_texture = texture;
 }
 
-void GameObject::clearLocations()
+void GameObject::clearPoints()
 {
-	this->_locations.clear();
+	this->_points.clear();
 }
 
-std::vector<Point> GameObject::getLocations()
+std::vector<Point> GameObject::getPoints() const
 {
-	return this->_locations;
+	return this->_points;
 }
 
-bool GameObject::isBlockedBy(const GameObject & other, Direction from) const
+bool GameObject::isBlockedBy(const GameObject & other, const Point & fromDirection) const
 {
-	for(std::vector<Point>::const_iterator myPosition = this->_locations.begin(); myPosition != this->_locations.end(); ++myPosition)
+	for(unsigned i = 0; i < this->_points.size(); ++i)
 	{
-		Point translatedPosition = *myPosition;
-		translatedPosition.move(from);
+		Point translatedPosition = this->_points[i];
+		translatedPosition.move(fromDirection);
 
-		for(std::vector<Point>::const_iterator othersPosition = other._locations.begin(); othersPosition != other._locations.end(); ++othersPosition)
+		for(unsigned j = 0; j < other._points.size(); ++j)
 		{
-			if(translatedPosition.equals(*othersPosition))
+			if(translatedPosition.equals(other._points[j]))
 			{
 				return true;
 			}
@@ -85,11 +78,11 @@ bool GameObject::isPushable() const
 
 bool GameObject::collidesWith(const GameObject & other) const
 {
-	for(std::vector<Point>::const_iterator myPosition = this->_locations.begin(); myPosition != this->_locations.end(); ++myPosition)
+	for(unsigned i = 0; i < this->_points.size(); ++i)
 	{
-		for(std::vector<Point>::const_iterator othersPosition = other._locations.begin(); othersPosition != other._locations.end(); ++othersPosition)
+		for(unsigned j = 0; j < other._points.size(); ++j)
 		{
-			if((*myPosition).equals(*othersPosition))
+			if(this->_points[i].equals(other._points[j]))
 			{
 				return true;
 			}
@@ -101,21 +94,21 @@ bool GameObject::collidesWith(const GameObject & other) const
 
 unsigned GameObject::getMass() const
 {
-	return this->_locations.size();
+	return this->_points.size();
 }
 
-void GameObject::move(Direction direction)
+void GameObject::move(const Point & offset)
 {
-	for(std::vector<Point>::iterator locationIter = this->_locations.begin(); locationIter != this->_locations.end(); ++locationIter)
+	for(unsigned i = 0; i < this->_points.size(); ++i)
 	{
-		(*locationIter).move(direction);
+		this->_points[i].move(offset);
 	}
 }
 
 void GameObject::draw(Canvas & canvas)
 {
-	for(std::vector<Point>::const_iterator locationIter = this->_locations.begin(); locationIter != this->_locations.end(); ++locationIter)
+	for(unsigned i = 0; i < this->_points.size(); ++i)
 	{
-		canvas.draw((*locationIter).getX(), (*locationIter).getY(), this->_texture);
+		canvas.draw(this->_points[i], this->_texture);
 	}
 }
