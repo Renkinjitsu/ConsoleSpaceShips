@@ -47,13 +47,11 @@ void GameOverScreen::process()
 
 void GameOverScreen::update()
 {
+	this->_highlightPosition.move(Point::RIGHT);
+
 	if(this->_highlightPosition.equals(this->_highlightEndPosition))
 	{
 		this->_highlightPosition = this->_drawOffset;
-	}
-	else
-	{
-		this->_highlightPosition.move(Point::RIGHT);
 	}
 }
 

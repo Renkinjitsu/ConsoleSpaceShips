@@ -9,6 +9,7 @@
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
 #include "GameScreen.h"
+#include "MenuScreen.h"
 
 unsigned Game::_nextLevelId;
 
@@ -66,11 +67,26 @@ void Game::startLevel()
 
 		GameScreenBuilder builder;
 		builder.loadFromFile(levelFile);
-		ScreenManager::add(builder.build());
+		if(builder.isValid())
+		{
+			ScreenManager::add(builder.build());
+		}
+		else
+		{
+			++Game::_nextLevelId;
+			Game::startNextLevel();
+		}
 	}
 	else
 	{
-		//Display "CongratulationsScreen" (followed by high-score screen)
+		MenuScreen * congratulationsScreen = new MenuScreen();
+		congratulationsScreen->append("Congratulations!");
+		congratulationsScreen->append("You may receive the \"Challanger\" bedge");
+		congratulationsScreen->append(" by subscribing to our Facebook page!");
+
+		//TODO: Append a high-score board
+
+		ScreenManager::add(congratulationsScreen);
 	}
 }
 

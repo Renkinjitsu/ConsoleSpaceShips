@@ -180,7 +180,10 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 		}
 	}
 
-	return crashingPile.getTotalMass() >= (ship.getMass() / 2);
+	const unsigned maxShipEndurance = (ship.getMass() / 2);
+
+	return (crashingPile.getTotalMass() > 0) &&
+		(crashingPile.getTotalMass() >= maxShipEndurance);
 }
 
 bool GameAlgorithm::isPushDirection(const Point & direction)
