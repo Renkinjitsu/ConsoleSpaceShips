@@ -19,5 +19,5 @@ Ship::Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, cha
 
 void Ship::explode()
 {
-	this->setTexture((char)13);
+	//Do nothing
 }
