@@ -87,6 +87,11 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 	{
 		bigShipInfo._velocity = Point::RIGHT;
 	}
+
+	if(keyboard.isPressed(Keyboard::P))
+	{
+		this->setState(GameScreen::GAME_STATE_WON);
+	}
 }
 
 void GameScreen::process()
