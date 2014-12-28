@@ -47,7 +47,7 @@ void Game::startLevel()
 					found = true;
 					closestIdIndex = i;
 				}
-				else if(ids[i] < ids[closestIdIndex])
+				else if(ids[i] <= ids[closestIdIndex])
 				{
 					closestIdIndex = i;
 				}
@@ -73,8 +73,7 @@ void Game::startLevel()
 		}
 		else
 		{
-			++Game::_nextLevelId;
-			Game::startNextLevel();
+			Game::startNextLevel(); //Retry with another ID
 		}
 	}
 	else
