@@ -280,26 +280,31 @@ Screen * GameScreenBuilder::build()
 		{
 			game->addGameObject(this->_items[i]);
 		}
+		this->_items.clear();
 
 		for(unsigned i = 0; i < this->_exitPoints.size(); ++i)
 		{
 			game->addGameObject(this->_exitPoints[i]);
 		}
+		this->_exitPoints.clear();
 
 		for(unsigned i = 0; i < this->_walls.size(); ++i)
 		{
 			game->addGameObject(this->_walls[i]);
 		}
+		this->_walls.clear();
 
 		for(unsigned i = 0; i < this->_smallShips.size(); ++i)
 		{
 			game->addGameObject(this->_smallShips[i]);
 		}
+		this->_smallShips.clear();
 
 		for(unsigned i = 0; i < this->_bigShips.size(); ++i)
 		{
 			game->addGameObject(this->_bigShips[i]);
 		}
+		this->_bigShips.clear();
 	}
 	else
 	{
