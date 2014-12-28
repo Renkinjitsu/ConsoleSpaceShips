@@ -282,6 +282,11 @@ unsigned GameScreen::getActiveShipsCount() const
 GameScreen::GameScreen()
 {
 	this->_gameState = GameScreen::GAME_STATE_ONGOING;
+
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; ++i)
+	{
+		this->_ships[i] = NULL;
+	}
 };
 
 GameScreen::~GameScreen()
