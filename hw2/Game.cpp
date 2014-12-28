@@ -25,14 +25,20 @@ void Game::startLevel()
 		//Get ID per SPG file
 		std::vector<unsigned> ids;
 		{
-			for(unsigned i = 0; i < fileNames.size(); ++i)
+			for(std::vector<std::string>::iterator fileName = fileNames.begin();
+				fileName != fileNames.end(); ++fileName)
 			{
-				const std::string filePath = GameConfig::getLevelsPath() +  fileNames[i];
+				const std::string filePath = GameConfig::getLevelsPath() +  *fileName;
 
 				unsigned id;
 				if(FilesManager::getScreenId(filePath, id))
 				{
 					ids.push_back(id);
+				}
+				else
+				{
+					fileName = fileNames.erase(fileName);
+					--fileName;
 				}
 			}
 		}
