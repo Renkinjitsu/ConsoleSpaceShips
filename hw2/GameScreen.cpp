@@ -6,6 +6,7 @@
 #include "ScreenManager.h"
 #include "GameAlgorithm.h"
 #include "Game.h"
+#include "InGameMenuScreen.h"
 
 void GameScreen::insertShip(Ship * ship, unsigned index)
 {
@@ -47,7 +48,7 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 
 	if(keyboard.isPressed(keyboard.ESC))
 	{
-		this->setState(GameScreen::GAME_STATE_QUIT);
+		ScreenManager::add(new InGameMenuScreen());
 	}
 
 	if(keyboard.isPressed(keyboard.Z))
@@ -189,13 +190,20 @@ void GameScreen::process()
 			GameAlgorithm::expandToPile(pile, this->_allGameObjects);
 			pile.remove(shipInfo._pushPile);
 
-			for(GameObjectSet::iterator iter = pile.begin(); iter != pile.end(); ++iter)
+			GameAlgorithm::removeBlockedFrom(pile, this->_allGameObjects, shipInfo._velocity);
+			GameAlgorithm::expandToPile(shipInfo._pushPile, pile);
+		}
+		else if(shipInfo._rotate)
+		{
+			for(GameObjectSet::iterator iter = this->_items.begin(); iter != this->_items.end(); ++iter)
+			{
+				shipInfo._rotate &= (ship->isBlockedBy(**iter, Point::UP) == false);
+			}
+
+			for(GameObjectSet::iterator iter = this->_obstacles.begin(); iter != _obstacles.end(); ++iter)
 			{
 				shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
 			}
-
-			GameAlgorithm::removeBlockedFrom(pile, this->_allGameObjects, shipInfo._velocity);
-			GameAlgorithm::expandToPile(shipInfo._pushPile, pile);
 		}
 	}
 }

@@ -17,6 +17,10 @@ const unsigned GameConfig::allowedTexturesCount = sizeof(GameConfig::allowedText
 
 std::string GameConfig::_levelsPath(""); //Default path for level files (current directory)
 
+const std::string GameConfig::FILE_EXTENSION_LEVEL(".spg");
+const std::string GameConfig::FILE_EXTENSION_GAME_SAVE(".spp");
+const std::string GameConfig::FILE_EXTENSION_SOLUTION(".sps");
+
 GameConfig::GameConfig()
 {
 }

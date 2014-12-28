@@ -13,28 +13,20 @@ bool SmallShip::isBlockingRotation(const GameObject & other) const
 	const std::vector<Point> & points = this->getPoints();
 
 	const unsigned left = Point::getLeft(points[0], points[1]);
-	const unsigned top = Point::getTop(points[0], points[1]);
-	Point point(left, top);
+	const unsigned bottom = Point::getBottom(points[0], points[1]);
 
 	GameObject blockingArea(GameConfig::TEXTURES_EMPTY, false);
+	Point point(left, bottom);
+	blockingArea.setPoints(point);
 
 	point.move(Point::UP);
 	blockingArea.setPoints(point);
 
-	if(points[0].getX() == points[1].getX()) //Vertical
-	{
-		point.move(Point::RIGHT);
-		point.move(Point::DOWN);
-		blockingArea.setPoints(point);
+	point.move(Point::RIGHT);
+	blockingArea.setPoints(point);
 
-		point.move(Point::DOWN);
-		blockingArea.setPoints(point);
-	}
-	else //Horizontal
-	{
-		point.move(Point::RIGHT);
-		blockingArea.setPoints(point);
-	}
+	point.move(Point::DOWN);
+	blockingArea.setPoints(point);
 
 	return other.collidesWith(blockingArea);
 }

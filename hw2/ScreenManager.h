@@ -14,6 +14,7 @@ private:
 
 	static Screens _screens;
 	static Screen * _removeScreen;
+	static bool _removeAll;
 
 	ScreenManager();
 	~ScreenManager();
@@ -21,6 +22,7 @@ public:
 
 	static void add(Screen * screen);
 	static void remove(Screen * screen);
+	static void removeAll();
 
 	static void run(Canvas & canvas, Keyboard & keyboard);
 };

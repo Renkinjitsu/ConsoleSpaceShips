@@ -22,6 +22,7 @@
     <ClCompile Include="GameAlgorithm.cpp" />
     <ClCompile Include="GameObjectSet.cpp" />
     <ClCompile Include="GameScreenBuilder.cpp" />
+    <ClCompile Include="InGameMenuScreen.cpp" />
     <ClCompile Include="InstructionsScreen.cpp" />
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -51,6 +52,7 @@
     <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameObjectSet.h" />
     <ClInclude Include="GameScreenBuilder.h" />
+    <ClInclude Include="InGameMenuScreen.h" />
     <ClInclude Include="InstructionsScreen.h" />
     <ClInclude Include="io_utils.h" />
     <ClInclude Include="Item.h" />

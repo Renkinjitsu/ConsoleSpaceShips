@@ -1,7 +1,7 @@
 #ifndef CANVAS_H_
 #define CANVAS_H_
 
-#include <string>
+#include <ostream>
 
 #include "GameConfig.h"
 #include "Point.h"
@@ -30,6 +30,7 @@ public:
 	static const Point CENTER;
 
 	Canvas();
+	~Canvas();
 
 	void draw(const Point & posititon, char character);
 	void draw(const Point & posititon, const char * string);
@@ -40,6 +41,7 @@ public:
 
 	void begin();
 	void end();
+	void end(std::string & destination);
 };
 
 #endif /* CANVAS_H_ */

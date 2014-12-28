@@ -6,6 +6,7 @@
 
 Screens ScreenManager::_screens;
 Screen * ScreenManager::_removeScreen = NULL;
+bool ScreenManager::_removeAll = false;
 
 ScreenManager::ScreenManager()
 {
@@ -24,6 +25,11 @@ void ScreenManager::add(Screen * screen)
 void ScreenManager::remove(Screen * screen)
 {
 	ScreenManager::_removeScreen = screen;
+}
+
+void ScreenManager::removeAll()
+{
+	ScreenManager::_removeAll = true;
 }
 
 void ScreenManager::run(Canvas & canvas, Keyboard & keyboard)
@@ -49,7 +55,17 @@ void ScreenManager::run(Canvas & canvas, Keyboard & keyboard)
 		currentScreen->draw(canvas);
 		canvas.end();
 
-		if(ScreenManager::_removeScreen)
+		if(ScreenManager::_removeAll)
+		{
+			ScreenManager::_removeAll = false;
+
+			for(unsigned i = 0; i < ScreenManager::_screens.size(); ++i)
+			{
+				delete ScreenManager::_screens[i];
+			}
+			ScreenManager::_screens.clear();
+		}
+		else if(ScreenManager::_removeScreen)
 		{
 			Screens::iterator iter = std::find(ScreenManager::_screens.begin(),
 				ScreenManager::_screens.end(), ScreenManager::_removeScreen);

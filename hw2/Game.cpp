@@ -2,114 +2,185 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 #include "GameConfig.h"
 #include "FilesManager.h"
 #include "ScreenManager.h"
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
-#include "GameScreen.h"
 #include "MenuScreen.h"
 
-unsigned Game::_nextLevelId;
+unsigned Game::_currentLevelId;
+GameScreen * Game::_currentGameScreen;
+std::string Game::_currentLevelFileName("");
 
 void Game::startLevel()
 {
-	std::string nextLevelFileName("");
-	bool found = false;
+	Game::_currentLevelFileName = "";
+	bool lastFileReached = false;
 
-	//Get closest-level file
+	while(Game::_currentLevelFileName.empty() && !lastFileReached)
 	{
-		std::vector<std::string> fileNames = FilesManager::getFileNames();
-
-		//Get ID per SPG file
-		std::vector<unsigned> ids;
+		//Get closest-level file
 		{
-			for(std::vector<std::string>::iterator fileName = fileNames.begin();
-				fileName != fileNames.end(); ++fileName)
-			{
-				const std::string filePath = GameConfig::getLevelsPath() +  *fileName;
+			std::vector<std::string> fileNames = FilesManager::getFileNames();
 
-				unsigned id;
-				if(FilesManager::getScreenId(filePath, id))
+			std::vector<unsigned> ids;
+			{
+				for(std::vector<std::string>::iterator fileName = fileNames.begin();
+					fileName != fileNames.end(); ++fileName)
 				{
-					ids.push_back(id);
+					const std::string filePath = GameConfig::getLevelsPath() + *fileName;
+
+					unsigned id;
+					if(FilesManager::getScreenId(filePath, id))
+					{
+						ids.push_back(id);
+					}
+					else
+					{
+						fileName = fileNames.erase(fileName);
+						--fileName;
+					}
 				}
-				else
+			}
+
+			if(ids.empty())
+			{
+				lastFileReached = true;
+			}
+
+			unsigned closestIdIndex = 0;
+			bool found = false;
+			for(unsigned i = 0; i < ids.size(); ++i)
+			{
+				if(ids[i] >= Game::_currentLevelId)
 				{
-					fileName = fileNames.erase(fileName);
-					--fileName;
+					if(found == false)
+					{
+						found = true;
+						closestIdIndex = i;
+					}
+					else if(ids[i] <= ids[closestIdIndex])
+					{
+						closestIdIndex = i;
+					}
 				}
+			}
+
+			if(found)
+			{
+				Game::_currentLevelId = ids[closestIdIndex];
+				Game::_currentLevelFileName = fileNames[closestIdIndex];
+			}
+			else
+			{
+				++Game::_currentLevelId;
 			}
 		}
 
-		unsigned closestIdIndex = 0;
-		for(unsigned i = 0; i < ids.size(); ++i)
+		if(lastFileReached)
 		{
-			if(ids[i] >= Game::_nextLevelId)
-			{
-				if(found == false)
-				{
-					found = true;
-					closestIdIndex = i;
-				}
-				else if(ids[i] <= ids[closestIdIndex])
-				{
-					closestIdIndex = i;
-				}
-			}
-		}
+			MenuScreen * congratulationsScreen = new MenuScreen();
+			congratulationsScreen->append("Congratulations!");
+			congratulationsScreen->append("You may receive the \"Challanger\" bedge");
+			congratulationsScreen->append(" by subscribing to our Facebook page!");
 
-		if(found)
-		{
-			Game::_nextLevelId = ids[closestIdIndex];
-			nextLevelFileName = fileNames[closestIdIndex];
-		}
-	}
+			//TODO: Append a high-score board
 
-	if(found)
-	{
-		const std::string levelFile = GameConfig::getLevelsPath() + nextLevelFileName;
-
-		GameScreenBuilder builder;
-		builder.loadFromFile(levelFile);
-		if(builder.isValid())
-		{
-			ScreenManager::add(builder.build());
+			ScreenManager::add(congratulationsScreen);
 		}
 		else
 		{
-			Game::startNextLevel(); //Retry with another ID
+			const std::string levelFile = GameConfig::getLevelsPath() + Game::_currentLevelFileName;
+
+			GameScreenBuilder builder;
+			builder.loadFromFile(levelFile);
+			if(builder.isValid())
+			{
+				Game::_currentGameScreen = (GameScreen *)builder.build();
+				ScreenManager::add(Game::_currentGameScreen);
+			}
+			else
+			{
+				Game::startNextLevel(); //Retry with another ID
+			}
 		}
-	}
-	else
-	{
-		MenuScreen * congratulationsScreen = new MenuScreen();
-		congratulationsScreen->append("Congratulations!");
-		congratulationsScreen->append("You may receive the \"Challanger\" bedge");
-		congratulationsScreen->append(" by subscribing to our Facebook page!");
-
-		//TODO: Append a high-score board
-
-		ScreenManager::add(congratulationsScreen);
 	}
 }
 
 void Game::start()
 {
-	Game::_nextLevelId = 0;
+	Game::_currentLevelId = 0;
 
 	Game::startLevel();
 }
 
 void Game::startNextLevel()
 {
-	++Game::_nextLevelId;
+	Game::saveSolution();
 
+	++Game::_currentLevelId;
 	Game::startLevel();
+}
+
+void Game::saveGame()
+{
+	std::string stringScreenId = std::to_string(Game::_currentLevelId);
+	const std::string filePath = GameConfig::getLevelsPath() + stringScreenId + GameConfig::FILE_EXTENSION_GAME_SAVE;
+	std::ofstream saveFile(filePath, std::ios::out | std::ios::trunc);
+
+	saveFile << "ScreenID=" << stringScreenId << std::endl;
+
+	Canvas canvas;
+	canvas.begin();
+	Game::_currentGameScreen->draw(canvas);
+	std::string stringCanvas;
+	canvas.end(stringCanvas);
+
+	const char * canvasCharacter = stringCanvas.c_str();
+	for(unsigned i = 0; i < Canvas::getHeight(); ++i)
+	{
+		for(unsigned j = 0; j < Canvas::getWidth(); ++j)
+		{
+			saveFile << *canvasCharacter;
+			++canvasCharacter;
+		}
+
+		saveFile << std::endl;
+	}
+
+	saveFile.close();
+}
+
+void Game::loadGame()
+{
+	//TODO: Implement
+}
+
+void Game::restart()
+{
+	ScreenManager::remove(Game::_currentGameScreen);
+	const std::string & levelFilePath = Game::_currentLevelFileName;
+	GameScreenBuilder builder;
+	builder.loadFromFile(levelFilePath);
+	Game::_currentGameScreen = (GameScreen *)builder.build();
+	ScreenManager::add(Game::_currentGameScreen);
+}
+
+void Game::saveSolution()
+{
+	//TODO: Implement
 }
 
 void Game::gameOver()
 {
 	ScreenManager::add(new GameOverScreen());
+}
+
+void Game::exit()
+{
+	ScreenManager::remove(Game::_currentGameScreen);
 }

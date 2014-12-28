@@ -42,10 +42,11 @@ void MainMenuScreen::readUserInput(const Keyboard & keyboard)
 	}
 	else if(keyboard.isPressed(Keyboard::NUM4))
 	{
-		//ScreenManager::add(new LoadSavedGameScreen());
+		Game::loadGame();
 	}
 	else if(keyboard.isPressed(Keyboard::NUM5))
 	{
+		//TODO: Implement
 		//ScreenManager::add(new LoadSpecificLevelScreen());
 	}
 	else if(keyboard.isPressed(Keyboard::NUM9))

@@ -95,6 +95,9 @@
     <ClCompile Include="MenuScreen.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
+    <ClCompile Include="InGameMenuScreen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectSet.h">
@@ -174,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="LevelValidationScreen.h">
       <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameMenuScreen.h">
+      <Filter>Others</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -47,6 +47,11 @@ Canvas::Canvas()
 	//Nothing to do
 }
 
+Canvas::~Canvas()
+{
+	//Nothing to do
+}
+
 void Canvas::draw(const Point & posititon, char character)
 {
 
@@ -103,4 +108,9 @@ void Canvas::end()
 {
 	gotoxy(0, 0);
 	std::cout << this->_buffer;
+}
+
+void Canvas::end(std::string & destination)
+{
+	destination = this->_buffer;
 }

@@ -34,6 +34,10 @@ public:
 	static const char allowedTextures[];
 	static const unsigned allowedTexturesCount;
 
+	static const std::string FILE_EXTENSION_LEVEL;
+	static const std::string FILE_EXTENSION_GAME_SAVE;
+	static const std::string FILE_EXTENSION_SOLUTION;
+
 	static const std::string & getLevelsPath();
 	static void setLevelsPath(const char * const newPath);
 };
