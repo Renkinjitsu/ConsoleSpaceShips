@@ -13,6 +13,8 @@ private:
 	static GameScreen * _currentGameScreen;
 	static std::string _currentLevelFileName;
 
+	static std::string getSteps();
+
 	static void startLevel();
 	static void saveSolution();
 public:

@@ -16,6 +16,27 @@ unsigned Game::_currentLevelId;
 GameScreen * Game::_currentGameScreen;
 std::string Game::_currentLevelFileName("");
 
+std::string Game::getSteps()
+{
+	std::string steps = "";
+
+	const GameRecorder & gameRecorder = Game::_currentGameScreen->getRecorder();
+
+	for(GameRecorder::const_iterator iteration = gameRecorder.cbegin();
+		iteration != gameRecorder.cend(); ++iteration)
+	{
+		steps += std::to_string((*iteration).getId()) + ": ";
+		for(GameIterationRecorder::const_iterator step = (*iteration).cbegin();
+			step != (*iteration).cend(); ++step)
+		{
+			steps += *step;
+		}
+		steps += '\n';
+	}
+
+	return steps;
+}
+
 void Game::startLevel()
 {
 	Game::_currentLevelFileName = "";
@@ -133,6 +154,7 @@ void Game::saveGame()
 	std::ofstream saveFile(filePath, std::ios::out | std::ios::trunc);
 
 	saveFile << "ScreenID=" << stringScreenId << std::endl;
+	saveFile << "ClockIterations=" << Game::_currentGameScreen->getIterations() << std::endl;
 
 	Canvas canvas;
 	canvas.begin();
@@ -152,21 +174,7 @@ void Game::saveGame()
 		saveFile << std::endl;
 	}
 
-	saveFile << "ClockIterations = " << Game::_currentGameScreen->getIterations() << std::endl;
-
-	const GameRecorder & gameRecorder = Game::_currentGameScreen->getRecorder();
-
-	for(GameRecorder::const_iterator iteration = gameRecorder.cbegin();
-		iteration != gameRecorder.cend(); ++iteration)
-	{
-		saveFile << (*iteration).getId() << ": ";
-		for(GameIterationRecorder::const_iterator step = (*iteration).cbegin();
-			step != (*iteration).cend(); ++step)
-		{
-			saveFile << *step;
-		}
-		saveFile << std::endl;
-	}
+	saveFile << Game::getSteps();
 
 	saveFile.close();
 }
@@ -188,7 +196,20 @@ void Game::restart()
 
 void Game::saveSolution()
 {
-	//TODO: Implement
+	std::string stringScreenId = std::to_string(Game::_currentLevelId);
+	const std::string filePath = GameConfig::getLevelsPath() + stringScreenId + GameConfig::FILE_EXTENSION_SOLUTION;
+	std::ofstream saveFile(filePath, std::ios::out | std::ios::trunc);
+
+	saveFile << "ScreenID=" << stringScreenId << std::endl;
+
+	std::cout << "\fPlease provide your name for the score-screen and press <Enter>";
+	std::string solverName;
+	std::cin >> solverName; //TODO: Re-implement
+	saveFile << "NameOfSolver=" << solverName << std::endl;
+
+	saveFile << Game::getSteps();
+
+	saveFile.close();
 }
 
 void Game::gameOver()
