@@ -19,12 +19,12 @@ void GameIterationRecorder::recored(char pressedCharacter)
 	this->_pressedCharacters.push_back(pressedCharacter);
 }
 
-GameIterationRecorder::const_iterator GameIterationRecorder::cbegin()
+GameIterationRecorder::const_iterator GameIterationRecorder::cbegin() const
 {
 	return this->_pressedCharacters.cbegin();
 }
 
-GameIterationRecorder::const_iterator GameIterationRecorder::cend()
+GameIterationRecorder::const_iterator GameIterationRecorder::cend() const
 {
 	return this->_pressedCharacters.cend();
 }
@@ -48,12 +48,12 @@ void GameRecorder::recored(unsigned iterationId, char pressedKey)
 	this->_iterationRecords[this->_iterationRecords.size() - 1].recored(pressedKey);
 }
 
-GameRecorder::const_iterator GameRecorder::cbegin()
+GameRecorder::const_iterator GameRecorder::cbegin() const
 {
 	return this->_iterationRecords.cbegin();
 }
 
-GameRecorder::const_iterator GameRecorder::cend()
+GameRecorder::const_iterator GameRecorder::cend() const
 {
 	return this->_iterationRecords.cend();
 }

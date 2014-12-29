@@ -13,7 +13,7 @@ private:
 	static const unsigned TICKS_PER_SECOND = 8;
 
 	static Screens _screens;
-	static Screen * _removeScreen;
+	static std::vector<Screen *> _pendingRemoveScreens;
 	static bool _removeAll;
 
 	ScreenManager();

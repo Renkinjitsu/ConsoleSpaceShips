@@ -152,6 +152,22 @@ void Game::saveGame()
 		saveFile << std::endl;
 	}
 
+	saveFile << "ClockIterations = " << Game::_currentGameScreen->getIterations() << std::endl;
+
+	const GameRecorder & gameRecorder = Game::_currentGameScreen->getRecorder();
+
+	for(GameRecorder::const_iterator iteration = gameRecorder.cbegin();
+		iteration != gameRecorder.cend(); ++iteration)
+	{
+		saveFile << (*iteration).getId() << ": ";
+		for(GameIterationRecorder::const_iterator step = (*iteration).cbegin();
+			step != (*iteration).cend(); ++step)
+		{
+			saveFile << *step;
+		}
+		saveFile << std::endl;
+	}
+
 	saveFile.close();
 }
 

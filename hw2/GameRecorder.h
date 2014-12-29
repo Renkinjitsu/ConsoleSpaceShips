@@ -18,8 +18,8 @@ public:
 	void recored(char pressedCharacter);
 
 	typedef std::vector<char>::const_iterator const_iterator;
-	GameIterationRecorder::const_iterator cbegin();
-	GameIterationRecorder::const_iterator cend();
+	GameIterationRecorder::const_iterator cbegin() const;
+	GameIterationRecorder::const_iterator cend() const;
 };
 
 class GameRecorder
@@ -34,8 +34,8 @@ public:
 	void recored(unsigned iterationId, char pressedKey);
 
 	typedef std::vector<GameIterationRecorder>::const_iterator const_iterator;
-	GameRecorder::const_iterator cbegin();
-	GameRecorder::const_iterator cend();
+	GameRecorder::const_iterator cbegin() const;
+	GameRecorder::const_iterator cend() const;
 };
 
 #endif /* GAME_RECORDER_H_ */

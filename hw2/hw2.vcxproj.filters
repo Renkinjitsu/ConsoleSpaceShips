@@ -181,11 +181,11 @@
     <ClInclude Include="LevelValidationScreen.h">
       <Filter>Screens</Filter>
     </ClInclude>
-    <ClInclude Include="InGameMenuScreen.h">
-      <Filter>Others</Filter>
-    </ClInclude>
     <ClInclude Include="GameRecorder.h">
       <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameMenuScreen.h">
+      <Filter>Screens</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

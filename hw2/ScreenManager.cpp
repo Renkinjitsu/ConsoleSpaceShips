@@ -5,7 +5,7 @@
 #include "io_utils.h" //For Sleep()
 
 Screens ScreenManager::_screens;
-Screen * ScreenManager::_removeScreen = NULL;
+std::vector<Screen *> ScreenManager::_pendingRemoveScreens;
 bool ScreenManager::_removeAll = false;
 
 ScreenManager::ScreenManager()
@@ -24,7 +24,7 @@ void ScreenManager::add(Screen * screen)
 
 void ScreenManager::remove(Screen * screen)
 {
-	ScreenManager::_removeScreen = screen;
+	ScreenManager::_pendingRemoveScreens.push_back(screen);
 }
 
 void ScreenManager::removeAll()
@@ -65,16 +65,20 @@ void ScreenManager::run(Canvas & canvas, Keyboard & keyboard)
 			}
 			ScreenManager::_screens.clear();
 		}
-		else if(ScreenManager::_removeScreen)
+		else
 		{
-			Screens::iterator iter = std::find(ScreenManager::_screens.begin(),
-				ScreenManager::_screens.end(), ScreenManager::_removeScreen);
-
-			if(ScreenManager::_screens.end() != iter)
+			while(ScreenManager::_pendingRemoveScreens.size() > 0)
 			{
-				ScreenManager::_screens.erase(iter);
-				delete ScreenManager::_removeScreen;
-				ScreenManager::_removeScreen = NULL;
+				Screen * screen = ScreenManager::_pendingRemoveScreens[ScreenManager::_pendingRemoveScreens.size() - 1];
+				ScreenManager::_pendingRemoveScreens.pop_back();
+
+				Screens::iterator iter = std::find(ScreenManager::_screens.begin(),
+					ScreenManager::_screens.end(), screen);
+				if(ScreenManager::_screens.end() != iter)
+				{
+					ScreenManager::_screens.erase(iter);
+					delete screen;
+				}
 			}
 		}
 

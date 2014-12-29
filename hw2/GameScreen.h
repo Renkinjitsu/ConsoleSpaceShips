@@ -10,6 +10,7 @@
 #include "SmallShip.h"
 #include "Wall.h"
 #include "ExitPoint.h"
+#include "GameRecorder.h"
 
 //For inner usage only
 struct ShipInfo
@@ -47,6 +48,10 @@ private:
 	GameObjectSet _prevFreeFallingItems;
 	GameObjectSet _currFreeFallingItems;
 
+	unsigned _iteration;
+
+	GameRecorder _gameRecorder;
+
 	void insertShip(Ship * ship, unsigned index);
 	void removeShip(unsigned index);
 
@@ -70,6 +75,10 @@ public:
 	void process();
 	void update(); //The actual moving/translation/advancment of the game
 	void draw(Canvas & canvas) const;
+
+	const GameRecorder & getRecorder() const;
+
+	unsigned getIterations() const;
 };
 
 #endif /* GAME_H_ */

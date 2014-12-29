@@ -33,6 +33,8 @@ void GameScreen::removeShip(unsigned index)
 
 void GameScreen::setInitialState()
 {
+	++this->_iteration;
+
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
 		this->_shipInfos[i]._pushPile.clear();
@@ -51,47 +53,69 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 		ScreenManager::add(new InGameMenuScreen());
 	}
 
-	if(keyboard.isPressed(keyboard.Z))
+	Keyboard::Key smallShipAffectiveKey = Keyboard::ESC;
+	Keyboard::Key bigShipAffectiveKey = Keyboard::ESC;
+
+	if(keyboard.isPressed(Keyboard::Z))
 	{
+		smallShipAffectiveKey = Keyboard::Z;
 		smallShipInfo._rotate = true;
 	}
 	else if(keyboard.isPressed(keyboard.X))
 	{
+		smallShipAffectiveKey = Keyboard::X;
 		smallShipInfo._velocity = Point::DOWN;
 	}
 	else if(keyboard.isPressed(keyboard.W))
 	{
+		smallShipAffectiveKey = Keyboard::W;
 		smallShipInfo._velocity = Point::UP;
 	}
 	else if(keyboard.isPressed(keyboard.A))
 	{
+		smallShipAffectiveKey = Keyboard::A;
 		smallShipInfo._velocity = Point::LEFT;
 	}
 	else if(keyboard.isPressed(keyboard.D))
 	{
+		smallShipAffectiveKey = Keyboard::D;
 		smallShipInfo._velocity = Point::RIGHT;
 	}
 
-	if(keyboard.isPressed(keyboard.I))
+	if(keyboard.isPressed(Keyboard::I))
 	{
+		bigShipAffectiveKey = Keyboard::I;
 		bigShipInfo._velocity = Point::UP;
 	}
 	else if(keyboard.isPressed(keyboard.M))
 	{
+		bigShipAffectiveKey = Keyboard::M;
 		bigShipInfo._velocity = Point::DOWN;
 	}
 	else if(keyboard.isPressed(keyboard.J))
 	{
+		bigShipAffectiveKey = Keyboard::J;
 		bigShipInfo._velocity = Point::LEFT;
 	}
 	else if(keyboard.isPressed(keyboard.L))
 	{
+		bigShipAffectiveKey = Keyboard::L;
 		bigShipInfo._velocity = Point::RIGHT;
 	}
 
 	if(keyboard.isPressed(Keyboard::P))
 	{
 		this->setState(GameScreen::GAME_STATE_WON);
+	}
+
+	if(smallShipAffectiveKey != Keyboard::ESC)
+	{
+		this->_gameRecorder.recored(this->_iteration, smallShipAffectiveKey);
+	}
+
+	if(bigShipAffectiveKey != Keyboard::ESC)
+	{
+		this->_gameRecorder.recored(this->_iteration, bigShipAffectiveKey);
 	}
 }
 
@@ -276,6 +300,16 @@ void GameScreen::draw(Canvas & canvas) const
 	}
 }
 
+const GameRecorder & GameScreen::getRecorder() const
+{
+	return this->_gameRecorder;
+}
+
+unsigned GameScreen::getIterations() const
+{
+	return this->_iteration + 1;
+}
+
 bool GameScreen::isGameOver() const
 {
 	return (this->_gameState != GameScreen::GAME_STATE_ONGOING);
@@ -298,6 +332,7 @@ unsigned GameScreen::getActiveShipsCount() const
 GameScreen::GameScreen()
 {
 	this->_gameState = GameScreen::GAME_STATE_ONGOING;
+	this->_iteration = 0;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; ++i)
 	{
