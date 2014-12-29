@@ -202,7 +202,10 @@ void GameScreen::process()
 
 			for(GameObjectSet::iterator iter = this->_obstacles.begin(); iter != _obstacles.end(); ++iter)
 			{
-				shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
+				if(ship != *iter)
+				{
+					shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
+				}
 			}
 		}
 	}
