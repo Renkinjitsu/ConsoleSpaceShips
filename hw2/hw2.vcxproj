@@ -18,6 +18,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameConfig.cpp" />
     <ClCompile Include="GameOverScreen.cpp" />
+    <ClCompile Include="GameRecorder.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameAlgorithm.cpp" />
     <ClCompile Include="GameObjectSet.cpp" />
@@ -48,6 +49,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameOverScreen.h" />
+    <ClInclude Include="GameRecorder.h" />
     <ClInclude Include="GameScreen.h" />
     <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameObjectSet.h" />
