@@ -146,8 +146,18 @@ void Game::startLevel()
 
 void Game::start(const unsigned id)
 {
-	Game::_currentLevelId = id;
-	Game::startLevel();
+	std::vector<std::string> levels = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
+	if(levels.empty())
+	{
+		MenuScreen * noLevelsScreen = new MenuScreen();
+		noLevelsScreen->append("Sorry, there are levels to be played.");
+		ScreenManager::add(noLevelsScreen);
+	}
+	else
+	{
+		Game::_currentLevelId = id;
+		Game::startLevel();
+	}
 }
 
 void Game::startNextLevel()
