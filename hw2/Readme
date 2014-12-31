@@ -19,8 +19,6 @@ Unmet requirements
 - The levels are ordered by their ID.
 - Need to read the requirements of 2nd work block.
 
- - Start game at a specific point
-
  - Finish 'Game::loadGame();' implementation (load recording & iterations counter, anything more to load?)
 
  - Arguments:
@@ -42,15 +40,10 @@ Unmet requirements
 
  - Replay screen
 
-
  - Make 3 levels
     For each level:
     > Solution
     > Saved game
-
- - Use FilesManager for fo;e related activities
-
- - Handle empty folder
 
 ===========================
 Student dependent decisions
