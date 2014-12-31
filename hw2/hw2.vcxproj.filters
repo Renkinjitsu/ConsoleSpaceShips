@@ -101,6 +101,9 @@
     <ClCompile Include="GameRecorder.cpp">
       <Filter>Others</Filter>
     </ClCompile>
+    <ClCompile Include="ReplayScreen.cpp">
+      <Filter>Screens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectSet.h">
@@ -185,6 +188,9 @@
       <Filter>Others</Filter>
     </ClInclude>
     <ClInclude Include="InGameMenuScreen.h">
+      <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="ReplayScreen.h">
       <Filter>Screens</Filter>
     </ClInclude>
   </ItemGroup>
