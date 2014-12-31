@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <cctype>
 #include <string.h>
 
 #include "GameConfig.h"
@@ -112,7 +111,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 		for(unsigned i = 0; i < Canvas::getWidth(); ++i, ++serializedPosition)
 		{
-			const char character = (i < line.length()) ? toupper(line.c_str()[i]) : GameConfig::TEXTURES_EMPTY;
+			const char character = (i < line.length()) ? line.c_str()[i] : GameConfig::TEXTURES_EMPTY;
 
 			if(GameScreenBuilder::isValidCharacter(character))
 			{
@@ -125,9 +124,10 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		}
 	}
 
-	//TODO: Movement instructions loading comes here
-
 	levelFile.close();
+
+	bool noBigSpaceship = true;
+	bool noSmallSpaceship = true;
 
 	//Recognize items
 	for(unsigned serializedPosition = 0; serializedPosition < Canvas::MAX_SERIALIZED_LENGTH; ++serializedPosition)
@@ -160,6 +160,8 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 			case GameConfig::TEXTURES_SMALL_SPACESHIP:
 			{
+				noSmallSpaceship = false;
+
 				if(points.size() != 2)
 				{
 					error += "Invalid small spaceship";
@@ -176,6 +178,8 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 			case GameConfig::TEXTURES_BIG_SPACESHIP:
 			{
+				noBigSpaceship = false;
+
 				if(points.size() != 4)
 				{
 					error += "Invalid big spaceship";
@@ -238,7 +242,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 	}
 
 	//Count validations
-	if(this->_smallShips.size() < 1)
+	if(noSmallSpaceship)
 	{
 		this->_errors.push_back("No small spaceship");
 	}
@@ -247,7 +251,7 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		this->_errors.push_back("Too many small spaceships");
 	}
 
-	if(this->_bigShips.size() < 1)
+	if(noBigSpaceship)
 	{
 		this->_errors.push_back("No big spaceship");
 	}
