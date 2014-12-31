@@ -21,6 +21,9 @@ private:
 
 	static void startLevel();
 	static void saveSolution();
+
+	static void displayEndGameScreen();
+
 public:
 
 	static void start(const unsigned id = 0);

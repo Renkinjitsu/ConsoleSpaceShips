@@ -140,14 +140,7 @@ void Game::startLevel()
 
 	if(!levelFound)
 	{
-		MenuScreen * congratulationsScreen = new MenuScreen();
-		congratulationsScreen->append("Congratulations!");
-		congratulationsScreen->append("You may receive the \"Challanger\" bedge");
-		congratulationsScreen->append(" by subscribing to our Facebook page!");
-
-		//TODO: Append a high-score board
-
-		ScreenManager::add(congratulationsScreen);
+		Game::displayEndGameScreen();
 	}
 }
 
@@ -233,6 +226,62 @@ void Game::saveSolution()
 		solutionFile->close();
 		delete solutionFile;
 	}
+}
+
+void Game::displayEndGameScreen()
+{
+	MenuScreen * congratulationsScreen = new MenuScreen();
+	congratulationsScreen->append("Congratulations!");
+	congratulationsScreen->append("You may receive the \"Challanger\" bedge");
+	congratulationsScreen->append(" by subscribing to our Facebook page!");
+	congratulationsScreen->append("");
+	congratulationsScreen->append("");
+	congratulationsScreen->append("Best scores:");
+
+	std::vector<std::string> levels = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
+	std::vector<std::string> solutions = FilesManager::getFilesList(FilesManager::FILE_TYPE_SOLUTION);
+	for(unsigned i = 0; i < levels.size(); ++i)
+	{
+		std::string score = std::to_string(i + 1) + ". " + levels[i] + " - ";
+
+		std::vector<std::string>::const_iterator bestSolution =
+			std::find(solutions.cbegin(), solutions.cend(), levels[i]);
+		if(bestSolution == solutions.cend())
+		{
+			score += "Unsolved!";
+		}
+		else
+		{
+			std::ifstream * solutionFile = FilesManager::openFile(levels[i], FilesManager::FILE_TYPE_SOLUTION);
+
+			std::string line;
+			std::getline(*solutionFile, line); //Skip screen ID
+			std::getline(*solutionFile, line); //Get solver name
+			score += "by ";
+			score += &(line.c_str()[strlen("NameOfSolver=")]);
+
+			//Get moves cout
+			unsigned iterationsCount = 0;
+			while(std::getline(*solutionFile, line))
+			{
+				unsigned iterationIndex;
+				char colon;
+				if(sscanf(line.c_str(), "%u%c", &iterationIndex, &colon) == 2 && colon == ':')
+				{
+					iterationsCount = iterationIndex + 1;
+				}
+			}
+
+			score += " in " + std::to_string(iterationsCount) + " clock-ticks";
+
+			solutionFile->close();
+			delete solutionFile;
+		}
+
+		congratulationsScreen->append(score);
+	}
+
+	ScreenManager::add(congratulationsScreen);
 }
 
 void Game::gameOver()
