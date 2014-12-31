@@ -3,6 +3,8 @@
 
 #include "GameScreen.h"
 
+#include <string>
+
 class Game
 {
 private:
@@ -14,6 +16,8 @@ private:
 	static std::string _currentLevelFileName;
 
 	static std::string getSteps();
+	static unsigned getSolutionInterationsCount(const std::string & levelName);
+	static std::string Game::prompt(const std::string & message);
 
 	static void startLevel();
 	static void saveSolution();

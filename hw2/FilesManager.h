@@ -6,16 +6,6 @@
 
 class FilesManager
 {
-private:
-	FilesManager();
-	~FilesManager();
-
-	static std::string _levelsPath;
-
-	static const std::string FILE_EXTENSION_LEVEL;
-	static const std::string FILE_EXTENSION_GAME_SAVE;
-	static const std::string FILE_EXTENSION_SOLUTION;
-
 public:
 
 	enum FileType
@@ -25,13 +15,27 @@ public:
 		FILE_TYPE_SOLUTION
 	};
 
-	static bool getScreenId(const std::string & filePath, unsigned & id);
+private:
+	FilesManager();
+	~FilesManager();
+
+	static std::string _workingDirectory;
+
+	static const std::string FILE_EXTENSION_LEVEL;
+	static const std::string FILE_EXTENSION_GAME_SAVE;
+	static const std::string FILE_EXTENSION_SOLUTION;
+
+	static const std::string & getExtension(FilesManager::FileType fileType);
+
+public:
+
+	static bool getScreenId(const std::string & fileName, unsigned & id);
 
 	static std::vector<std::string> getFilesList(const FilesManager::FileType fileType);
-	static void setLevelsPath(const char * const newPath);
+	static void changeDirectory(const char * const newPath);
 
-	static std::ofstream * createSaveFile(const std::string fileName);
-	static std::ofstream * createSolutionFile(const std::string fileName);
+	static std::ofstream * createFile(const std::string & fileName, FilesManager::FileType fileType);
+	static std::ifstream * openFile(const std::string & fileName, FilesManager::FileType fileType);
 };
 
 #endif /* FILES_MANAGER_H_ */

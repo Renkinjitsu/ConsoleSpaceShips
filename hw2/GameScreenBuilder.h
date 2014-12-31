@@ -34,7 +34,7 @@ public:
 	GameScreenBuilder();
 	~GameScreenBuilder();
 
-	void loadFromFile(const std::string & filePath);
+	void loadFromFile(const std::string & fileName);
 
 	bool isValid() const;
 

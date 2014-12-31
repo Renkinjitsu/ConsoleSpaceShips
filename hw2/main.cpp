@@ -8,7 +8,7 @@ int main(int argc, char * argv[])
 {
 	if(argc > 1)
 	{
-		FilesManager::setLevelsPath(argv[1]);
+		FilesManager::changeDirectory(argv[1]);
 	}
 
 	Canvas canvas;

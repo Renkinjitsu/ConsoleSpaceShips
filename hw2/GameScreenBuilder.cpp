@@ -51,21 +51,21 @@ GameScreenBuilder::~GameScreenBuilder()
 	this->clear();
 }
 
-void GameScreenBuilder::loadFromFile(const std::string & filePath)
+void GameScreenBuilder::loadFromFile(const std::string & fileName)
 {
 	this->clear();
 
-	std::ifstream levelFile(filePath);
+	std::ifstream * levelFile = FilesManager::openFile(fileName, FilesManager::FILE_TYPE_LEVEL);
 	std::string line;
 
-	//ID
-	if(levelFile.eof())
+	//Screen ID
+	if(levelFile->eof())
 	{
 		this->_errors.push_back("No screen ID");
 	}
 	else
 	{
-		std::getline(levelFile, line);
+		std::getline(*levelFile, line);
 		unsigned id;
 		if(sscanf(line.c_str(), "ScreenID=%u", &id) != 1)
 		{
@@ -73,18 +73,18 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		}
 		else
 		{
+			//Check for duplicate ID
 			const std::vector<std::string> & fileNames = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
 			for(unsigned i = 0; i < fileNames.size(); ++i)
 			{
-				std::string path = fileNames[i];
-				if(path != filePath)
+				if(fileNames[i] != fileName)
 				{
 					unsigned otherId;
-					if(FilesManager::getScreenId(path, otherId))
+					if(FilesManager::getScreenId(fileNames[i], otherId))
 					{
 						if(id == otherId)
 						{
-							this->_errors.push_back("Duplicate ID - \"" + path + "\"");
+							this->_errors.push_back("Duplicate ID - \"" + fileNames[i] + "\"");
 						}
 					}
 				}
@@ -92,21 +92,18 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		}
 	}
 
-	const unsigned lineOffset = 2; //First line is marked as '1', & is ocupied by the screen ID
-	const unsigned columnOffset = 1; //First column is marked as '1'
-
 	//Load serialized canvas
 	char serializedCanvas[Canvas::MAX_SERIALIZED_LENGTH];
 	unsigned serializedPosition = 0;
 	for(unsigned lineIndex = 0; lineIndex < Canvas::getHeight(); ++lineIndex)
 	{
-		if(levelFile.eof())
+		if(levelFile->eof())
 		{
 			line = "";
 		}
 		else
 		{
-			std::getline(levelFile, line);
+			std::getline(*levelFile, line);
 		}
 
 		for(unsigned i = 0; i < Canvas::getWidth(); ++i, ++serializedPosition)
@@ -124,7 +121,8 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		}
 	}
 
-	levelFile.close();
+	levelFile->close();
+	delete levelFile;
 
 	bool noBigSpaceship = true;
 	bool noSmallSpaceship = true;
@@ -233,6 +231,9 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 
 		if(error.length() > 0)
 		{
+			const unsigned lineOffset = 2; //First line is marked as '1', & is ocupied by the screen ID
+			const unsigned columnOffset = 1; //First column is marked as '1'
+
 			const unsigned lineIndex = serializedPosition / Canvas::getWidth();
 			const unsigned characterIndex = serializedPosition % Canvas::getWidth();
 			error += " at line " + std::to_string(lineOffset + lineIndex);

@@ -1,7 +1,6 @@
 #include "Game.h"
 
 #include <vector>
-#include <string>
 #include <iostream>
 #include <fstream>
 
@@ -10,6 +9,12 @@
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
 #include "MenuScreen.h"
+
+typedef struct
+{
+	const std::string * name;
+	unsigned id;
+}FileInfo;
 
 unsigned Game::_currentLevelId;
 GameScreen * Game::_currentGameScreen;
@@ -36,83 +41,86 @@ std::string Game::getSteps()
 	return steps;
 }
 
+unsigned Game::getSolutionInterationsCount(const std::string & levelName)
+{
+	unsigned iterationsCount = 0;
+
+	std::ifstream * solutionFile = FilesManager::openFile(levelName, FilesManager::FILE_TYPE_SOLUTION);
+
+	std::string line;
+	while(std::getline(*solutionFile, line))
+	{
+		unsigned iterationIndex;
+		char colon;
+		if(sscanf(line.c_str(), "%u%c", &iterationIndex, &colon) == 2 && colon == ':')
+		{
+			iterationsCount = iterationIndex + 1;
+		}
+	}
+
+	solutionFile->close();
+	delete solutionFile;
+
+	return iterationsCount;
+}
+
+std::string Game::prompt(const std::string & message)
+{
+	std::string reply;
+
+	system("cls");
+	std::cout << message << " ";
+	std::cin >> reply;
+	system("cls");
+
+	return reply;
+}
+
 void Game::startLevel()
 {
-	Game::_currentLevelFileName = "";
-	bool lastFileReached = false;
+	std::vector<std::string> fileNames = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
 
-	while(Game::_currentLevelFileName.empty() && !lastFileReached)
+	//Get the ID of each level
+	std::vector<FileInfo> files;
+	for(std::vector<std::string>::iterator fileName = fileNames.begin();
+		fileName != fileNames.end(); ++fileName)
 	{
-		//Get closest-level file
+		FileInfo fileInfo;
+
+		if(FilesManager::getScreenId(*fileName, fileInfo.id))
 		{
-			std::vector<std::string> fileNames = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
-
-			std::vector<unsigned> ids;
-			{
-				for(std::vector<std::string>::iterator fileName = fileNames.begin();
-					fileName != fileNames.end(); ++fileName)
-				{
-					unsigned id;
-					if(FilesManager::getScreenId(*fileName, id))
-					{
-						ids.push_back(id);
-					}
-					else
-					{
-						fileName = fileNames.erase(fileName);
-						--fileName;
-					}
-				}
-			}
-
-			if(ids.empty())
-			{
-				lastFileReached = true;
-			}
-
-			unsigned closestIdIndex = 0;
-			bool found = false;
-			for(unsigned i = 0; i < ids.size(); ++i)
-			{
-				if(ids[i] >= Game::_currentLevelId)
-				{
-					if(found == false)
-					{
-						found = true;
-						closestIdIndex = i;
-					}
-					else if(ids[i] <= ids[closestIdIndex])
-					{
-						closestIdIndex = i;
-					}
-				}
-			}
-
-			if(found)
-			{
-				Game::_currentLevelId = ids[closestIdIndex];
-				Game::_currentLevelFileName = fileNames[closestIdIndex];
-			}
-			else
-			{
-				++Game::_currentLevelId;
-			}
-		}
-
-		if(lastFileReached)
-		{
-			MenuScreen * congratulationsScreen = new MenuScreen();
-			congratulationsScreen->append("Congratulations!");
-			congratulationsScreen->append("You may receive the \"Challanger\" bedge");
-			congratulationsScreen->append(" by subscribing to our Facebook page!");
-
-			//TODO: Append a high-score board
-
-			ScreenManager::add(congratulationsScreen);
+			fileInfo.name = &(*fileName);
+			files.push_back(fileInfo);
 		}
 		else
 		{
-			const std::string levelFile;
+			fileName = fileNames.erase(fileName);
+			--fileName;
+		}
+	}
+
+	//Sort
+	for(unsigned i = 1; i < files.size(); ++i)
+	{
+		for(unsigned j = i; j > 0; --j)
+		{
+			if(files[j].id < files[j - 1].id)
+			{
+				std::swap(files[j].id, files[j - 1].id);
+				std::swap(files[j].name, files[j - 1].name);
+			}
+		}
+	}
+
+	bool levelFound = false;
+
+	//Get closest-level file
+	for(unsigned i = 0; i < files.size() && !levelFound; ++i)
+	{
+		if(files[i].id >= Game::_currentLevelId)
+		{
+			Game::_currentLevelId = files[i].id;
+			Game::_currentLevelFileName = *files[i].name;
 
 			GameScreenBuilder builder;
 			builder.loadFromFile(Game::_currentLevelFileName);
@@ -120,12 +128,26 @@ void Game::startLevel()
 			{
 				Game::_currentGameScreen = (GameScreen *)builder.build();
 				ScreenManager::add(Game::_currentGameScreen);
+
+				levelFound = true;
 			}
-			else
+			else //Retry with a higher level ID
 			{
-				Game::startNextLevel(); //Retry with another ID
+				++Game::_currentLevelId;
 			}
 		}
+	}
+
+	if(!levelFound)
+	{
+		MenuScreen * congratulationsScreen = new MenuScreen();
+		congratulationsScreen->append("Congratulations!");
+		congratulationsScreen->append("You may receive the \"Challanger\" bedge");
+		congratulationsScreen->append(" by subscribing to our Facebook page!");
+
+		//TODO: Append a high-score board
+
+		ScreenManager::add(congratulationsScreen);
 	}
 }
 
@@ -145,13 +167,10 @@ void Game::startNextLevel()
 
 void Game::saveGame()
 {
-	//TODO: Re-implement
 	//Get save-file name
-	std::cout << "\fPlease choose a name for this game-save and press <Enter>";
-	std::string saveName;
-	std::cin >> saveName;
+	std::string saveName = Game::prompt("Game-save name:");
 
-	std::ofstream * saveFile = FilesManager::createSaveFile(saveName);
+	std::ofstream * saveFile = FilesManager::createFile(saveName, FilesManager::FILE_TYPE_SAVE);
 
 	*saveFile << "ScreenID=" << Game::_currentLevelId << std::endl;
 	*saveFile << "ClockIterations=" << Game::_currentGameScreen->getIterations() << std::endl;
@@ -197,19 +216,23 @@ void Game::restart()
 
 void Game::saveSolution()
 {
-	std::ofstream * solutionFile = FilesManager::createSolutionFile(Game::_currentLevelFileName);
+	const unsigned currentGameIterations = Game::_currentGameScreen->getIterations();
+	const unsigned currentSolutionIterations = Game::getSolutionInterationsCount(Game::_currentLevelFileName);
+	if(currentSolutionIterations == 0 ||
+		currentGameIterations < currentSolutionIterations)
+	{
+		std::string solverName = Game::prompt("Congratulations! You made a new record! What is your name?");
 
-	*solutionFile << "ScreenID=" << Game::_currentLevelId << std::endl;
+		std::ofstream * solutionFile = FilesManager::createFile(Game::_currentLevelFileName, FilesManager::FILE_TYPE_SOLUTION);
+		std::string steps = Game::getSteps();
 
-	std::cout << "\fPlease provide your name for the score-screen and press <Enter>";
-	std::string solverName;
-	std::cin >> solverName; //TODO: Re-implement
-	*solutionFile << "NameOfSolver=" << solverName << std::endl;
+		*solutionFile << "ScreenID=" << Game::_currentLevelId << std::endl;
+		*solutionFile << "NameOfSolver=" << solverName << std::endl;
+		*solutionFile << steps;
 
-	*solutionFile << Game::getSteps();
-
-	solutionFile->close();
-	delete solutionFile;
+		solutionFile->close();
+		delete solutionFile;
+	}
 }
 
 void Game::gameOver()
