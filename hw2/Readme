@@ -19,16 +19,42 @@ Unmet requirements
 - The levels are ordered by their ID.
 - Need to read the requirements of 2nd work block.
 
+ - Start game at a specific point
+
+ - Arguments:
+    The path must be quoted (dir /b "d:\path\some sub folder with spaces")
+    string command = "dir /b \"" + path + "\"";
+    Test:
+    > "C:\Users\or\Desktop\space ship\"
+    > "C:\Users\or\Desktop\space ship\\"
+
+ - Save solution if none exists or if better
+    ScreenID=<screen ID>
+    NameOfSolver=<name>
+    <iteration>: <chars>
+
+ - Score screen
+
+ - Load saved game
+    > For each save display file name & level name
+
+ - Replay screen
+
+
+ - Make 3 levels
+    For each level:
+    > Solution
+    > Saved game
+
+ - Use FilesManager for fo;e related activities
+
+ - Handle empty folder
+
 ===========================
 Student dependent decisions
 ===========================
 - An item that falls indirectly on a ship is not considered as crashed into the ship.
-- The small ship may rotate in the same cycle as moving/advancing/position-changing.
+- The small ship can't rotate in the same cycle as moving/advancing/position-changing.
 - A ship may push a free-falling item.
 - Only a ship can go through the exit point.
 - A ship can't push another ship.
-
-
-
-
-system("dir /b somedir\\*.spg\"");
