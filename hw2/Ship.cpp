@@ -3,17 +3,17 @@
 Ship::Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, char texture)
 	: GameObject(texture, false)
 {
-	Point startingPoint(bottoLeftPosition);
+	Point widthWalker(bottoLeftPosition);
 	for(size_t i = 0; i < width; i++)
 	{
-		startingPoint.move(Point::RIGHT);
-
-		Point current(startingPoint);
+		Point heightWalker(widthWalker);
 		for(size_t j = 0; j < height; j++)
 		{
-			current.move(Point::UP);
-			this->setPoints(current);
+			this->setPoints(heightWalker);
+			heightWalker.move(Point::UP);
 		}
+
+		widthWalker.move(Point::RIGHT);
 	}
 }
 
