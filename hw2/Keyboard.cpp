@@ -3,6 +3,15 @@
 #include "io_utils.h"
 #include <cctype>
 
+const Keyboard::Key Keyboard::numberKeys[] =
+{
+	Keyboard::NUM1, Keyboard::NUM2, Keyboard::NUM3,
+	Keyboard::NUM4, Keyboard::NUM5, Keyboard::NUM6,
+	Keyboard::NUM7, Keyboard::NUM8, Keyboard::NUM9
+};
+
+const unsigned Keyboard::numberKeysCount = sizeof(Keyboard::numberKeys) / sizeof(*Keyboard::numberKeys);
+
 void Keyboard::resetPressedKeys()
 {
 	for(size_t i = 0; i < Keyboard::SUPPORTED_KEYS; ++i)

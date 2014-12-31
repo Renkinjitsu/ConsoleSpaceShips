@@ -21,6 +21,8 @@ Unmet requirements
 
  - Start game at a specific point
 
+ - Finish 'Game::loadGame();' implementation (load recording & iterations counter, anything more to load?)
+
  - Arguments:
     The path must be quoted (dir /b "d:\path\some sub folder with spaces")
     string command = "dir /b \"" + path + "\"";

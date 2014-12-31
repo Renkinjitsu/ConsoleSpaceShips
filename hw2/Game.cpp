@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "GameConfig.h"
 #include "FilesManager.h"
 #include "ScreenManager.h"
 #include "GameScreenBuilder.h"
@@ -46,17 +45,15 @@ void Game::startLevel()
 	{
 		//Get closest-level file
 		{
-			std::vector<std::string> fileNames = FilesManager::getFileNames();
+			std::vector<std::string> fileNames = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
 
 			std::vector<unsigned> ids;
 			{
 				for(std::vector<std::string>::iterator fileName = fileNames.begin();
 					fileName != fileNames.end(); ++fileName)
 				{
-					const std::string filePath = GameConfig::getLevelsPath() + *fileName;
-
 					unsigned id;
-					if(FilesManager::getScreenId(filePath, id))
+					if(FilesManager::getScreenId(*fileName, id))
 					{
 						ids.push_back(id);
 					}
@@ -115,10 +112,10 @@ void Game::startLevel()
 		}
 		else
 		{
-			const std::string levelFile = GameConfig::getLevelsPath() + Game::_currentLevelFileName;
+			const std::string levelFile;
 
 			GameScreenBuilder builder;
-			builder.loadFromFile(levelFile);
+			builder.loadFromFile(Game::_currentLevelFileName);
 			if(builder.isValid())
 			{
 				Game::_currentGameScreen = (GameScreen *)builder.build();
@@ -132,10 +129,9 @@ void Game::startLevel()
 	}
 }
 
-void Game::start()
+void Game::start(const unsigned id)
 {
-	Game::_currentLevelId = 0;
-
+	Game::_currentLevelId = id;
 	Game::startLevel();
 }
 
@@ -149,12 +145,16 @@ void Game::startNextLevel()
 
 void Game::saveGame()
 {
-	std::string stringScreenId = std::to_string(Game::_currentLevelId);
-	const std::string filePath = GameConfig::getLevelsPath() + stringScreenId + GameConfig::FILE_EXTENSION_GAME_SAVE;
-	std::ofstream saveFile(filePath, std::ios::out | std::ios::trunc);
+	//TODO: Re-implement
+	//Get save-file name
+	std::cout << "\fPlease choose a name for this game-save and press <Enter>";
+	std::string saveName;
+	std::cin >> saveName;
 
-	saveFile << "ScreenID=" << stringScreenId << std::endl;
-	saveFile << "ClockIterations=" << Game::_currentGameScreen->getIterations() << std::endl;
+	std::ofstream * saveFile = FilesManager::createSaveFile(saveName);
+
+	*saveFile << "ScreenID=" << Game::_currentLevelId << std::endl;
+	*saveFile << "ClockIterations=" << Game::_currentGameScreen->getIterations() << std::endl;
 
 	Canvas canvas;
 	canvas.begin();
@@ -167,16 +167,17 @@ void Game::saveGame()
 	{
 		for(unsigned j = 0; j < Canvas::getWidth(); ++j)
 		{
-			saveFile << *canvasCharacter;
+			*saveFile << *canvasCharacter;
 			++canvasCharacter;
 		}
 
-		saveFile << std::endl;
+		*saveFile << std::endl;
 	}
 
-	saveFile << Game::getSteps();
+	*saveFile << Game::getSteps();
 
-	saveFile.close();
+	saveFile->close();
+	delete saveFile;
 }
 
 void Game::loadGame()
@@ -196,20 +197,19 @@ void Game::restart()
 
 void Game::saveSolution()
 {
-	std::string stringScreenId = std::to_string(Game::_currentLevelId);
-	const std::string filePath = GameConfig::getLevelsPath() + stringScreenId + GameConfig::FILE_EXTENSION_SOLUTION;
-	std::ofstream saveFile(filePath, std::ios::out | std::ios::trunc);
+	std::ofstream * solutionFile = FilesManager::createSolutionFile(Game::_currentLevelFileName);
 
-	saveFile << "ScreenID=" << stringScreenId << std::endl;
+	*solutionFile << "ScreenID=" << Game::_currentLevelId << std::endl;
 
 	std::cout << "\fPlease provide your name for the score-screen and press <Enter>";
 	std::string solverName;
 	std::cin >> solverName; //TODO: Re-implement
-	saveFile << "NameOfSolver=" << solverName << std::endl;
+	*solutionFile << "NameOfSolver=" << solverName << std::endl;
 
-	saveFile << Game::getSteps();
+	*solutionFile << Game::getSteps();
 
-	saveFile.close();
+	solutionFile->close();
+	delete solutionFile;
 }
 
 void Game::gameOver()

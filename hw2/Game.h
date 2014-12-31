@@ -19,7 +19,7 @@ private:
 	static void saveSolution();
 public:
 
-	static void start();
+	static void start(const unsigned id = 0);
 	static void startNextLevel();
 
 	static void saveGame();

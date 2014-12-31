@@ -58,6 +58,9 @@ private:
 	void resetPressedKeys();
 public:
 
+	static const Keyboard::Key numberKeys[];
+	static const unsigned numberKeysCount;
+
 	Keyboard();
 	~Keyboard();
 

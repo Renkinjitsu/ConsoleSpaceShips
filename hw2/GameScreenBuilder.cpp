@@ -73,10 +73,10 @@ void GameScreenBuilder::loadFromFile(const std::string & filePath)
 		}
 		else
 		{
-			const std::vector<std::string> & fileNames = FilesManager::getFileNames();
+			const std::vector<std::string> & fileNames = FilesManager::getFilesList(FilesManager::FILE_TYPE_LEVEL);
 			for(unsigned i = 0; i < fileNames.size(); ++i)
 			{
-				std::string path = GameConfig::getLevelsPath() + fileNames[i];
+				std::string path = fileNames[i];
 				if(path != filePath)
 				{
 					unsigned otherId;

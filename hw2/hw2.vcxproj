@@ -28,6 +28,7 @@
     <ClCompile Include="io_utils.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="LevelSelectionScreen.cpp" />
     <ClCompile Include="LevelValidationScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -61,6 +62,7 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="LevelSelectionScreen.h" />
     <ClInclude Include="LevelValidationScreen.h" />
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="MenuScreen.h" />

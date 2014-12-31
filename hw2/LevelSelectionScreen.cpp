@@ -1,19 +1,20 @@
-#include "LevelValidationScreen.h"
+#include "LevelSelectionScreen.h"
 
 #include <algorithm>
 
 #include "FilesManager.h"
 #include "ScreenManager.h"
-#include "MenuScreen.h"
+#include "Game.h"
+#include "GameScreenBuilder.h"
 
-const unsigned LevelValidationScreen::MAX_SUPPORTED_FILES = Keyboard::numberKeysCount;
+const unsigned LevelSelectionScreen::MAX_SUPPORTED_FILES = Keyboard::numberKeysCount;
 
-LevelValidationScreen::LevelValidationScreen()
+LevelSelectionScreen::LevelSelectionScreen()
 {
 	const std::vector<std::string> availableFileNames = FilesManager::getFilesList(FilesManager::FileType::FILE_TYPE_LEVEL);
 
 	//Support only first 'MAX_SUPPORTED_FILES' files
-	const unsigned relevantFilesCount = std::min(availableFileNames.size(), LevelValidationScreen::MAX_SUPPORTED_FILES);
+	const unsigned relevantFilesCount = std::min(availableFileNames.size(), LevelSelectionScreen::MAX_SUPPORTED_FILES);
 
 	char indexingCache[] = {'0', ')', ' ', '\0'};
 
@@ -44,15 +45,15 @@ LevelValidationScreen::LevelValidationScreen()
 	}
 }
 
-LevelValidationScreen::~LevelValidationScreen()
+LevelSelectionScreen::~LevelSelectionScreen()
 {
 }
 
-void LevelValidationScreen::setInitialState()
+void LevelSelectionScreen::setInitialState()
 {
 }
 
-void LevelValidationScreen::readUserInput(const Keyboard & keyboard)
+void LevelSelectionScreen::readUserInput(const Keyboard & keyboard)
 {
 	if(keyboard.isPressed(Keyboard::ESC))
 	{
@@ -73,30 +74,33 @@ void LevelValidationScreen::readUserInput(const Keyboard & keyboard)
 
 		if(optionSelected)
 		{
-			this->_builder.loadFromFile(this->_fileNames[selectedIndex]);
-			if(this->_builder.isValid())
+			unsigned screenId;
+			bool isValidScreenId = FilesManager::getScreenId(this->_fileNames[selectedIndex], screenId);
+
+			if(isValidScreenId)
 			{
-				MenuScreen * message = new MenuScreen();
-				message->append("No errors detected, the file is valid!");
-				ScreenManager::add(message);
+				ScreenManager::remove(this);
+				Game::start(screenId);
 			}
 			else
 			{
-				ScreenManager::add(this->_builder.build());
+				GameScreenBuilder builder;
+				builder.loadFromFile(this->_fileNames[selectedIndex]);
+				ScreenManager::add(builder.build());
 			}
 		}
 	}
 }
 
-void LevelValidationScreen::process()
+void LevelSelectionScreen::process()
 {
 }
 
-void LevelValidationScreen::update()
+void LevelSelectionScreen::update()
 {
 }
 
-void LevelValidationScreen::draw(Canvas & canvas) const
+void LevelSelectionScreen::draw(Canvas & canvas) const
 {
 	Point startPosition(Canvas::TOP_LEFT);
 	startPosition.move(Point::RIGHT); //Padding from the left
@@ -110,7 +114,7 @@ void LevelValidationScreen::draw(Canvas & canvas) const
 	}
 	else
 	{
-		canvas.draw(startPosition, "Choose a file to test:");
+		canvas.draw(startPosition, "Choose a file to play:");
 		startPosition.move(Point::RIGHT); //Ident
 		startPosition.move(Point::DOWN); //Move 1 row lower
 

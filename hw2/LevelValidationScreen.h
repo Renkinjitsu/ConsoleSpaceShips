@@ -10,7 +10,6 @@
 class LevelValidationScreen : public Screen
 {
 private:
-	static const Keyboard::Key numberKeys[];
 	static const unsigned MAX_SUPPORTED_FILES;
 
 	std::vector<std::string> _fileNames;
