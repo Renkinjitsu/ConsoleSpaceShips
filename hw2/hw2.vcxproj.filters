@@ -194,4 +194,7 @@
       <Filter>Screens</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme" />
+  </ItemGroup>
 </Project>

@@ -72,6 +72,9 @@
     <ClInclude Include="SmallShip.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0CCE840E-8D46-4F6C-BE97-8A580CEE92EA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
