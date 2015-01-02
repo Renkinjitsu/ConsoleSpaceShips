@@ -9,9 +9,39 @@
 
 const unsigned LevelSelectionScreen::MAX_SUPPORTED_FILES = Keyboard::numberKeysCount;
 
-LevelSelectionScreen::LevelSelectionScreen()
+const std::string & LevelSelectionScreen::getLevelName(unsigned id, const std::vector<std::string> & levels)
 {
-	const std::vector<std::string> availableFileNames = FilesManager::getFilesList(FilesManager::FileType::FILE_TYPE_LEVEL);
+	for(unsigned i = 0; i < levels.size(); ++i)
+	{
+		unsigned levelId;
+		if(FilesManager::getScreenId(levels[i], FilesManager::FileType::FILE_TYPE_LEVEL, levelId))
+		{
+			if(levelId == id)
+			{
+				return levels[i];
+			}
+		}
+	}
+
+	return levels[0]; //Just in case, though shouldn't happen
+}
+
+LevelSelectionScreen::LevelSelectionScreen(LevelSelectionScreen::LoadType loadType)
+{
+	const FilesManager::FileType fileType = (loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
+		? FilesManager::FileType::FILE_TYPE_SAVE : FilesManager::FileType::FILE_TYPE_LEVEL;
+
+	this->_loadType = loadType;
+
+	const std::vector<std::string> newGameFileNames = FilesManager::getFilesList(FilesManager::FileType::FILE_TYPE_LEVEL);
+	std::vector<std::string> savedGameFileNames;
+	if(loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
+	{
+		savedGameFileNames = FilesManager::getFilesList(FilesManager::FileType::FILE_TYPE_SAVE);
+	}
+
+	const std::vector<std::string> & availableFileNames = (loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME) ?
+		savedGameFileNames : newGameFileNames;
 
 	//Support only first 'MAX_SUPPORTED_FILES' files
 	const unsigned relevantFilesCount = std::min(availableFileNames.size(), LevelSelectionScreen::MAX_SUPPORTED_FILES);
@@ -23,7 +53,7 @@ LevelSelectionScreen::LevelSelectionScreen()
 		++(indexingCache[0]);
 
 		unsigned screenId;
-		bool isValidScreenId = FilesManager::getScreenId(availableFileNames[i], screenId);
+		bool isValidScreenId = FilesManager::getScreenId(availableFileNames[i], fileType, screenId);
 
 		std::string option;
 		option += indexingCache;
@@ -33,7 +63,15 @@ LevelSelectionScreen::LevelSelectionScreen()
 		{
 			option += " (Screen ID \'";
 			option += std::to_string(screenId);
-			option += "\')";
+			option += '\'';
+
+			if(loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
+			{
+				option += ", Level: ";
+				option += LevelSelectionScreen::getLevelName(screenId, newGameFileNames);
+			}
+
+			option += ')';
 		}
 		else
 		{
@@ -74,13 +112,23 @@ void LevelSelectionScreen::readUserInput(const Keyboard & keyboard)
 
 		if(optionSelected)
 		{
+			const FilesManager::FileType fileType = (this->_loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
+				? FilesManager::FileType::FILE_TYPE_SAVE : FilesManager::FileType::FILE_TYPE_LEVEL;
+
 			unsigned screenId;
-			bool isValidScreenId = FilesManager::getScreenId(this->_fileNames[selectedIndex], screenId);
+			const bool isValidScreenId = FilesManager::getScreenId(this->_fileNames[selectedIndex], fileType, screenId);
 
 			if(isValidScreenId)
 			{
+				if(this->_loadType == LevelSelectionScreen::LOAD_NEW_GAME)
+				{
+					Game::start(screenId);
+				}
+				else
+				{
+					Game::loadGame(this->_fileNames[selectedIndex], screenId);
+				}
 				ScreenManager::remove(this);
-				Game::start(screenId);
 			}
 			else
 			{
@@ -114,7 +162,7 @@ void LevelSelectionScreen::draw(Canvas & canvas) const
 	}
 	else
 	{
-		canvas.draw(startPosition, "Choose a file to play:");
+		canvas.draw(startPosition, "Choose a game to play:");
 		startPosition.move(Point::RIGHT); //Ident
 		startPosition.move(Point::DOWN); //Move 1 row lower
 

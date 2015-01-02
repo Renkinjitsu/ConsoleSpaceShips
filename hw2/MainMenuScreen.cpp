@@ -43,11 +43,11 @@ void MainMenuScreen::readUserInput(const Keyboard & keyboard)
 	}
 	else if(keyboard.isPressed(Keyboard::NUM4))
 	{
-		Game::loadGame();
+		ScreenManager::add(new LevelSelectionScreen(LevelSelectionScreen::LoadType::LOAD_SAVED_GAME));
 	}
 	else if(keyboard.isPressed(Keyboard::NUM5))
 	{
-		ScreenManager::add(new LevelSelectionScreen());
+		ScreenManager::add(new LevelSelectionScreen(LevelSelectionScreen::LoadType::LOAD_NEW_GAME));
 	}
 	else if(keyboard.isPressed(Keyboard::NUM9))
 	{

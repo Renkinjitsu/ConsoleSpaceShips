@@ -3,17 +3,28 @@
 
 #include "MenuScreen.h"
 
+#include <string>
+
 class LevelSelectionScreen : public MenuScreen
 {
-private:
+public:
+	enum LoadType
+	{
+		LOAD_NEW_GAME,
+		LOAD_SAVED_GAME
+	};
+
 private:
 	static const unsigned MAX_SUPPORTED_FILES;
 
 	std::vector<std::string> _fileNames;
 	std::vector<std::string> _options;
+	LevelSelectionScreen::LoadType _loadType;
+
+	static const std::string & getLevelName(unsigned id, const std::vector<std::string> & levels);
 
 public:
-	LevelSelectionScreen();
+	LevelSelectionScreen(LevelSelectionScreen::LoadType loadType);
 	~LevelSelectionScreen();
 
 	void setInitialState();

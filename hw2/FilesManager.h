@@ -29,7 +29,7 @@ private:
 
 public:
 
-	static bool getScreenId(const std::string & fileName, unsigned & id);
+	static bool getScreenId(const std::string & fileName, FilesManager::FileType fileType, unsigned & id);
 
 	static std::vector<std::string> getFilesList(const FilesManager::FileType fileType);
 	static void changeDirectory(const char * const newPath);

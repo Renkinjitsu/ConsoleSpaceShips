@@ -35,23 +35,26 @@ void Keyboard::update()
 
 	while(_kbhit())
 	{
-		char ch = _getch();
-
-		if(ch == '\r')
-		{
-			ch = '\n';
-		}
-
-		ch = tolower(ch);
-
-		if(ch < Keyboard::SUPPORTED_KEYS)
-		{
-			this->_pressedKeys[ch] = true;
-		}
+		this->setPress(_getch());
 	}
 }
 
 bool Keyboard::isPressed(Key key) const
 {
 	return this->_pressedKeys[key];
+}
+
+void Keyboard::setPress(char character)
+{
+	if(character == '\r')
+	{
+		character = '\n';
+	}
+
+	character = tolower(character);
+
+	if(character < Keyboard::SUPPORTED_KEYS)
+	{
+		this->_pressedKeys[character] = true;
+	}
 }

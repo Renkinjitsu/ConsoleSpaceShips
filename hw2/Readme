@@ -19,8 +19,6 @@ Unmet requirements
 - The levels are ordered by their ID.
 - Need to read the requirements of 2nd work block.
 
- - Finish 'Game::loadGame();' implementation (load recording & iterations counter, anything more to load?)
-
  - Arguments:
     The path must be quoted (dir /b "d:\path\some sub folder with spaces")
     string command = "dir /b \"" + path + "\"";
@@ -28,10 +26,8 @@ Unmet requirements
     > "C:\Users\or\Desktop\space ship\"
     > "C:\Users\or\Desktop\space ship\\"
 
- - Load saved game
-    > For each save display file name & level name
-
  - Replay screen
+    > Base on 'Game::loadGame(...)' implementation
 
  - Make 3 levels
     For each level:

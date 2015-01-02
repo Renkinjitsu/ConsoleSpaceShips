@@ -22,7 +22,7 @@ LevelValidationScreen::LevelValidationScreen()
 		++(indexingCache[0]);
 
 		unsigned screenId;
-		bool isValidScreenId = FilesManager::getScreenId(availableFileNames[i], screenId);
+		bool isValidScreenId = FilesManager::getScreenId(availableFileNames[i], FilesManager::FileType::FILE_TYPE_LEVEL, screenId);
 
 		std::string option;
 		option += indexingCache;

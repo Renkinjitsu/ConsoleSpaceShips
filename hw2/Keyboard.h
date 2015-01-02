@@ -67,6 +67,8 @@ public:
 	void update();
 
 	bool isPressed(Key key) const;
+
+	void setPress(char character);
 };
 
 #endif /* KEYBOARD_H_ */

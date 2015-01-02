@@ -56,7 +56,7 @@ const std::string & FilesManager::getExtension(FilesManager::FileType fileType)
 
 		case FilesManager::FILE_TYPE_SAVE:
 		{
-			fileTypeExtension = &FilesManager::FILE_EXTENSION_SOLUTION;
+			fileTypeExtension = &FilesManager::FILE_EXTENSION_GAME_SAVE;
 		}
 		break;
 
@@ -103,9 +103,9 @@ std::vector<std::string> FilesManager::getFilesList(const FilesManager::FileType
 	return result;
 }
 
-bool FilesManager::getScreenId(const std::string & fileName, unsigned & id)
+bool FilesManager::getScreenId(const std::string & fileName, FilesManager::FileType fileType, unsigned & id)
 {
-	std::ifstream * levelFile = FilesManager::openFile(fileName, FilesManager::FILE_TYPE_LEVEL);
+	std::ifstream * levelFile = FilesManager::openFile(fileName, fileType);
 	std::string idLine;
 	std::getline(*levelFile, idLine);
 

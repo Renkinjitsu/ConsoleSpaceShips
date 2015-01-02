@@ -87,7 +87,7 @@ void Game::startLevel()
 	{
 		FileInfo fileInfo;
 
-		if(FilesManager::getScreenId(*fileName, fileInfo.id))
+		if(FilesManager::getScreenId(*fileName, FilesManager::FileType::FILE_TYPE_LEVEL, fileInfo.id))
 		{
 			fileInfo.name = &(*fileName);
 			files.push_back(fileInfo);
@@ -202,9 +202,80 @@ void Game::saveGame()
 	delete saveFile;
 }
 
-void Game::loadGame()
+void Game::loadGame(const std::string & saveFileName, unsigned screenId)
 {
-	//TODO: Implement
+	Game::_currentLevelId = screenId;
+	Game::startLevel();
+
+	std::ifstream * saveFile = FilesManager::openFile(saveFileName, FilesManager::FILE_TYPE_SAVE);
+	std::string line;
+
+	std::getline(*saveFile, line); //Skip Screen ID
+
+	std::getline(*saveFile, line); //Read iterations counter
+	unsigned iterationsCounter;
+	sscanf(line.c_str(), "ClockIterations=%u", &iterationsCounter);
+
+	//Skip Screen description
+	for(unsigned i = 0; i < Canvas::getHeight(); ++i)
+	{
+		std::getline(*saveFile, line);
+	}
+
+	Canvas canvas;
+
+	//Load & apply iterations
+	Screen & screen = *Game::_currentGameScreen;
+	Keyboard dummyKeyboard;
+	unsigned currentIteration = 0;
+	while(std::getline(*saveFile, line))
+	{
+		unsigned iteration;
+		char key1;
+		char key2;
+
+		const int parametersCount = sscanf(line.c_str(), "%u: %c%c", &iteration, &key1, &key2);
+
+		while(currentIteration < iteration - 1)
+		{
+			screen.setInitialState();
+			screen.readUserInput(dummyKeyboard);
+			dummyKeyboard.update();
+			screen.process();
+			screen.update();
+
+			canvas.begin();
+			screen.draw(canvas);
+			canvas.end();
+
+			++currentIteration;
+		}
+
+		if(parametersCount >= 2)
+		{
+			dummyKeyboard.setPress(key1);
+		}
+
+		if(parametersCount >= 3)
+		{
+			dummyKeyboard.setPress(key2);
+		}
+	}
+
+	do
+	{
+		screen.setInitialState();
+		screen.readUserInput(dummyKeyboard);
+		dummyKeyboard.update();
+		screen.process();
+		screen.update();
+
+		++currentIteration;
+	}
+	while(iterationsCounter > currentIteration);
+
+	saveFile->close();
+	delete saveFile;
 }
 
 void Game::restart()

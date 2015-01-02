@@ -30,7 +30,7 @@ public:
 	static void startNextLevel();
 
 	static void saveGame();
-	static void loadGame();
+	static void loadGame(const std::string & saveFileName, unsigned screenId);
 
 	static void restart();
 

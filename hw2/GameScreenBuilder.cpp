@@ -80,7 +80,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 				if(fileNames[i] != fileName)
 				{
 					unsigned otherId;
-					if(FilesManager::getScreenId(fileNames[i], otherId))
+					if(FilesManager::getScreenId(fileNames[i], FilesManager::FileType::FILE_TYPE_LEVEL, otherId))
 					{
 						if(id == otherId)
 						{
