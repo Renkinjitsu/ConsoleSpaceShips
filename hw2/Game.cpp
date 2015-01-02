@@ -8,6 +8,7 @@
 #include "ScreenManager.h"
 #include "GameScreenBuilder.h"
 #include "GameOverScreen.h"
+#include "ReplayScreen.h"
 #include "MenuScreen.h"
 
 typedef struct
@@ -18,6 +19,7 @@ typedef struct
 
 unsigned Game::_currentLevelId;
 GameScreen * Game::_currentGameScreen;
+ReplayScreen * Game::_replayScreen = NULL;
 std::string Game::_currentLevelFileName("");
 
 std::string Game::getSteps()
@@ -162,10 +164,18 @@ void Game::start(const unsigned id)
 
 void Game::startNextLevel()
 {
-	Game::saveSolution();
+	if(Game::_replayScreen != NULL)
+	{
+		ScreenManager::remove(Game::_replayScreen);
+		Game::_replayScreen = NULL;
+	}
+	else
+	{
+		Game::saveSolution();
 
-	++Game::_currentLevelId;
-	Game::startLevel();
+		++Game::_currentLevelId;
+		Game::startLevel();
+	}
 }
 
 void Game::saveGame()
@@ -222,8 +232,6 @@ void Game::loadGame(const std::string & saveFileName, unsigned screenId)
 		std::getline(*saveFile, line);
 	}
 
-	Canvas canvas;
-
 	//Load & apply iterations
 	Screen & screen = *Game::_currentGameScreen;
 	Keyboard dummyKeyboard;
@@ -243,10 +251,6 @@ void Game::loadGame(const std::string & saveFileName, unsigned screenId)
 			dummyKeyboard.update();
 			screen.process();
 			screen.update();
-
-			canvas.begin();
-			screen.draw(canvas);
-			canvas.end();
 
 			++currentIteration;
 		}
@@ -363,6 +367,12 @@ void Game::displayEndGameScreen()
 	}
 
 	ScreenManager::add(congratulationsScreen);
+}
+
+void Game::playSolution()
+{
+	Game::_replayScreen = new ReplayScreen(Game::_currentLevelFileName);
+	ScreenManager::add(Game::_replayScreen);
 }
 
 void Game::gameOver()

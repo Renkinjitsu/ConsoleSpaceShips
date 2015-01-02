@@ -41,8 +41,7 @@ void InGameMenuScreen::readUserInput(const Keyboard & keyboard)
 	}
 	else if(keyboard.isPressed(Keyboard::NUM3))
 	{
-		//TODO: Implement
-		//ScreenManager::add(solutionViewerScreen);
+		Game::playSolution();
 	}
 	else if(keyboard.isPressed(Keyboard::NUM8))
 	{

@@ -26,9 +26,6 @@ Unmet requirements
     > "C:\Users\or\Desktop\space ship\"
     > "C:\Users\or\Desktop\space ship\\"
 
- - Replay screen
-    > Base on 'Game::loadGame(...)' implementation
-
  - Make 3 levels
     For each level:
     > Solution
