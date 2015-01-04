@@ -5,6 +5,7 @@
 
 #include "GameScreenBuilder.h"
 #include "FilesManager.h"
+#include "ScreenManager.h"
 
 ReplayScreen::ReplayScreen(const std::string & levelName)
 {
@@ -38,6 +39,11 @@ void ReplayScreen::setInitialState()
 
 void ReplayScreen::readUserInput(const Keyboard & keyboard)
 {
+	if(keyboard.isPressed(Keyboard::Key::ESC))
+	{
+		ScreenManager::remove(this);
+	}
+
 	if(this->nextRecored._parametersCount == 0 &&
 		this->_solutionFile->eof() == false)
 	{
