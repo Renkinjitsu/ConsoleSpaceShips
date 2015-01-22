@@ -10,22 +10,22 @@
 
 void GameScreen::insertShip(Ship * ship, unsigned index)
 {
-	this->_allGameObjects.insert(ship);
-	this->_obstacles.insert(ship);
+	_allGameObjects += ship;
+	_obstacles += ship;
 
-	this->_ships[index] = ship;
+	_ships[index] = ship;
 
-	this->_shipInfos[index]._velocity = Point::ZERO;
-	this->_shipInfos[index]._rotate = false;
-	this->_shipInfos[index]._pushPile.clear();
+	_shipInfos[index]._velocity = Point::ZERO;
+	_shipInfos[index]._rotate = false;
+	_shipInfos[index]._pushPile.clear();
 }
 
 void GameScreen::removeShip(unsigned index)
 {
-	Ship * & ship = this->_ships[index];
+	Ship * & ship = _ships[index];
 
-	this->_allGameObjects.remove(ship);
-	this->_obstacles.remove(ship);
+	_allGameObjects -= ship;
+	_obstacles -= ship;
 
 	delete ship;
 	ship = NULL;
@@ -33,24 +33,31 @@ void GameScreen::removeShip(unsigned index)
 
 void GameScreen::setInitialState()
 {
-	++this->_iteration;
+	++_iteration;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
-		this->_shipInfos[i]._pushPile.clear();
-		this->_shipInfos[i]._velocity = Point::ZERO;
-		this->_shipInfos[i]._rotate = false;
+		_shipInfos[i]._pushPile.clear();
+		_shipInfos[i]._velocity = Point::ZERO;
+		_shipInfos[i]._rotate = false;
 	}
 }
 
 void GameScreen::readUserInput(const Keyboard & keyboard)
 {
-	ShipInfo & smallShipInfo = this->_shipInfos[GameScreen::SMALL_SHIP_INDEX];
-	ShipInfo & bigShipInfo = this->_shipInfos[GameScreen::BIG_SHIP_INDEX];
+	ShipInfo & smallShipInfo = _shipInfos[GameScreen::SMALL_SHIP_INDEX];
+	ShipInfo & bigShipInfo = _shipInfos[GameScreen::BIG_SHIP_INDEX];
 
 	if(keyboard.isPressed(keyboard.ESC))
 	{
 		ScreenManager::add(new InGameMenuScreen());
+	}
+
+	if(keyboard.isPressed(Keyboard::Key::B))
+	{
+		_isItemFrictionOn = !_isItemFrictionOn;
+
+		_gameRecorder.recored(_iteration, Keyboard::Key::B);
 	}
 
 	Keyboard::Key smallShipAffectiveKey = Keyboard::ESC;
@@ -110,32 +117,99 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 
 	if(smallShipAffectiveKey != Keyboard::ESC)
 	{
-		this->_gameRecorder.recored(this->_iteration, smallShipAffectiveKey);
+		_gameRecorder.recored(_iteration, smallShipAffectiveKey);
 	}
 
 	if(bigShipAffectiveKey != Keyboard::ESC)
 	{
-		this->_gameRecorder.recored(this->_iteration, bigShipAffectiveKey);
+		_gameRecorder.recored(_iteration, bigShipAffectiveKey);
 	}
 }
 
 void GameScreen::process()
 {
-	this->_prevFreeFallingItems = this->_currFreeFallingItems;
+	_prevFreeFallingItems = _currFreeFallingItems;
+
+	bool shipExploded = false;
+
+	{
+		GameObjectSet detonatedBombs;
+		GameObjectSet affectedObjects;
+		GameAlgorithm::handleBombs(detonatedBombs, affectedObjects, _bombs, _obstacles);
+
+		_allGameObjects -= detonatedBombs;
+		_bombs -= detonatedBombs;
+
+		(_allGameObjects -= affectedObjects) += _exitPoints;
+		_badShips -= affectedObjects;
+		_currFreeFallingItems -= affectedObjects;
+		_prevFreeFallingItems -= affectedObjects;
+		_items -= affectedObjects;
+		_obstacles -= affectedObjects;
+
+		//Detect exploded ships
+		for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
+		{
+			if(affectedObjects.contains(_ships[i]))
+			{
+				affectedObjects -= _ships[i];
+				_ships[i]->explode();
+				shipExploded = true;
+			}
+		}
+
+		for(GameObjectSet::iterator iter = detonatedBombs.begin();
+			iter != detonatedBombs.end();
+			++iter)
+		{
+			delete *iter;
+		}
+
+		for(GameObjectSet::iterator iter = affectedObjects.begin();
+			iter != affectedObjects.end();
+			++iter)
+		{
+			delete *iter;
+		}
+	}
+
+	//Detect player & enemy troop contact
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
+	{
+		for(std::vector<GameObject *>::iterator enemyIter = _badShips.begin();
+			enemyIter != _badShips.end() && _ships[i];
+			++enemyIter)
+		{
+			BadShip * enemyTroop = (BadShip *)(*enemyIter);
+
+			if(_ships[i]->isTouching(*enemyTroop))
+			{
+				_ships[i]->explode();
+				shipExploded = true;
+			}
+		}
+	}
+
+	if(shipExploded)
+	{
+		this->setState(GameScreen::GAME_STATE_LOST);
+
+		return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
+	}
 
 	unsigned totalShipsMass = 0;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
-		Ship * const ship = this->_ships[i];
+		Ship * const ship = _ships[i];
 		if(ship == NULL) //Ship not present
 		{
 			continue; //Skip the not-present ship
 		}
 
-		ShipInfo & shipInfo = this->_shipInfos[i];
+		ShipInfo & shipInfo = _shipInfos[i];
 
-		if(GameAlgorithm::isShipCrashed(*ship, this->_prevFreeFallingItems))
+		if(GameAlgorithm::isShipCrashed(*ship, _prevFreeFallingItems))
 		{
 			ship->explode();
 			this->setState(GameScreen::GAME_STATE_LOST);
@@ -143,25 +217,25 @@ void GameScreen::process()
 			return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
 		}
 
-		GameAlgorithm::getTouchingObstacles(*ship, shipInfo._velocity, this->_obstacles, shipInfo._pushPile);
+		GameAlgorithm::getTouchingObstacles(*ship, shipInfo._velocity, _obstacles, shipInfo._pushPile);
 		if(shipInfo._pushPile.isPushable() == false)
 		{
 			shipInfo._velocity = Point::ZERO;
 			shipInfo._pushPile.clear();
 		}
 
-		GameAlgorithm::expandToPushablePile(shipInfo._pushPile, this->_allGameObjects, shipInfo._velocity);
+		GameAlgorithm::expandToPushablePile(shipInfo._pushPile, _allGameObjects, shipInfo._velocity);
 
 		totalShipsMass += ship->getMass();
 	}
 
-	ShipInfo & smallShipInfo = this->_shipInfos[GameScreen::SMALL_SHIP_INDEX];
-	ShipInfo & bigShipInfo = this->_shipInfos[GameScreen::BIG_SHIP_INDEX];
+	ShipInfo & smallShipInfo = _shipInfos[GameScreen::SMALL_SHIP_INDEX];
+	ShipInfo & bigShipInfo = _shipInfos[GameScreen::BIG_SHIP_INDEX];
 
 	if(this->getActiveShipsCount() > 0 &&
-		smallShipInfo._pushPile.isEqual(bigShipInfo._pushPile) &&
-		smallShipInfo._velocity.equals(bigShipInfo._velocity) &&
-		smallShipInfo._velocity.notEquals(Point::ZERO))
+		(smallShipInfo._pushPile == bigShipInfo._pushPile) &&
+		(smallShipInfo._velocity == bigShipInfo._velocity) &&
+		(smallShipInfo._velocity != Point::ZERO))
 	{
 		if(bigShipInfo._pushPile.getTotalMass() > totalShipsMass)
 		{
@@ -176,13 +250,13 @@ void GameScreen::process()
 	{
 		for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 		{
-			Ship * & ship = this->_ships[i];
+			Ship * & ship = _ships[i];
 			if(ship == NULL) //Ship not present
 			{
 				continue; //Skip the not-present ship
 			}
 
-			ShipInfo & shipInfo = this->_shipInfos[i];
+			ShipInfo & shipInfo = _shipInfos[i];
 
 			assert(shipInfo._pushPile.contains(ship) == false);
 
@@ -199,32 +273,32 @@ void GameScreen::process()
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		Ship * & ship = this->_ships[i];
+		Ship * & ship = _ships[i];
 		if(ship == NULL) //Ship not present
 		{
 			continue; //Skip the not-present ship
 		}
 
-		ShipInfo & shipInfo = this->_shipInfos[i];
+		ShipInfo & shipInfo = _shipInfos[i];
 
-		if(shipInfo._velocity.notEquals(Point::ZERO))
+		if(shipInfo._velocity != Point::ZERO)
 		{
-			shipInfo._pushPile.insert(ship);
+			shipInfo._pushPile += ship;
 			GameObjectSet pile(shipInfo._pushPile);
-			GameAlgorithm::expandToPile(pile, this->_allGameObjects);
-			pile.remove(shipInfo._pushPile);
+			GameAlgorithm::expandToPile(pile, _allGameObjects);
+			pile -= shipInfo._pushPile;
 
-			GameAlgorithm::removeBlockedFrom(pile, this->_allGameObjects, shipInfo._velocity);
+			GameAlgorithm::removeBlockedFrom(pile, _allGameObjects, shipInfo._velocity);
 			GameAlgorithm::expandToPile(shipInfo._pushPile, pile);
 		}
 		else if(shipInfo._rotate)
 		{
-			for(GameObjectSet::iterator iter = this->_items.begin(); iter != this->_items.end(); ++iter)
+			for(GameObjectSet::iterator iter = _items.begin(); iter != _items.end(); ++iter)
 			{
 				shipInfo._rotate &= (ship->isBlockedBy(**iter, Point::UP) == false);
 			}
 
-			for(GameObjectSet::iterator iter = this->_obstacles.begin(); iter != _obstacles.end(); ++iter)
+			for(GameObjectSet::iterator iter = _obstacles.begin(); iter != _obstacles.end(); ++iter)
 			{
 				if(ship != *iter)
 				{
@@ -244,24 +318,24 @@ void GameScreen::update()
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		Ship * & ship = this->_ships[i];
+		Ship * & ship = _ships[i];
 		if(ship == NULL) //Ship not present
 		{
 			continue; //Skip the not-present ship
 		}
 
-		ShipInfo & shipInfo = this->_shipInfos[i];
+		ShipInfo & shipInfo = _shipInfos[i];
 
 		if(shipInfo._rotate)
 		{
 			ship->rotate();
 		}
-		else if(shipInfo._velocity.notEquals(Point::ZERO))
+		else if(shipInfo._velocity != Point::ZERO)
 		{
 			GameAlgorithm::move(shipInfo._pushPile, shipInfo._velocity);
 		}
 
-		if(GameAlgorithm::collidesWith(*ship, this->_exitPoints))
+		if(GameAlgorithm::collidesWith(*ship, _exitPoints))
 		{
 			this->removeShip(i);
 		}
@@ -274,22 +348,23 @@ void GameScreen::update()
 	else //Nope, the show goes on!
 	{
 		//List free-falling Item-s (should be after the moving of the push-piles)
-		this->_currFreeFallingItems.clear();
-		for(GameObjectSet::iterator itemIter = this->_items.begin(); itemIter != this->_items.end(); ++itemIter)
+		_currFreeFallingItems.clear();
+		for(GameObjectSet::iterator itemIter = _items.begin(); itemIter != _items.end(); ++itemIter)
 		{
-			if(GameAlgorithm::isBlocked(**itemIter, this->_obstacles, Point::DOWN) == false)
+			if(GameAlgorithm::isBlocked(**itemIter, _obstacles, Point::DOWN) == false)
 			{
-				this->_currFreeFallingItems.insert(*itemIter);
+				_currFreeFallingItems += *itemIter;
 			}
 		}
 
-		GameAlgorithm::move(this->_currFreeFallingItems, Point::DOWN);
+		GameAlgorithm::move(_currFreeFallingItems, Point::DOWN);
+		GameAlgorithm::move(_bombs, Point::DOWN);
 	}
 }
 
 void GameScreen::draw(Canvas & canvas) const
 {
-	for(GameObjectSet::const_iterator iter = this->_allGameObjects.cbegin(); iter != this->_allGameObjects.cend(); ++iter)
+	for(GameObjectSet::const_iterator iter = _allGameObjects.cbegin(); iter != _allGameObjects.cend(); ++iter)
 	{
 		(*iter)->draw(canvas);
 	}
@@ -302,17 +377,17 @@ void GameScreen::draw(Canvas & canvas) const
 
 const GameRecorder & GameScreen::getRecorder() const
 {
-	return this->_gameRecorder;
+	return _gameRecorder;
 }
 
 unsigned GameScreen::getIterations() const
 {
-	return this->_iteration + 1;
+	return _iteration + 1;
 }
 
 bool GameScreen::isGameOver() const
 {
-	return (this->_gameState != GameScreen::GAME_STATE_ONGOING);
+	return (_gameState != GameScreen::GAME_STATE_ONGOING);
 }
 
 unsigned GameScreen::getActiveShipsCount() const
@@ -320,7 +395,7 @@ unsigned GameScreen::getActiveShipsCount() const
 	unsigned activeShipsCount = 0;
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
-		if(this->_ships[i] != NULL)
+		if(_ships[i] != NULL)
 		{
 			++activeShipsCount;
 		}
@@ -331,19 +406,20 @@ unsigned GameScreen::getActiveShipsCount() const
 
 GameScreen::GameScreen()
 {
-	this->_gameState = GameScreen::GAME_STATE_ONGOING;
-	this->_iteration = 0;
+	_gameState = GameScreen::GAME_STATE_ONGOING;
+	_isItemFrictionOn = false;
+	_iteration = 0;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; ++i)
 	{
-		this->_ships[i] = NULL;
+		_ships[i] = NULL;
 	}
 };
 
 GameScreen::~GameScreen()
 {
-	for(GameObjectSet::iterator iter = this->_allGameObjects.begin();
-		iter != this->_allGameObjects.end(); ++iter)
+	for(GameObjectSet::iterator iter = _allGameObjects.begin();
+		iter != _allGameObjects.end(); ++iter)
 	{
 		delete *iter;
 	}
@@ -351,21 +427,34 @@ GameScreen::~GameScreen()
 
 void GameScreen::addGameObject(Item * item)
 {
-	this->_items.insert(item);
-	this->_obstacles.insert(item);
-	this->_allGameObjects.insert(item);
+	_items += item;
+	_obstacles += item;
+	_allGameObjects += item;
 }
 
 void GameScreen::addGameObject(Wall * wall)
 {
-	this->_obstacles.insert(wall);
-	this->_allGameObjects.insert(wall);
+	_obstacles += wall;
+	_allGameObjects += wall;
 }
 
 void GameScreen::addGameObject(ExitPoint * exit)
 {
-	this->_exitPoints.insert(exit);
-	this->_allGameObjects.insert(exit);
+	_exitPoints += exit;
+	_allGameObjects += exit;
+}
+
+void GameScreen::addGameObject(Bomb * bomb)
+{
+	_bombs += bomb;
+	_allGameObjects += bomb;
+}
+
+void GameScreen::addGameObject(BadShip * ship)
+{
+	_badShips += ship;
+	_allGameObjects += ship;
+	_obstacles += ship;
 }
 
 void GameScreen::addGameObject(BigShip * ship)
@@ -409,5 +498,5 @@ void GameScreen::setState(GameScreen::GameState newState)
 		break;
 	}
 
-	this->_gameState = newState;
+	_gameState = newState;
 }

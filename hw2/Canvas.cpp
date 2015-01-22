@@ -55,7 +55,7 @@ Canvas::~Canvas()
 void Canvas::draw(const Point & posititon, char character)
 {
 
-	this->_buffer[Canvas::serialize(posititon)] = character;
+	_buffer[Canvas::serialize(posititon)] = character;
 }
 
 void Canvas::draw(const Point & posititon, const char * string)
@@ -64,7 +64,7 @@ void Canvas::draw(const Point & posititon, const char * string)
 
 	while(*string != '\0')
 	{
-		this->_buffer[i++] = *string;
+		_buffer[i++] = *string;
 		++string;
 	}
 }
@@ -78,39 +78,39 @@ void Canvas::save()
 {
 	for(unsigned i = 0; i < Canvas::bufferLength; i++)
 	{
-		this->_bufferBackup[i] = this->_buffer[i];
+		_bufferBackup[i] = _buffer[i];
 	}
 
-	this->_bufferBackup[Canvas::bufferLength] = '\0';
+	_bufferBackup[Canvas::bufferLength] = '\0';
 }
 
 void Canvas::restore()
 {
 	for(unsigned i = 0; i < Canvas::bufferLength; i++)
 	{
-		this->_buffer[i] = this->_bufferBackup[i];
+		_buffer[i] = _bufferBackup[i];
 	}
 
-	this->_buffer[Canvas::bufferLength] = '\0';
+	_buffer[Canvas::bufferLength] = '\0';
 }
 
 void Canvas::begin()
 {
 	for(unsigned i = 0; i < Canvas::bufferLength; i++)
 	{
-		this->_buffer[i] = GameConfig::TEXTURES_EMPTY;
+		_buffer[i] = GameConfig::TEXTURES_EMPTY;
 	}
 
-	this->_buffer[Canvas::bufferLength] = '\0';
+	_buffer[Canvas::bufferLength] = '\0';
 }
 
 void Canvas::end()
 {
 	gotoxy(0, 0);
-	std::cout << this->_buffer;
+	std::cout << _buffer;
 }
 
 void Canvas::end(std::string & destination)
 {
-	destination = this->_buffer;
+	destination = _buffer;
 }

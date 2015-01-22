@@ -16,7 +16,7 @@ void Keyboard::resetPressedKeys()
 {
 	for(size_t i = 0; i < Keyboard::SUPPORTED_KEYS; ++i)
 	{
-		this->_pressedKeys[i] = false;
+		_pressedKeys[i] = false;
 	}
 }
 
@@ -41,7 +41,7 @@ void Keyboard::update()
 
 bool Keyboard::isPressed(Key key) const
 {
-	return this->_pressedKeys[key];
+	return _pressedKeys[key];
 }
 
 void Keyboard::setPress(char character)
@@ -55,6 +55,6 @@ void Keyboard::setPress(char character)
 
 	if(character < Keyboard::SUPPORTED_KEYS)
 	{
-		this->_pressedKeys[character] = true;
+		_pressedKeys[character] = true;
 	}
 }

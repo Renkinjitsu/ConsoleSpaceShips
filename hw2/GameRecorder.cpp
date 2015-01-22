@@ -2,7 +2,7 @@
 
 GameIterationRecorder::GameIterationRecorder(unsigned id)
 {
-	this->_id = id;
+	_id = id;
 }
 
 GameIterationRecorder::~GameIterationRecorder()
@@ -11,22 +11,22 @@ GameIterationRecorder::~GameIterationRecorder()
 
 unsigned GameIterationRecorder::getId() const
 {
-	return this->_id;
+	return _id;
 }
 
 void GameIterationRecorder::recored(char pressedCharacter)
 {
-	this->_pressedCharacters.push_back(pressedCharacter);
+	_pressedCharacters.push_back(pressedCharacter);
 }
 
 GameIterationRecorder::const_iterator GameIterationRecorder::cbegin() const
 {
-	return this->_pressedCharacters.cbegin();
+	return _pressedCharacters.cbegin();
 }
 
 GameIterationRecorder::const_iterator GameIterationRecorder::cend() const
 {
-	return this->_pressedCharacters.cend();
+	return _pressedCharacters.cend();
 }
 
 GameRecorder::GameRecorder()
@@ -39,21 +39,21 @@ GameRecorder::~GameRecorder()
 
 void GameRecorder::recored(unsigned iterationId, char pressedKey)
 {
-	if(this->_iterationRecords.empty() ||
-		(this->_iterationRecords[this->_iterationRecords.size() - 1].getId() != iterationId))
+	if(_iterationRecords.empty() ||
+		(_iterationRecords[_iterationRecords.size() - 1].getId() != iterationId))
 	{
-		this->_iterationRecords.push_back(iterationId);
+		_iterationRecords.push_back(iterationId);
 	}
 
-	this->_iterationRecords[this->_iterationRecords.size() - 1].recored(pressedKey);
+	_iterationRecords[_iterationRecords.size() - 1].recored(pressedKey);
 }
 
 GameRecorder::const_iterator GameRecorder::cbegin() const
 {
-	return this->_iterationRecords.cbegin();
+	return _iterationRecords.cbegin();
 }
 
 GameRecorder::const_iterator GameRecorder::cend() const
 {
-	return this->_iterationRecords.cend();
+	return _iterationRecords.cend();
 }

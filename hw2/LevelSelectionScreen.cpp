@@ -31,7 +31,7 @@ LevelSelectionScreen::LevelSelectionScreen(LevelSelectionScreen::LoadType loadTy
 	const FilesManager::FileType fileType = (loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
 		? FilesManager::FileType::FILE_TYPE_SAVE : FilesManager::FileType::FILE_TYPE_LEVEL;
 
-	this->_loadType = loadType;
+	_loadType = loadType;
 
 	const std::vector<std::string> newGameFileNames = FilesManager::getFilesList(FilesManager::FileType::FILE_TYPE_LEVEL);
 	std::vector<std::string> savedGameFileNames;
@@ -78,8 +78,8 @@ LevelSelectionScreen::LevelSelectionScreen(LevelSelectionScreen::LoadType loadTy
 			option += " (Currupted screen ID)";
 		}
 
-		this->_fileNames.push_back(availableFileNames[i]);
-		this->_options.push_back(option);
+		_fileNames.push_back(availableFileNames[i]);
+		_options.push_back(option);
 	}
 }
 
@@ -101,7 +101,7 @@ void LevelSelectionScreen::readUserInput(const Keyboard & keyboard)
 	{
 		bool optionSelected = false;
 		unsigned selectedIndex;
-		for(unsigned i = 0; i < this->_options.size(); ++i)
+		for(unsigned i = 0; i < _options.size(); ++i)
 		{
 			if(keyboard.isPressed(Keyboard::numberKeys[i]))
 			{
@@ -112,28 +112,28 @@ void LevelSelectionScreen::readUserInput(const Keyboard & keyboard)
 
 		if(optionSelected)
 		{
-			const FilesManager::FileType fileType = (this->_loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
+			const FilesManager::FileType fileType = (_loadType == LevelSelectionScreen::LoadType::LOAD_SAVED_GAME)
 				? FilesManager::FileType::FILE_TYPE_SAVE : FilesManager::FileType::FILE_TYPE_LEVEL;
 
 			unsigned screenId;
-			const bool isValidScreenId = FilesManager::getScreenId(this->_fileNames[selectedIndex], fileType, screenId);
+			const bool isValidScreenId = FilesManager::getScreenId(_fileNames[selectedIndex], fileType, screenId);
 
 			if(isValidScreenId)
 			{
-				if(this->_loadType == LevelSelectionScreen::LOAD_NEW_GAME)
+				if(_loadType == LevelSelectionScreen::LOAD_NEW_GAME)
 				{
 					Game::start(screenId);
 				}
 				else
 				{
-					Game::loadGame(this->_fileNames[selectedIndex], screenId);
+					Game::loadGame(_fileNames[selectedIndex], screenId);
 				}
 				ScreenManager::remove(this);
 			}
 			else
 			{
 				GameScreenBuilder builder;
-				builder.loadFromFile(this->_fileNames[selectedIndex]);
+				builder.loadFromFile(_fileNames[selectedIndex]);
 				ScreenManager::add(builder.build());
 			}
 		}
@@ -150,11 +150,11 @@ void LevelSelectionScreen::update()
 
 void LevelSelectionScreen::draw(Canvas & canvas) const
 {
-	Point startPosition(Canvas::TOP_LEFT);
-	startPosition.move(Point::RIGHT); //Padding from the left
-	startPosition.move(Point::DOWN); //Padding from the right
+	Point startPosition = Canvas::TOP_LEFT +
+		Point::RIGHT + //Padding from the left
+		Point::DOWN; //Padding from the right
 
-	const unsigned filesCount = (unsigned)this->_options.size();
+	const unsigned filesCount = (unsigned)_options.size();
 
 	if(filesCount == 0)
 	{
@@ -163,13 +163,13 @@ void LevelSelectionScreen::draw(Canvas & canvas) const
 	else
 	{
 		canvas.draw(startPosition, "Choose a game to play:");
-		startPosition.move(Point::RIGHT); //Ident
-		startPosition.move(Point::DOWN); //Move 1 row lower
+		startPosition += Point::RIGHT; //Ident
+		startPosition += Point::DOWN; //Move 1 row lower
 
 		for(unsigned i = 0; i < filesCount; ++i)
 		{
-			startPosition.move(Point::DOWN); //Move 1 row lower
-			canvas.draw(startPosition, this->_options[i]);
+			startPosition += Point::DOWN; //Move 1 row lower
+			canvas.draw(startPosition, _options[i]);
 		}
 	}
 }

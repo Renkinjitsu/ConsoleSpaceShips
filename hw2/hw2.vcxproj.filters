@@ -107,6 +107,15 @@
     <ClCompile Include="LevelSelectionScreen.cpp">
       <Filter>Screens</Filter>
     </ClCompile>
+    <ClCompile Include="BadShip.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Area.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObjectSet.h">
@@ -198,6 +207,15 @@
     </ClInclude>
     <ClInclude Include="LevelSelectionScreen.h">
       <Filter>Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="BadShip.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Area.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

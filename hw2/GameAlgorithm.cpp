@@ -2,16 +2,11 @@
 
 #include <assert.h>
 
-GameAlgorithm::GameAlgorithm()
-{
-	//Nothing to do
-}
-
-
-GameAlgorithm::~GameAlgorithm()
-{
-	//Nothing to do
-}
+#include "GameObject.h"
+#include "GameObjectSet.h"
+#include "Bomb.h"
+#include "Area.h"
+#include "Item.h"
 
 bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, std::vector<const GameObject *> & ignore)
 {
@@ -51,7 +46,7 @@ void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & dir
 		}
 		else if(current.isBlockedBy(**itemIter, direction))
 		{
-			touchingObstacles.insert(*itemIter);
+			touchingObstacles += (*itemIter);
 			GameAlgorithm::getTouchingObstacles(**itemIter, direction, allObstacles, touchingObstacles, ignore);
 		}
 	}
@@ -100,7 +95,7 @@ void GameAlgorithm::getPiledItems(const GameObject & pileBase, GameObjectSet & p
 	{
 		if(&pileBase != *potentialIter && pileBase.isBlockedBy(**potentialIter, Point::UP))
 		{
-			pile.insertUnique(*potentialIter);
+			pile += (*potentialIter);
 			GameAlgorithm::getPiledItems(**potentialIter, pile, potentialPileMembers);
 		}
 	}
@@ -116,12 +111,12 @@ void GameAlgorithm::expandToPile(GameObjectSet & gameObjects, const GameObjectSe
 		GameAlgorithm::getPiledItems(**gameObjectIter, piles, potentialPileMembers);
 	}
 
-	gameObjects.merge(piles);
+	gameObjects += piles;
 }
 
 void GameAlgorithm::expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, const Point & pushDirection)
 {
-	if(pushDirection.notEquals(Point::ZERO))
+	if(pushDirection != Point::ZERO)
 	{
 		GameObjectSet pile(root);
 		GameAlgorithm::expandToPile(pile, obsticales);
@@ -139,7 +134,7 @@ void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObj
 		if((*blockedIter)->isPushable() == false ||
 			GameAlgorithm::isBlocked(**blockedIter, potentialBlockers, direction))
 		{
-			blockedIter = gameObjects.remove(blockedIter);
+			blockedIter = gameObjects.erase(blockedIter);
 		}
 		else
 		{
@@ -154,6 +149,54 @@ void GameAlgorithm::getTouchingObstacles(GameObject & root, const Point & direct
 
 	std::vector<const GameObject *> ignore;
 	GameAlgorithm::getTouchingObstacles(root, direction, allObstacles, touchingObstacles, ignore);
+}
+
+void GameAlgorithm::handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & affectedObjects, GameObjectSet & bombs, GameObjectSet & potentiallyAffected)
+{
+	//Look for detonated bombs
+	for(GameObjectSet::iterator bombIter = bombs.begin();
+		bombIter != bombs.end();
+		++bombIter)
+	{
+		for(GameObjectSet::const_iterator potentialIter = potentiallyAffected.cbegin();
+			potentialIter != potentiallyAffected.cend();
+			++potentialIter)
+		{
+			if((*bombIter)->isTouching(**potentialIter))
+			{
+				detonatedBombs += (*bombIter);
+			}
+		}
+	}
+
+	const unsigned explosionLength = (Bomb::getExplosionDistance() * 2) + 1;
+
+	//For each detonated bomb, list effects
+	for(GameObjectSet::const_iterator detonatedIter = detonatedBombs.cbegin();
+		detonatedIter != detonatedBombs.cend();
+		++detonatedIter)
+	{
+		//Prepare explosion area object
+		const Point areaTopLeft = (*detonatedIter)->getTopLeft() + ((Point::UP + Point::LEFT) * Bomb::getExplosionDistance());
+		const Area explosionArea(areaTopLeft, explosionLength, explosionLength);
+
+		for(GameObjectSet::iterator potentialIter = potentiallyAffected.begin();
+			potentialIter != potentiallyAffected.end();
+			++potentialIter)
+		{
+			if(explosionArea.collidesWith(**potentialIter))
+			{
+				if(bombs.contains(*potentialIter))
+				{
+					detonatedBombs += (*potentialIter);
+				}
+				else
+				{
+					affectedObjects += (*potentialIter);
+				}
+			}
+		}
+	}
 }
 
 void GameAlgorithm::move(GameObjectSet & gameObjects, const Point & direction)
@@ -175,8 +218,8 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 		{
 			GameObjectSet temp;
 			GameAlgorithm::getPiledItems(**itemIter, temp, previouslyFreeFalingItems);
-			crashingPile.merge(temp);
-			crashingPile.insertUnique(*itemIter);
+			crashingPile += temp;
+			crashingPile += (*itemIter);
 		}
 	}
 
@@ -188,5 +231,5 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 
 bool GameAlgorithm::isPushDirection(const Point & direction)
 {
-	return direction.notEquals(Point::ZERO) & direction.notEquals(Point::DOWN);
+	return (direction != Point::ZERO) && (direction != Point::DOWN);
 }

@@ -8,6 +8,8 @@
 
 #include "Wall.h"
 #include "Item.h"
+#include "Bomb.h"
+#include "BadShip.h"
 #include "BigShip.h"
 #include "SmallShip.h"
 #include "ExitPoint.h"
@@ -19,6 +21,8 @@ class GameScreenBuilder
 private:
 	std::vector<Wall *> _walls;
 	std::vector<Item *> _items;
+	std::vector<Bomb *> _bombs;
+	std::vector<BadShip *> _badShips;
 	std::vector<BigShip *> _bigShips;
 	std::vector<SmallShip *> _smallShips;
 	std::vector<ExitPoint *> _exitPoints;

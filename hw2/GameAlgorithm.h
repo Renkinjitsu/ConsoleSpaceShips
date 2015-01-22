@@ -63,6 +63,11 @@ public:
 	static void getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles);
 
 	/*
+	 * Moves Bombs that should explode & the affected GameObjects to 'detonatedBombs' & 'affectedObjects' respectivly
+	 */
+	static void handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & affectedObjects, GameObjectSet & bombs, GameObjectSet & potentiallyAffected);
+
+	/*
 	 * Moves the provided game objects 1 step in the provided direction.
 	 * No checks of movement validity are performed.
 	 */

@@ -39,12 +39,16 @@ public:
 	unsigned getX() const;
 	unsigned getY() const;
 
-	bool equals(const Point & other) const;
-	bool notEquals(const Point & other) const;
+	Point & operator+=(const Point & other);
+	Point & operator*=(const unsigned scalar);
+	Point & operator/=(const unsigned scalar);
 
-	void move(const Point & offset);
-	void multiply(const unsigned factor);
-	void divide(const unsigned factor);
+	Point operator+(const Point & other) const;
+	Point operator*(const unsigned scalar) const;
+	Point operator/(const unsigned scalar) const;
+
+	bool operator==(const Point & other) const;
+	bool operator!=(const Point & other) const;
 };
 
 #endif /* POINT_H_ */

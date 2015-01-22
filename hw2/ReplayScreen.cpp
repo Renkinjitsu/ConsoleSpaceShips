@@ -9,32 +9,32 @@
 
 ReplayScreen::ReplayScreen(const std::string & levelName)
 {
-	this->_currentIteration = 0;
+	_currentIteration = 0;
 
-	this->_solutionFile = FilesManager::openFile(levelName, FilesManager::FILE_TYPE_SOLUTION);
+	_solutionFile = FilesManager::openFile(levelName, FilesManager::FILE_TYPE_SOLUTION);
 
 	GameScreenBuilder builder;
 	builder.loadFromFile(levelName);
-	this->_gameScreen = (GameScreen *)builder.build();
+	_gameScreen = (GameScreen *)builder.build();
 
-	GameScreen & screen = *this->_gameScreen;
+	GameScreen & screen = *_gameScreen;
 
 	std::string line;
-	std::getline(*this->_solutionFile, line); //Skip Screen ID
-	std::getline(*this->_solutionFile, line); //Skip name of solver
+	std::getline(*_solutionFile, line); //Skip Screen ID
+	std::getline(*_solutionFile, line); //Skip name of solver
 
 	this->nextRecored._parametersCount = 0;
 }
 
 ReplayScreen::~ReplayScreen()
 {
-	this->_solutionFile->close();
-	delete this->_solutionFile;
+	_solutionFile->close();
+	delete _solutionFile;
 }
 
 void ReplayScreen::setInitialState()
 {
-	this->_gameScreen->setInitialState();
+	_gameScreen->setInitialState();
 }
 
 void ReplayScreen::readUserInput(const Keyboard & keyboard)
@@ -45,16 +45,16 @@ void ReplayScreen::readUserInput(const Keyboard & keyboard)
 	}
 
 	if(this->nextRecored._parametersCount == 0 &&
-		this->_solutionFile->eof() == false)
+		_solutionFile->eof() == false)
 	{
 		std::string line;
-		std::getline(*this->_solutionFile, line);
+		std::getline(*_solutionFile, line);
 		this->nextRecored._parametersCount = sscanf(line.c_str(), "%u: %c%c", &this->nextRecored._id,
 			&this->nextRecored._key1, &this->nextRecored._key2);
 	}
 
 	if(this->nextRecored._parametersCount >= 2 &&
-		this->nextRecored._id == this->_currentIteration)
+		this->nextRecored._id == _currentIteration)
 	{
 		Keyboard dummyKeyboard;
 		dummyKeyboard.setPress(this->nextRecored._key1);
@@ -63,24 +63,24 @@ void ReplayScreen::readUserInput(const Keyboard & keyboard)
 			dummyKeyboard.setPress(this->nextRecored._key2);
 		}
 
-		this->_gameScreen->readUserInput(dummyKeyboard);
+		_gameScreen->readUserInput(dummyKeyboard);
 
 		this->nextRecored._parametersCount = 0;
 	}
 
-	++this->_currentIteration;
+	++_currentIteration;
 }
 
 void ReplayScreen::process()
 {
-	this->_gameScreen->process();
+	_gameScreen->process();
 }
 void ReplayScreen::update()
 {
-	this->_gameScreen->update();
+	_gameScreen->update();
 }
 
 void ReplayScreen::draw(Canvas & canvas) const
 {
-	this->_gameScreen->draw(canvas);
+	_gameScreen->draw(canvas);
 }

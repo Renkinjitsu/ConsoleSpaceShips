@@ -9,23 +9,24 @@
 class GameObjectSet
 {
 	std::vector<GameObject *> _collection;
+
 public:
 	GameObjectSet();
 	GameObjectSet(const GameObjectSet & other);
 	~GameObjectSet();
 
-	void insert(GameObject * gameObject);
-	void insertUnique(GameObject * gameObject);
-	void merge(const GameObjectSet & other);
+	GameObjectSet & operator+=(GameObject * const gameObject);
+	GameObjectSet & operator+=(const GameObjectSet & other);
 
-	void remove(const GameObject * const gameObject);
-	void remove(const GameObjectSet & other);
+	GameObjectSet & operator-=(const GameObject * const gameObject);
+	GameObjectSet & operator-=(const GameObjectSet & other);
 
-	void clear();
+	bool operator==(const GameObjectSet & other) const;
+	bool operator!=(const GameObjectSet & other) const;
 
-	bool isEqual(const GameObjectSet & other) const;
 	bool contains(const GameObject * const gameObject) const;
 	bool isEmpty() const;
+	void clear();
 
 	bool isPushable() const;
 	unsigned getTotalMass() const;
@@ -41,7 +42,7 @@ public:
 	GameObjectSet::iterator end();
 	GameObjectSet::const_iterator cend() const;
 
-	GameObjectSet::iterator remove(const GameObjectSet::iterator & gameObjectIter);
+	GameObjectSet::iterator erase(const GameObjectSet::iterator & gameObjectIter);
 };
 
 #endif /* GAME_OBJECT_SET_H_ */

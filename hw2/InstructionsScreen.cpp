@@ -8,17 +8,11 @@ InstructionsScreen::InstructionsScreen()
 	{
 		"\xDB\xDB Keys",
 		"\xDB Small spaceship:",
-		"\xDB  A - Move left",
-		"\xDB  W - Move up",
-		"\xDB  D - Move right",
-		"\xDB  X - Move down",
-		"\xDB  Z - Rotate",
+		"\xDB  A/W/D/X  Move left/up/right/down",
+		"\xDB  Z        Rotate",
 		"\xDB",
 		"\xDB Big spaceship:",
-		"\xDB  J - Move left",
-		"\xDB  I - Move up",
-		"\xDB  L - Move right",
-		"\xDB  M - Move down",
+		"\xDB  J/I/L/M - Move left/up/right/down",
 		"\xDB",
 		"\xDB\xDB Objective",
 		"\xDB Get the two spaceships (@@, ##) through the exit point (marked by 'X').",
@@ -26,9 +20,11 @@ InstructionsScreen::InstructionsScreen()
 		"\xDB",
 		"\xDB\xDB Warning",
 		"\xDB Big items may damage the spaceships.",
+		"\xDB Bombs (marked by '*') detonate by thouch and explode.",
+		"\xDB Enemy troops (marked by 'W') are suicidal.",
 		"\xDB",
 		"\xDB\xDB Tip",
-		"\xDB Combine the power of the spaceships to move big items."
+		"\xDB Combine the power of the spaceships to move bigger items."
 	};
 
 	const size_t instructionsCount = sizeof(instructions) / sizeof(instructions[0]);

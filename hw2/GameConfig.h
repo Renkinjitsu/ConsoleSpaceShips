@@ -18,6 +18,8 @@ public:
 	static const char TEXTURES_EXIT = 'X';
 	static const char TEXTURES_SMALL_SPACESHIP = '@';
 	static const char TEXTURES_BIG_SPACESHIP = '#';
+	static const char TEXTURES_BAD_SPACESHIP = 'W';
+	static const char TEXTURES_BOMB = '*';
 	static const char TEXTURES_ITEM1 = '1';
 	static const char TEXTURES_ITEM2 = '2';
 	static const char TEXTURES_ITEM3 = '3';

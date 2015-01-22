@@ -34,8 +34,7 @@ void GameScreenBuilder::floodFill4Way(char * const serializedCanvas, const char 
 
 		for(unsigned i = 0; i < Point::DIRECTIONS_COUNT; ++i)
 		{
-			Point nextCoordinate = coordinate;
-			nextCoordinate.move(Point::DIRECTIONS[i]);
+			const Point nextCoordinate = coordinate + Point::DIRECTIONS[i];
 
 			GameScreenBuilder::floodFill4Way(serializedCanvas, targetCharacter, nextCoordinate, points);
 		}
@@ -61,7 +60,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 	//Screen ID
 	if(levelFile->eof())
 	{
-		this->_errors.push_back("No screen ID");
+		_errors.push_back("No screen ID");
 	}
 	else
 	{
@@ -69,7 +68,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 		unsigned id;
 		if(sscanf(line.c_str(), "ScreenID=%u", &id) != 1)
 		{
-			this->_errors.push_back("Corrupted screen ID line");
+			_errors.push_back("Corrupted screen ID line");
 		}
 		else
 		{
@@ -84,7 +83,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 					{
 						if(id == otherId)
 						{
-							this->_errors.push_back("Duplicate ID - \"" + fileNames[i] + "\"");
+							_errors.push_back("Duplicate ID - \"" + fileNames[i] + "\"");
 						}
 					}
 				}
@@ -146,13 +145,13 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 		{
 			case GameConfig::TEXTURES_WALL:
 			{
-				this->_walls.push_back(new Wall(points));
+				_walls.push_back(new Wall(points));
 			}
 			break;
 
 			case GameConfig::TEXTURES_EXIT:
 			{
-				this->_exitPoints.push_back(new ExitPoint(points));
+				_exitPoints.push_back(new ExitPoint(points));
 			}
 			break;
 
@@ -169,7 +168,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 					const Point bottomLeft(Point::getLeft(points[0], points[1]), Point::getBottom(points[0], points[1]));
 					const bool isHorisontal = (points[0].getY() == points[1].getY());
 
-					this->_smallShips.push_back(new SmallShip(bottomLeft, isHorisontal));
+					_smallShips.push_back(new SmallShip(bottomLeft, isHorisontal));
 				}
 			}
 			break;
@@ -189,15 +188,12 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 					const unsigned left = Point::getLeft(Point::getLeft(points[0], points[1]), Point::getLeft(points[2], points[3]));
 					const unsigned right = Point::getRight(Point::getRight(points[0], points[1]), Point::getRight(points[2], points[3]));
 
-					Point bottomLeft(left, bottom);
-					Point topRight(right, top);
+					const Point bottomLeft(left, bottom);
+					const Point topRight = Point(right, top) + Point::DOWN + Point::LEFT;
 
-					topRight.move(Point::DOWN);
-					topRight.move(Point::LEFT);
-
-					if(bottomLeft.equals(topRight))
+					if(bottomLeft == topRight)
 					{
-						this->_bigShips.push_back(new BigShip(bottomLeft));
+						_bigShips.push_back(new BigShip(bottomLeft));
 					}
 					else
 					{
@@ -207,12 +203,30 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 			}
 			break;
 
+			case GameConfig::TEXTURES_BAD_SPACESHIP:
+			{
+				for(unsigned i = 0; i < points.size(); ++i)
+				{
+					_badShips.push_back(new BadShip(points[i]));
+				}
+			}
+			break;
+
+			case GameConfig::TEXTURES_BOMB:
+			{
+				for(unsigned i = 0; i < points.size(); ++i)
+				{
+					_bombs.push_back(new Bomb(points[i]));
+				}
+			}
+			break;
+
 			default: //ch is in [1 .. 9]
 			{
 				bool isDuplicateItem = false;
-				for(unsigned i = 0; i < this->_items.size(); ++i)
+				for(unsigned i = 0; i < _items.size(); ++i)
 				{
-					isDuplicateItem |= (this->_items[i]->getTexture() == character);
+					isDuplicateItem |= (_items[i]->getTexture() == character);
 				}
 
 				if(isDuplicateItem)
@@ -223,7 +237,7 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 				}
 				else
 				{
-					this->_items.push_back(new Item(character, points));
+					_items.push_back(new Item(character, points));
 				}
 			}
 			break;
@@ -238,38 +252,38 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 			const unsigned characterIndex = serializedPosition % Canvas::getWidth();
 			error += " at line " + std::to_string(lineOffset + lineIndex);
 			error += ", character " + std::to_string(columnOffset + characterIndex);
-			this->_errors.push_back(error);
+			_errors.push_back(error);
 		}
 	}
 
 	//Count validations
 	if(noSmallSpaceship)
 	{
-		this->_errors.push_back("No small spaceship");
+		_errors.push_back("No small spaceship");
 	}
-	else if(this->_smallShips.size() > 1)
+	else if(_smallShips.size() > 1)
 	{
-		this->_errors.push_back("Too many small spaceships");
+		_errors.push_back("Too many small spaceships");
 	}
 
 	if(noBigSpaceship)
 	{
-		this->_errors.push_back("No big spaceship");
+		_errors.push_back("No big spaceship");
 	}
-	else if(this->_bigShips.size() > 1)
+	else if(_bigShips.size() > 1)
 	{
-		this->_errors.push_back("Too many big spaceships");
+		_errors.push_back("Too many big spaceships");
 	}
 
-	if(this->_exitPoints.size() == 0)
+	if(_exitPoints.size() == 0)
 	{
-		this->_errors.push_back("No exit point");
+		_errors.push_back("No exit point");
 	}
 }
 
 bool GameScreenBuilder::isValid() const
 {
-	return this->_errors.empty();
+	return _errors.empty();
 }
 
 Screen * GameScreenBuilder::build()
@@ -281,35 +295,47 @@ Screen * GameScreenBuilder::build()
 		GameScreen * game = new GameScreen();
 		screen = game;
 
-		for(unsigned i = 0; i < this->_items.size(); ++i)
+		for(unsigned i = 0; i < _items.size(); ++i)
 		{
-			game->addGameObject(this->_items[i]);
+			game->addGameObject(_items[i]);
 		}
-		this->_items.clear();
+		_items.clear();
 
-		for(unsigned i = 0; i < this->_exitPoints.size(); ++i)
+		for(unsigned i = 0; i < _exitPoints.size(); ++i)
 		{
-			game->addGameObject(this->_exitPoints[i]);
+			game->addGameObject(_exitPoints[i]);
 		}
-		this->_exitPoints.clear();
+		_exitPoints.clear();
 
-		for(unsigned i = 0; i < this->_walls.size(); ++i)
+		for(unsigned i = 0; i < _walls.size(); ++i)
 		{
-			game->addGameObject(this->_walls[i]);
+			game->addGameObject(_walls[i]);
 		}
-		this->_walls.clear();
+		_walls.clear();
 
-		for(unsigned i = 0; i < this->_smallShips.size(); ++i)
+		for(unsigned i = 0; i < _smallShips.size(); ++i)
 		{
-			game->addGameObject(this->_smallShips[i]);
+			game->addGameObject(_smallShips[i]);
 		}
-		this->_smallShips.clear();
+		_smallShips.clear();
 
-		for(unsigned i = 0; i < this->_bigShips.size(); ++i)
+		for(unsigned i = 0; i < _bigShips.size(); ++i)
 		{
-			game->addGameObject(this->_bigShips[i]);
+			game->addGameObject(_bigShips[i]);
 		}
-		this->_bigShips.clear();
+		_bigShips.clear();
+
+		for(unsigned i = 0; i < _badShips.size(); ++i)
+		{
+			game->addGameObject(_badShips[i]);
+		}
+		_badShips.clear();
+
+		for(unsigned i = 0; i < _bombs.size(); ++i)
+		{
+			game->addGameObject(_bombs[i]);
+		}
+		_bombs.clear();
 	}
 	else
 	{
@@ -317,9 +343,9 @@ Screen * GameScreenBuilder::build()
 		screen = errors;
 
 		errors->append("Errors:");
-		for(unsigned i = 0; i < this->_errors.size(); ++i)
+		for(unsigned i = 0; i < _errors.size(); ++i)
 		{
-			errors->append(std::to_string(i + 1) + ". " + this->_errors[i]);
+			errors->append(std::to_string(i + 1) + ". " + _errors[i]);
 		}
 	}
 
@@ -330,35 +356,35 @@ Screen * GameScreenBuilder::build()
 
 void GameScreenBuilder::clear()
 {
-	for(unsigned i = 0; i < this->_items.size(); ++i)
+	for(unsigned i = 0; i < _items.size(); ++i)
 	{
-		delete this->_items[i];
+		delete _items[i];
 	}
-	this->_items.clear();
+	_items.clear();
 
-	for(unsigned i = 0; i < this->_exitPoints.size(); ++i)
+	for(unsigned i = 0; i < _exitPoints.size(); ++i)
 	{
-		delete this->_exitPoints[i];
+		delete _exitPoints[i];
 	}
-	this->_exitPoints.clear();
+	_exitPoints.clear();
 
-	for(unsigned i = 0; i < this->_walls.size(); ++i)
+	for(unsigned i = 0; i < _walls.size(); ++i)
 	{
-		delete this->_walls[i];
+		delete _walls[i];
 	}
-	this->_walls.clear();
+	_walls.clear();
 
-	for(unsigned i = 0; i < this->_smallShips.size(); ++i)
+	for(unsigned i = 0; i < _smallShips.size(); ++i)
 	{
-		delete this->_smallShips[i];
+		delete _smallShips[i];
 	}
-	this->_smallShips.clear();
+	_smallShips.clear();
 
-	for(unsigned i = 0; i < this->_bigShips.size(); ++i)
+	for(unsigned i = 0; i < _bigShips.size(); ++i)
 	{
-		delete this->_bigShips[i];
+		delete _bigShips[i];
 	}
-	this->_bigShips.clear();
+	_bigShips.clear();
 
-	this->_errors.clear();
+	_errors.clear();
 }

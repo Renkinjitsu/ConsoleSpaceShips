@@ -1,5 +1,5 @@
-#ifndef EXITPOINT_H_
-#define EXITPOINT_H_
+#ifndef EXIT_POINT_H_
+#define EXIT_POINT_H_
 
 #include "GameObject.h"
 

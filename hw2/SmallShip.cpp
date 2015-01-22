@@ -1,6 +1,7 @@
 #include "SmallShip.h"
 
 #include "GameConfig.h"
+#include "Area.h"
 
 SmallShip::SmallShip(const Point & bottoLeftPosition, bool horizontal)
 	: Ship(bottoLeftPosition, horizontal ? 2 : 1, horizontal ? 1 : 2, GameConfig::TEXTURES_SMALL_SPACESHIP)
@@ -15,18 +16,8 @@ bool SmallShip::isBlockingRotation(const GameObject & other) const
 	const unsigned left = Point::getLeft(points[0], points[1]);
 	const unsigned bottom = Point::getBottom(points[0], points[1]);
 
-	GameObject blockingArea(GameConfig::TEXTURES_EMPTY, false);
-	Point point(left, bottom);
-	blockingArea.setPoints(point);
-
-	point.move(Point::UP);
-	blockingArea.setPoints(point);
-
-	point.move(Point::RIGHT);
-	blockingArea.setPoints(point);
-
-	point.move(Point::DOWN);
-	blockingArea.setPoints(point);
+	const Point topLeft = Point(left, bottom) + Point::UP;
+	const Area blockingArea(topLeft, 2, 2);
 
 	return other.collidesWith(blockingArea);
 }
@@ -46,13 +37,13 @@ void SmallShip::rotate()
 
 	if(bottomLeft.getX() == topRight.getX()) //Vertical
 	{
-		topRight.move(Point::RIGHT);
-		topRight.move(Point::DOWN);
+		topRight += Point::RIGHT;
+		topRight += Point::DOWN;
 	}
 	else //Horizontal
 	{
-		topRight.move(Point::UP);
-		topRight.move(Point::LEFT);
+		topRight += Point::UP;
+		topRight += Point::LEFT;
 	}
 
 	this->setPoints(bottomLeft);

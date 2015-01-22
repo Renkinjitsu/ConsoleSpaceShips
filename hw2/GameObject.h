@@ -33,8 +33,10 @@ public:
 	bool isBlockedBy(const GameObject & other, const Point & fromDirection) const;
 	bool isPushable() const;
 	bool collidesWith(const GameObject & other) const;
+	bool isTouching(const GameObject & other) const;
 
 	unsigned getMass() const;
+	Point getTopLeft() const;
 
 	void move(const Point & offset);
 

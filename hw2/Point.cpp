@@ -56,65 +56,86 @@ unsigned Point::getTop(const Point & p1, const Point & p2)
 
 Point::Point(unsigned x, unsigned y)
 {
-	this->_x = x;
-	this->_y = y;
+	_x = x;
+	_y = y;
 }
 
 Point::Point(const Point & other)
 {
-	this->_x = other._x;
-	this->_y = other._y;
+	_x = other._x;
+	_y = other._y;
 }
 
 unsigned Point::getX() const
 {
-	return this->_x;
+	return _x;
 }
 
 unsigned Point::getY() const
 {
-	return this->_y;
+	return _y;
 }
 
 bool Point::equals(unsigned x, unsigned y) const
 {
-	return (this->_x == x && this->_y == y);
-}
-
-bool Point::equals(const Point & other) const
-{
-	return this->equals(other._x, other._y);
-}
-
-bool Point::notEquals(const Point & other) const
-{
-	return (this->equals(other) == false);
+	return (_x == x && _y == y);
 }
 
 void Point::move(unsigned x, unsigned y)
 {
 	y %= GameConfig::SCREEN_HEIGHT;
 
-	this->_x = (this->_x + x) % GameConfig::SCREEN_WIDTH;
-	this->_y = (this->_y + y) % GameConfig::SCREEN_HEIGHT;
+	_x = (_x + x) % GameConfig::SCREEN_WIDTH;
+	_y = (_y + y) % GameConfig::SCREEN_HEIGHT;
 }
 
-void Point::move(const Point & offset)
+Point & Point::operator+=(const Point & other)
 {
-	this->move(offset._x, offset._y);
+	this->move(other._x, other._y);
+
+	return *this;
 }
 
-void Point::multiply(const unsigned factor)
+Point & Point::operator*=(const unsigned scalar)
 {
-	this->_x *= factor;
-	this->_y *= factor;
+	_x *= scalar;
+	_y *= scalar;
 
-	this->_x %= GameConfig::SCREEN_WIDTH;
-	this->_y %= GameConfig::SCREEN_HEIGHT;
+	_x %= GameConfig::SCREEN_WIDTH;
+	_y %= GameConfig::SCREEN_HEIGHT;
+
+	return *this;
 }
 
-void Point::divide(const unsigned factor)
+Point & Point::operator/=(const unsigned scalar)
 {
-	this->_x /= factor;
-	this->_y /= factor;
+	_x /= scalar;
+	_y /= scalar;
+
+	return *this;
+}
+
+Point Point::operator+(const Point & other) const
+{
+	return Point(*this) += other;
+}
+
+Point Point::operator*(const unsigned scalar) const
+{
+	return Point(*this) *= scalar;
+}
+
+Point Point::operator/(const unsigned scalar) const
+{
+	return Point(*this) /= scalar;
+}
+
+bool Point::operator==(const Point & other) const
+{
+	return this->equals(other._x, other._y);
+}
+
+bool Point::operator!=(const Point & other) const
+{
+	return !((*this) == other);
 }

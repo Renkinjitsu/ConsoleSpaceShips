@@ -10,6 +10,26 @@ TODO
 ====
 - [Failed to] Verify that ships can't push items downwards.
 - Verify small ship can't rotate while carring items
+- Verify behavior for a wal that is partially damaged by explosion
+- Transform 'Area : GameObject' to 'Rectangle : None'
+- BadShip
+[V] Character 'W'
+[V] Size: 1x1
+  > follows the player's ships
+[V] Terget suicide explosion
+
+[v]Bomb
+[V] Character '*'
+[V] Detonate on touch (with any object)
+[v] explosion is in a rext of x+-4, y+-4
+[v] Any object (exept for exit points) in the explosion rect is destroyed
+
+ - Slow push
+[V] On-offswitch key: 'b'
+  > Slow push mode needs to be displayed
+  > slow-push means that items do have friction
+
+ - 3 more screens
 
 ==================
 Unmet requirements

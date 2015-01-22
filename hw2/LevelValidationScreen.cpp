@@ -39,8 +39,8 @@ LevelValidationScreen::LevelValidationScreen()
 			option += " (Currupted screen ID)";
 		}
 
-		this->_fileNames.push_back(availableFileNames[i]);
-		this->_options.push_back(option);
+		_fileNames.push_back(availableFileNames[i]);
+		_options.push_back(option);
 	}
 }
 
@@ -62,7 +62,7 @@ void LevelValidationScreen::readUserInput(const Keyboard & keyboard)
 	{
 		bool optionSelected = false;
 		unsigned selectedIndex;
-		for(unsigned i = 0; i < this->_options.size(); ++i)
+		for(unsigned i = 0; i < _options.size(); ++i)
 		{
 			if(keyboard.isPressed(Keyboard::numberKeys[i]))
 			{
@@ -73,8 +73,8 @@ void LevelValidationScreen::readUserInput(const Keyboard & keyboard)
 
 		if(optionSelected)
 		{
-			this->_builder.loadFromFile(this->_fileNames[selectedIndex]);
-			if(this->_builder.isValid())
+			_builder.loadFromFile(_fileNames[selectedIndex]);
+			if(_builder.isValid())
 			{
 				MenuScreen * message = new MenuScreen();
 				message->append("No errors detected, the file is valid!");
@@ -82,7 +82,7 @@ void LevelValidationScreen::readUserInput(const Keyboard & keyboard)
 			}
 			else
 			{
-				ScreenManager::add(this->_builder.build());
+				ScreenManager::add(_builder.build());
 			}
 		}
 	}
@@ -98,11 +98,11 @@ void LevelValidationScreen::update()
 
 void LevelValidationScreen::draw(Canvas & canvas) const
 {
-	Point startPosition(Canvas::TOP_LEFT);
-	startPosition.move(Point::RIGHT); //Padding from the left
-	startPosition.move(Point::DOWN); //Padding from the right
+	Point startPosition = Canvas::TOP_LEFT +
+		Point::RIGHT + //Padding from the left
+		Point::DOWN; //Padding from the right
 
-	const unsigned filesCount = (unsigned)this->_options.size();
+	const unsigned filesCount = (unsigned)_options.size();
 
 	if(filesCount == 0)
 	{
@@ -111,13 +111,13 @@ void LevelValidationScreen::draw(Canvas & canvas) const
 	else
 	{
 		canvas.draw(startPosition, "Choose a file to test:");
-		startPosition.move(Point::RIGHT); //Ident
-		startPosition.move(Point::DOWN); //Move 1 row lower
+		startPosition += Point::RIGHT; //Ident
+		startPosition += Point::DOWN; //Move 1 row lower
 
 		for(unsigned i = 0; i < filesCount; ++i)
 		{
-			startPosition.move(Point::DOWN); //Move 1 row lower
-			canvas.draw(startPosition, this->_options[i]);
+			startPosition += Point::DOWN; //Move 1 row lower
+			canvas.draw(startPosition, _options[i]);
 		}
 	}
 }

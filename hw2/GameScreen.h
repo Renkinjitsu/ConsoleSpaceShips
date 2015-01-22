@@ -7,9 +7,12 @@
 
 #include "Item.h"
 #include "BigShip.h"
+#include "BadShip.h"
 #include "SmallShip.h"
 #include "Wall.h"
 #include "ExitPoint.h"
+#include "Bomb.h"
+
 #include "GameRecorder.h"
 
 //For inner usage only
@@ -38,9 +41,12 @@ private:
 	GameObjectSet _allGameObjects;
 	GameObjectSet _obstacles;
 	GameObjectSet _items;
+	GameObjectSet _badShips;
+	GameObjectSet _bombs;
 	GameObjectSet _exitPoints;
 
 	GameState _gameState;
+	bool _isItemFrictionOn;
 
 	Ship * _ships[GameScreen::SHIPS_COUNT];
 	ShipInfo _shipInfos[GameScreen::SHIPS_COUNT];
@@ -67,6 +73,8 @@ public:
 	void addGameObject(Item * item);
 	void addGameObject(Wall * wall);
 	void addGameObject(ExitPoint * exit);
+	void addGameObject(Bomb * bomb);
+	void addGameObject(BadShip * ship);
 	void addGameObject(BigShip * ship);
 	void addGameObject(SmallShip * ship);
 

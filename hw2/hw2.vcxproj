@@ -11,7 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Area.cpp" />
+    <ClCompile Include="BadShip.cpp" />
     <ClCompile Include="BigShip.cpp" />
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="ExitPoint.cpp" />
     <ClCompile Include="FilesManager.cpp" />
@@ -43,7 +46,9 @@
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Area.h" />
     <ClInclude Include="BigShip.h" />
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="ExitPoint.h" />
@@ -56,6 +61,7 @@
     <ClInclude Include="GameAlgorithm.h" />
     <ClInclude Include="GameObjectSet.h" />
     <ClInclude Include="GameScreenBuilder.h" />
+    <ClInclude Include="BadShip.h" />
     <ClInclude Include="InGameMenuScreen.h" />
     <ClInclude Include="InstructionsScreen.h" />
     <ClInclude Include="io_utils.h" />
