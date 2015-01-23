@@ -1,6 +1,7 @@
 #include "GameAlgorithm.h"
 
 #include <assert.h>
+#include <algorithm>
 
 #include "GameObject.h"
 #include "GameObjectSet.h"

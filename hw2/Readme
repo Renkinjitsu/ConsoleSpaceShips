@@ -10,19 +10,20 @@ TODO
 ====
 - [Failed to] Verify that ships can't push items downwards.
 - Verify small ship can't rotate while carring items
-- Verify behavior for a wal that is partially damaged by explosion
+- Fix behavior for a wall that is partially damaged by explosion
 - Transform 'Area : GameObject' to 'Rectangle : None'
 - BadShip
 [V] Character 'W'
 [V] Size: 1x1
-  > follows the player's ships
+[V] follows the player's ships
 [V] Terget suicide explosion
+  > Destroed by free falling items
 
-[v]Bomb
+[V]Bomb
 [V] Character '*'
 [V] Detonate on touch (with any object)
-[v] explosion is in a rext of x+-4, y+-4
-[v] Any object (exept for exit points) in the explosion rect is destroyed
+[V] explosion is in a rext of x+-4, y+-4
+[V] Any object (exept for exit points) in the explosion rect is destroyed
 
  - Slow push
 [V] On-offswitch key: 'b'
@@ -34,10 +35,7 @@ TODO
 ==================
 Unmet requirements
 ==================
-- At the (successful) end of a level, go to the next.
 - If the last level is completed, show a message and wait for a keypress. then, return to the main menu.
-- The levels are ordered by their ID.
-- Need to read the requirements of 2nd work block.
 
  - Arguments:
     The path must be quoted (dir /b "d:\path\some sub folder with spaces")
@@ -54,3 +52,30 @@ Student dependent decisions
 - A ship may push a free-falling item.
 - Only a ship can go through the exit point.
 - A ship can't push another ship.
+- Gravity affects 'Bomb'-s
+- Bad spaceship can't push objects
+- Bad spaceship recognize obsticales only if it immediately blocks it
+- Exit point is immune to damage
+
+=====================
+Bad spaceship hunting
+=====================
+
+Step-distance
+*************
+Sum of difference on each axis.
+
+Target selection
+****************
+Bad spaceship hunts the closest non-bad spaceship.
+If both the small & the big spaceships are at the same step-distance, the target shall be the big spaceship.
+
+Movement
+********
+Let <x> be the step-distance on the X axis
+Let <y> be the step-distance on the Y axis
+If <x> >= <y>
+ let <C> be X axis
+else,
+ let <C> be Y axis
+advance twords the target on <C>

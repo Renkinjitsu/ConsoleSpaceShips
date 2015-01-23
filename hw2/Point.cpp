@@ -76,6 +76,41 @@ unsigned Point::getY() const
 	return _y;
 }
 
+unsigned Point::getHorizontalDistance(const Point & other) const
+{
+	return std::max(_x, other._x) - std::min(_x, other._x);
+}
+
+unsigned Point::getVerticalDistance(const Point & other) const
+{
+	return std::max(_y, other._y) - std::min(_y, other._y);
+}
+
+unsigned Point::getStepDistance(const Point & other) const
+{
+	return this->getHorizontalDistance(other) + this->getVerticalDistance(other);
+}
+
+bool Point::isAbove(const Point & other) const
+{
+	return (Point::getTop(*this, other) != other._y);
+}
+
+bool Point::isBelow(const Point & other) const
+{
+	return (Point::getTop(*this, other) != _y);
+}
+
+bool Point::isLeftOf(const Point & other) const
+{
+	return (Point::getLeft(*this, other) != other._x);
+}
+
+bool Point::isRightOf(const Point & other) const
+{
+	return (Point::getLeft(*this, other) != _x);
+}
+
 bool Point::equals(unsigned x, unsigned y) const
 {
 	return (_x == x && _y == y);

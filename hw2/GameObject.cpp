@@ -1,5 +1,7 @@
 #include "GameObject.h"
 
+#include <algorithm>
+
 GameObject::GameObject(char texture, bool isPushable)
 {
 	_texture = texture;
@@ -116,6 +118,45 @@ Point GameObject::getTopLeft() const
 	}
 
 	return Point(left, top);
+}
+
+unsigned GameObject::getStepDistance(const Point & point) const
+{
+	unsigned result = _points[0].getStepDistance(point);
+
+	for(unsigned i = 1; i < _points.size(); ++i)
+	{
+		result = std::min(result, _points[i].getStepDistance(point));
+	}
+
+	return result;
+}
+
+unsigned GameObject::getStepDistance(const GameObject & other) const
+{
+	unsigned result = other.getStepDistance(_points[0]);
+
+	for(unsigned i = 1; i < _points.size(); ++i)
+	{
+		result = std::min(result, other.getStepDistance(_points[0]));
+	}
+
+	return result;
+}
+
+Point GameObject::getClosestStepDistancePoint(const GameObject & other) const
+{
+	const Point * closestPoint = &(_points[0]);
+
+	for(unsigned i = 1; i < _points.size(); ++i)
+	{
+		if(other.getStepDistance(_points[i]) < other.getStepDistance(*closestPoint))
+		{
+			closestPoint = &(_points[i]);
+		}
+	}
+
+	return *closestPoint;
 }
 
 void GameObject::move(const Point & offset)

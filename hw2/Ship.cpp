@@ -1,9 +1,9 @@
 #include "Ship.h"
 
-Ship::Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, char texture)
+Ship::Ship(const Point & bottomLeftPosition, unsigned width, unsigned height, char texture)
 	: GameObject(texture, false)
 {
-	Point rowWalker(bottoLeftPosition);
+	Point rowWalker(bottomLeftPosition);
 	for(size_t i = 0; i < height; ++i)
 	{
 		Point point(rowWalker);

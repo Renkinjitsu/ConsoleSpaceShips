@@ -9,7 +9,7 @@ private:
 	//None
 
 public:
-	Ship(const Point & bottoLeftPosition, unsigned width, unsigned height, char texture);
+	Ship(const Point & bottomLeftPosition, unsigned width, unsigned height, char texture);
 
 	virtual bool isBlockingRotation(const GameObject & other) const = 0;
 

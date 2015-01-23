@@ -357,6 +357,76 @@ void GameScreen::update()
 			}
 		}
 
+		//Update bad spaceships position
+		for(GameObjectSet::iterator badShipIter = _badShips.begin();
+			badShipIter != _badShips.end(); ++badShipIter)
+		{
+			GameObject & badShip = **badShipIter;
+			const Point badShipPosition = badShip.getTopLeft();
+
+			const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
+			const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
+
+			const Point smallShipClosestPoint = smallShip.getClosestStepDistancePoint(badShip);
+			const Point bigShipClosestPoint = bigShip.getClosestStepDistancePoint(badShip);
+
+			const unsigned smallShipDistance = badShip.getStepDistance(smallShipClosestPoint);
+			const unsigned bigShipDistance = badShip.getStepDistance(bigShipClosestPoint);
+
+			const Point & targetPoint = (bigShipDistance <= smallShipDistance) ? bigShipClosestPoint : smallShipClosestPoint;
+
+			Point verticalMovement = Point::ZERO;
+			if(targetPoint.isAbove(badShipPosition))
+			{
+				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::UP) == false)
+				{
+					verticalMovement = Point::UP;
+				}
+			}
+			else if(targetPoint.isBelow(badShipPosition))
+			{
+				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::DOWN) == false)
+				{
+					verticalMovement = Point::DOWN;
+				}
+			}
+			//else, no horizontal movement
+
+			Point horisontalMovement = Point::ZERO;
+			if(targetPoint.isLeftOf(badShipPosition))
+			{
+				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::LEFT) == false)
+				{
+					horisontalMovement = Point::LEFT;
+				}
+			}
+			else if(targetPoint.isRightOf(badShipPosition))
+			{
+				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::RIGHT) == false)
+				{
+					horisontalMovement = Point::RIGHT;
+				}
+			}
+			//else, no vertical movement
+
+			if(horisontalMovement == Point::ZERO)
+			{
+				badShip.move(verticalMovement);
+			}
+			else if(verticalMovement == Point::ZERO)
+			{
+				badShip.move(horisontalMovement);
+			}
+			else if(badShipPosition.getHorizontalDistance(targetPoint) >= badShipPosition.getVerticalDistance(targetPoint))
+			{
+				badShip.move(horisontalMovement);
+			}
+			else
+			{
+				badShip.move(verticalMovement);
+			}
+		}
+
 		GameAlgorithm::move(_currFreeFallingItems, Point::DOWN);
 		GameAlgorithm::move(_bombs, Point::DOWN);
 	}

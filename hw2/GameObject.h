@@ -37,6 +37,9 @@ public:
 
 	unsigned getMass() const;
 	Point getTopLeft() const;
+	unsigned getStepDistance(const Point & point) const;
+	unsigned getStepDistance(const GameObject & other) const;
+	Point getClosestStepDistancePoint(const GameObject & other) const;
 
 	void move(const Point & offset);
 

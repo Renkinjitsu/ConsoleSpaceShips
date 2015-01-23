@@ -39,6 +39,15 @@ public:
 	unsigned getX() const;
 	unsigned getY() const;
 
+	unsigned getHorizontalDistance(const Point & other) const;
+	unsigned getVerticalDistance(const Point & other) const;
+	unsigned getStepDistance(const Point & other) const;
+
+	bool isAbove(const Point & other) const;
+	bool isBelow(const Point & other) const;
+	bool isLeftOf(const Point & other) const;
+	bool isRightOf(const Point & other) const;
+
 	Point & operator+=(const Point & other);
 	Point & operator*=(const unsigned scalar);
 	Point & operator/=(const unsigned scalar);
