@@ -12,22 +12,10 @@ TODO
 - Verify small ship can't rotate while carring items
 - Fix behavior for a wall that is partially damaged by explosion
 - Transform 'Area : GameObject' to 'Rectangle : None'
-- BadShip
-[V] Character 'W'
-[V] Size: 1x1
-[V] follows the player's ships
-[V] Terget suicide explosion
-  > Destroed by free falling items
-
-[V]Bomb
-[V] Character '*'
-[V] Detonate on touch (with any object)
-[V] explosion is in a rext of x+-4, y+-4
-[V] Any object (exept for exit points) in the explosion rect is destroyed
 
  - Slow push
 [V] On-offswitch key: 'b'
-  > Slow push mode needs to be displayed
+[V] Slow push mode needs to be displayed
   > slow-push means that items do have friction
 
  - 3 more screens

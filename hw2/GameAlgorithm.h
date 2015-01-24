@@ -62,10 +62,14 @@ public:
 	 */
 	static void getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles);
 
+	static bool isTouchingObstacles(const GameObject & gameObject, const GameObjectSet & obstacles, const Point & direction);
+
 	/*
 	 * Moves Bombs that should explode & the affected GameObjects to 'detonatedBombs' & 'affectedObjects' respectivly
 	 */
 	static void handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & affectedObjects, GameObjectSet & bombs, GameObjectSet & potentiallyAffected);
+
+	static void updateBadSpaceshipPosition(GameObject & badShip, const Ship & smallShip, const Ship & bigShip, const GameObjectSet & obstacles);
 
 	/*
 	 * Moves the provided game objects 1 step in the provided direction.
@@ -73,7 +77,7 @@ public:
 	 */
 	static void move(GameObjectSet & gameObjects, const Point & direction);
 
-	static bool isShipCrashed(const Ship & ship, const GameObjectSet & previouslyFreeFalingItems);
+	static bool isCrashed(const GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems);
 
 	static bool isPushDirection(const Point & direction);
 };

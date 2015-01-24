@@ -20,14 +20,17 @@ bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet
 
 	for(GameObjectSet::const_iterator blockingObjectIter = blockingObjects.cbegin(); blockingObjectIter != blockingObjects.cend(); ++blockingObjectIter)
 	{
-		if(*blockingObjectIter != &gameObject &&
-			gameObject.isBlockedBy(**blockingObjectIter, from) &&
-			(std::find(ignore.begin(), ignore.end(), *blockingObjectIter) == ignore.end()))
+		const GameObject & blockingObject = **blockingObjectIter;
+
+		if(gameObject.isBlockedBy(blockingObject, from))
 		{
-			if((*blockingObjectIter)->isPushable() == false ||
-				GameAlgorithm::isBlocked(**blockingObjectIter, blockingObjects, from, ignore))
+			const bool ignored = std::find(ignore.begin(), ignore.end(), &blockingObject) != ignore.end();
+			if(ignored == false)
 			{
-				return true;
+				if(blockingObject.isPushable() == false || GameAlgorithm::isBlocked(blockingObject, blockingObjects, from, ignore))
+				{
+					return true;
+				}
 			}
 		}
 	}
@@ -55,7 +58,7 @@ void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & dir
 
 bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from)
 {
-	GameObjectSet empty_ignore;
+	const GameObjectSet empty_ignore;
 
 	return GameAlgorithm::isBlocked(gameObject, blockingObjects, from, empty_ignore);
 }
@@ -152,6 +155,18 @@ void GameAlgorithm::getTouchingObstacles(GameObject & root, const Point & direct
 	GameAlgorithm::getTouchingObstacles(root, direction, allObstacles, touchingObstacles, ignore);
 }
 
+bool GameAlgorithm::isTouchingObstacles(const GameObject & gameObject, const GameObjectSet & obstacles, const Point & direction)
+{
+	bool result = false;
+
+	for(GameObjectSet::const_iterator obstacleIter = obstacles.cbegin(); (obstacleIter != obstacles.cend()) && (result == false); ++obstacleIter)
+	{
+		result = gameObject.isBlockedBy(**obstacleIter, direction);
+	}
+
+	return result;
+}
+
 void GameAlgorithm::handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & affectedObjects, GameObjectSet & bombs, GameObjectSet & potentiallyAffected)
 {
 	//Look for detonated bombs
@@ -200,6 +215,70 @@ void GameAlgorithm::handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & 
 	}
 }
 
+void GameAlgorithm::updateBadSpaceshipPosition(GameObject & badShip, const Ship & smallShip, const Ship & bigShip, const GameObjectSet & obstacles)
+{
+	const Point badShipPosition = badShip.getTopLeft();
+
+	const Point smallShipClosestPoint = smallShip.getClosestStepDistancePoint(badShip);
+	const Point bigShipClosestPoint = bigShip.getClosestStepDistancePoint(badShip);
+
+	const unsigned smallShipDistance = badShip.getStepDistance(smallShipClosestPoint);
+	const unsigned bigShipDistance = badShip.getStepDistance(bigShipClosestPoint);
+
+	const Point & targetPoint = (bigShipDistance <= smallShipDistance) ? bigShipClosestPoint : smallShipClosestPoint;
+
+	Point verticalMovement = Point::ZERO;
+	if(targetPoint.isAbove(badShipPosition))
+	{
+		if(GameAlgorithm::isTouchingObstacles(badShip, obstacles, Point::UP) == false)
+		{
+			verticalMovement = Point::UP;
+		}
+	}
+	else if(targetPoint.isBelow(badShipPosition))
+	{
+		if(GameAlgorithm::isTouchingObstacles(badShip, obstacles, Point::DOWN) == false)
+		{
+			verticalMovement = Point::DOWN;
+		}
+	}
+	//else, no horizontal movement
+
+	Point horisontalMovement = Point::ZERO;
+	if(targetPoint.isLeftOf(badShipPosition))
+	{
+		if(GameAlgorithm::isTouchingObstacles(badShip, obstacles, Point::LEFT) == false)
+		{
+			horisontalMovement = Point::LEFT;
+		}
+	}
+	else if(targetPoint.isRightOf(badShipPosition))
+	{
+		if(GameAlgorithm::isTouchingObstacles(badShip, obstacles, Point::RIGHT) == false)
+		{
+			horisontalMovement = Point::RIGHT;
+		}
+	}
+	//else, no vertical movement
+
+	if(horisontalMovement == Point::ZERO)
+	{
+		badShip.move(verticalMovement);
+	}
+	else if(verticalMovement == Point::ZERO)
+	{
+		badShip.move(horisontalMovement);
+	}
+	else if(badShipPosition.getHorizontalDistance(targetPoint) >= badShipPosition.getVerticalDistance(targetPoint))
+	{
+		badShip.move(horisontalMovement);
+	}
+	else
+	{
+		badShip.move(verticalMovement);
+	}
+}
+
 void GameAlgorithm::move(GameObjectSet & gameObjects, const Point & direction)
 {
 	for(GameObjectSet::iterator iter = gameObjects.begin(); iter != gameObjects.end(); ++iter)
@@ -208,14 +287,14 @@ void GameAlgorithm::move(GameObjectSet & gameObjects, const Point & direction)
 	}
 }
 
-bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previouslyFreeFalingItems)
+bool GameAlgorithm::isCrashed(const GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems)
 {
 	GameObjectSet crashingPile;
 
 	for(GameObjectSet::const_iterator itemIter = previouslyFreeFalingItems.cbegin();
 		itemIter != previouslyFreeFalingItems.cend(); ++itemIter)
 	{
-		if(ship.isBlockedBy(**itemIter, Point::UP))
+		if(gameObject.isBlockedBy(**itemIter, Point::UP))
 		{
 			GameObjectSet temp;
 			GameAlgorithm::getPiledItems(**itemIter, temp, previouslyFreeFalingItems);
@@ -224,7 +303,7 @@ bool GameAlgorithm::isShipCrashed(const Ship & ship, const GameObjectSet & previ
 		}
 	}
 
-	const unsigned maxShipEndurance = (ship.getMass() / 2);
+	const unsigned maxShipEndurance = (gameObject.getMass() / 2);
 
 	return (crashingPile.getTotalMass() > 0) &&
 		(crashingPile.getTotalMass() >= maxShipEndurance);

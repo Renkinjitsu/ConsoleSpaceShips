@@ -89,22 +89,22 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 		smallShipInfo._velocity = Point::RIGHT;
 	}
 
-	if(keyboard.isPressed(Keyboard::I))
+	if(keyboard.isPressed(Keyboard::I) || keyboard.isPressed(Keyboard::NUM8))
 	{
 		bigShipAffectiveKey = Keyboard::I;
 		bigShipInfo._velocity = Point::UP;
 	}
-	else if(keyboard.isPressed(keyboard.M))
+	else if(keyboard.isPressed(keyboard.M) || keyboard.isPressed(Keyboard::NUM2))
 	{
 		bigShipAffectiveKey = Keyboard::M;
 		bigShipInfo._velocity = Point::DOWN;
 	}
-	else if(keyboard.isPressed(keyboard.J))
+	else if(keyboard.isPressed(keyboard.J) || keyboard.isPressed(Keyboard::NUM4))
 	{
 		bigShipAffectiveKey = Keyboard::J;
 		bigShipInfo._velocity = Point::LEFT;
 	}
-	else if(keyboard.isPressed(keyboard.L))
+	else if(keyboard.isPressed(keyboard.L) || keyboard.isPressed(Keyboard::NUM6))
 	{
 		bigShipAffectiveKey = Keyboard::L;
 		bigShipInfo._velocity = Point::RIGHT;
@@ -197,6 +197,32 @@ void GameScreen::process()
 		return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
 	}
 
+	//Bad ship crash detection
+	{
+		std::vector<BadShip *> crashedShips;
+
+		for(GameObjectSet::iterator badShipIter = _badShips.begin();
+			badShipIter != _badShips.end(); ++badShipIter)
+		{
+			BadShip * const badShip = (BadShip *)(*badShipIter);
+
+			if(GameAlgorithm::isCrashed(*badShip, _prevFreeFallingItems))
+			{
+				crashedShips.push_back(badShip);
+			}
+		}
+
+		for(unsigned i = 0; i < crashedShips.size(); ++i)
+		{
+			_allGameObjects -= crashedShips[i];
+			_badShips -= crashedShips[i];
+			_obstacles -= crashedShips[i];
+
+			delete crashedShips[i];
+
+		}
+	}
+
 	unsigned totalShipsMass = 0;
 
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
@@ -209,7 +235,7 @@ void GameScreen::process()
 
 		ShipInfo & shipInfo = _shipInfos[i];
 
-		if(GameAlgorithm::isShipCrashed(*ship, _prevFreeFallingItems))
+		if(GameAlgorithm::isCrashed(*ship, _prevFreeFallingItems))
 		{
 			ship->explode();
 			this->setState(GameScreen::GAME_STATE_LOST);
@@ -357,74 +383,15 @@ void GameScreen::update()
 			}
 		}
 
-		//Update bad spaceships position
+		const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
+		const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
+
 		for(GameObjectSet::iterator badShipIter = _badShips.begin();
 			badShipIter != _badShips.end(); ++badShipIter)
 		{
 			GameObject & badShip = **badShipIter;
-			const Point badShipPosition = badShip.getTopLeft();
 
-			const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
-			const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
-
-			const Point smallShipClosestPoint = smallShip.getClosestStepDistancePoint(badShip);
-			const Point bigShipClosestPoint = bigShip.getClosestStepDistancePoint(badShip);
-
-			const unsigned smallShipDistance = badShip.getStepDistance(smallShipClosestPoint);
-			const unsigned bigShipDistance = badShip.getStepDistance(bigShipClosestPoint);
-
-			const Point & targetPoint = (bigShipDistance <= smallShipDistance) ? bigShipClosestPoint : smallShipClosestPoint;
-
-			Point verticalMovement = Point::ZERO;
-			if(targetPoint.isAbove(badShipPosition))
-			{
-				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::UP) == false)
-				{
-					verticalMovement = Point::UP;
-				}
-			}
-			else if(targetPoint.isBelow(badShipPosition))
-			{
-				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::DOWN) == false)
-				{
-					verticalMovement = Point::DOWN;
-				}
-			}
-			//else, no horizontal movement
-
-			Point horisontalMovement = Point::ZERO;
-			if(targetPoint.isLeftOf(badShipPosition))
-			{
-				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::LEFT) == false)
-				{
-					horisontalMovement = Point::LEFT;
-				}
-			}
-			else if(targetPoint.isRightOf(badShipPosition))
-			{
-				if(GameAlgorithm::isBlocked(badShip, _obstacles, Point::RIGHT) == false)
-				{
-					horisontalMovement = Point::RIGHT;
-				}
-			}
-			//else, no vertical movement
-
-			if(horisontalMovement == Point::ZERO)
-			{
-				badShip.move(verticalMovement);
-			}
-			else if(verticalMovement == Point::ZERO)
-			{
-				badShip.move(horisontalMovement);
-			}
-			else if(badShipPosition.getHorizontalDistance(targetPoint) >= badShipPosition.getVerticalDistance(targetPoint))
-			{
-				badShip.move(horisontalMovement);
-			}
-			else
-			{
-				badShip.move(verticalMovement);
-			}
+			GameAlgorithm::updateBadSpaceshipPosition(badShip, smallShip, bigShip, _obstacles);
 		}
 
 		GameAlgorithm::move(_currFreeFallingItems, Point::DOWN);
@@ -438,6 +405,8 @@ void GameScreen::draw(Canvas & canvas) const
 	{
 		(*iter)->draw(canvas);
 	}
+
+	canvas.printNotification((_isItemFrictionOn) ? "Slow push mode: On" : "Slow push mode: Off");
 
 	if(this->isGameOver())
 	{

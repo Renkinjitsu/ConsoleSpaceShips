@@ -10,9 +10,12 @@ class Canvas
 {
 private:
 	static const unsigned bufferLength = (GameConfig::SCREEN_WIDTH * GameConfig::SCREEN_HEIGHT);
+	static const unsigned notificationBarLength = GameConfig::SCREEN_WIDTH - 1;
 
 	char _buffer[bufferLength + 1];
 	char _bufferBackup[bufferLength + 1];
+
+	char _notificationBarBuffer[notificationBarLength + 1];
 
 public:
 	static const unsigned MAX_SERIALIZED_LENGTH = bufferLength;
@@ -35,6 +38,8 @@ public:
 	void draw(const Point & posititon, char character);
 	void draw(const Point & posititon, const char * string);
 	void draw(const Point & posititon, const std::string & string);
+
+	void printNotification(const char * const notification);
 
 	void save();
 	void restore();

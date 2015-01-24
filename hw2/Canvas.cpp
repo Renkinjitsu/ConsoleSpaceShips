@@ -54,7 +54,6 @@ Canvas::~Canvas()
 
 void Canvas::draw(const Point & posititon, char character)
 {
-
 	_buffer[Canvas::serialize(posititon)] = character;
 }
 
@@ -72,6 +71,17 @@ void Canvas::draw(const Point & posititon, const char * string)
 void Canvas::draw(const Point & posititon, const std::string & string)
 {
 	this->draw(posititon, string.c_str());
+}
+
+void Canvas::printNotification(const char * const notification)
+{
+	unsigned i = 0;
+	while(i < Canvas::notificationBarLength && notification[i] != '\0')
+	{
+		_notificationBarBuffer[i] = notification[i];
+
+		++i;
+	}
 }
 
 void Canvas::save()
@@ -102,12 +112,18 @@ void Canvas::begin()
 	}
 
 	_buffer[Canvas::bufferLength] = '\0';
+
+	for(unsigned i = 0; i < Canvas::notificationBarLength; i++)
+	{
+		_notificationBarBuffer[i] = GameConfig::TEXTURES_EMPTY;
+	}
+	_notificationBarBuffer[Canvas::notificationBarLength] = '\0';
 }
 
 void Canvas::end()
 {
 	gotoxy(0, 0);
-	std::cout << _buffer;
+	std::cout << _buffer << _notificationBarBuffer;
 }
 
 void Canvas::end(std::string & destination)
