@@ -18,7 +18,7 @@ private:
 	~GameAlgorithm();
 
 	static bool isBlocked(const GameObject & gameObject, const GameObjectSet & blockingObjects, const Point & from, std::vector<const GameObject *> & ignore);
-	static void getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore);
+	static void getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, bool recursive, std::vector<const GameObject *> & ignore);
 public:
 
 	/*
@@ -52,15 +52,13 @@ public:
 	 */
 	static void expandToPile(GameObjectSet & gameObjects, const GameObjectSet & potentialPileMembers);
 
-	static void expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, const Point & pushDirection);
-
 	static void removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, const Point & direction);
 
 	/*
-	 * Returns a collection of obsticles that touch 'root' or other's in the collection from 'direction'.
-	 * 'touchingObsticles' (the collection) should be provided empty.
+	 * Returns a collection of obstacles that touch 'root' from 'direction'.
+	 * if 'recursive', adds obstacles that touch others in the collection from 'direction'.
 	 */
-	static void getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles);
+	static void getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, bool recursive);
 
 	static bool isTouchingObstacles(const GameObject & gameObject, const GameObjectSet & obstacles, const Point & direction);
 
@@ -77,7 +75,7 @@ public:
 	 */
 	static void move(GameObjectSet & gameObjects, const Point & direction);
 
-	static bool isCrashed(const GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems);
+	static bool isCrashed(GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems);
 
 	static bool isPushDirection(const Point & direction);
 };

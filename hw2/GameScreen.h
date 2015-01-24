@@ -19,7 +19,8 @@
 struct ShipInfo
 {
 	Point _velocity;
-	GameObjectSet _pushPile; //A pile that the ship is currently tring to push
+	GameObjectSet _pushPile; //A pile that the ship is currently tring to push (left or right)
+	GameObjectSet _pullPile; //A pile that the ship is pulling (up or down)
 	bool _rotate;
 };
 

@@ -1,23 +1,15 @@
 ==========
 Known bugs
 ==========
-- Non-falling items also crash a ship
 - A ship might get under a falling item without explode (when it shoudn't).
-- Ships may push upwards an item pile that is too heavy.
 
 ====
 TODO
 ====
 - [Failed to] Verify that ships can't push items downwards.
-- Verify small ship can't rotate while carring items
 - Transform 'Area : GameObject' to 'Rectangle : None'
 
- - Slow push
-[V] On-offswitch key: 'b'
-[V] Slow push mode needs to be displayed
-  > slow-push means that items do have friction
-
- - 3 more screens
+- 3 more screens
 
 ==================
 Unmet requirements

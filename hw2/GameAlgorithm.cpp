@@ -38,7 +38,7 @@ bool GameAlgorithm::isBlocked(const GameObject & gameObject, const GameObjectSet
 	return false;
 }
 
-void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, std::vector<const GameObject *> & ignore)
+void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, bool recursive, std::vector<const GameObject *> & ignore)
 {
 	ignore.push_back(&current);
 
@@ -51,7 +51,11 @@ void GameAlgorithm::getTouchingObstacles(GameObject & current, const Point & dir
 		else if(current.isBlockedBy(**itemIter, direction))
 		{
 			touchingObstacles += (*itemIter);
-			GameAlgorithm::getTouchingObstacles(**itemIter, direction, allObstacles, touchingObstacles, ignore);
+
+			if(recursive)
+			{
+				GameAlgorithm::getTouchingObstacles(**itemIter, direction, allObstacles, touchingObstacles, recursive, ignore);
+			}
 		}
 	}
 }
@@ -118,18 +122,6 @@ void GameAlgorithm::expandToPile(GameObjectSet & gameObjects, const GameObjectSe
 	gameObjects += piles;
 }
 
-void GameAlgorithm::expandToPushablePile(GameObjectSet & root, const GameObjectSet & obsticales, const Point & pushDirection)
-{
-	if(pushDirection != Point::ZERO)
-	{
-		GameObjectSet pile(root);
-		GameAlgorithm::expandToPile(pile, obsticales);
-		GameAlgorithm::removeBlockedFrom(pile, obsticales, pushDirection);
-
-		GameAlgorithm::expandToPile(root, pile);
-	}
-}
-
 void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObjectSet & potentialBlockers, const Point & direction)
 {
 	GameObjectSet::iterator blockedIter = gameObjects.begin();
@@ -147,12 +139,10 @@ void GameAlgorithm::removeBlockedFrom(GameObjectSet & gameObjects, const GameObj
 	}
 }
 
-void GameAlgorithm::getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles)
+void GameAlgorithm::getTouchingObstacles(GameObject & root, const Point & direction, const GameObjectSet & allObstacles, GameObjectSet & touchingObstacles, bool recursive)
 {
-	assert(touchingObstacles.isEmpty());
-
 	std::vector<const GameObject *> ignore;
-	GameAlgorithm::getTouchingObstacles(root, direction, allObstacles, touchingObstacles, ignore);
+	GameAlgorithm::getTouchingObstacles(root, direction, allObstacles, touchingObstacles, recursive, ignore);
 }
 
 bool GameAlgorithm::isTouchingObstacles(const GameObject & gameObject, const GameObjectSet & obstacles, const Point & direction)
@@ -287,26 +277,15 @@ void GameAlgorithm::move(GameObjectSet & gameObjects, const Point & direction)
 	}
 }
 
-bool GameAlgorithm::isCrashed(const GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems)
+bool GameAlgorithm::isCrashed(GameObject & gameObject, const GameObjectSet & previouslyFreeFalingItems)
 {
 	GameObjectSet crashingPile;
+	GameAlgorithm::getTouchingObstacles(gameObject, Point::UP, previouslyFreeFalingItems, crashingPile, true);
 
-	for(GameObjectSet::const_iterator itemIter = previouslyFreeFalingItems.cbegin();
-		itemIter != previouslyFreeFalingItems.cend(); ++itemIter)
-	{
-		if(gameObject.isBlockedBy(**itemIter, Point::UP))
-		{
-			GameObjectSet temp;
-			GameAlgorithm::getPiledItems(**itemIter, temp, previouslyFreeFalingItems);
-			crashingPile += temp;
-			crashingPile += (*itemIter);
-		}
-	}
+	const unsigned maxEndurance = gameObject.getMass() / 2;
+	const unsigned crashingPileTotalMass = crashingPile.getTotalMass();
 
-	const unsigned maxShipEndurance = (gameObject.getMass() / 2);
-
-	return (crashingPile.getTotalMass() > 0) &&
-		(crashingPile.getTotalMass() >= maxShipEndurance);
+	return (crashingPileTotalMass > 0) && (crashingPileTotalMass >= maxEndurance);
 }
 
 bool GameAlgorithm::isPushDirection(const Point & direction)

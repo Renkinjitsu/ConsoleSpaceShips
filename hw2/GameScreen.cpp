@@ -18,6 +18,7 @@ void GameScreen::insertShip(Ship * ship, unsigned index)
 	_shipInfos[index]._velocity = Point::ZERO;
 	_shipInfos[index]._rotate = false;
 	_shipInfos[index]._pushPile.clear();
+	_shipInfos[index]._pullPile.clear();
 }
 
 void GameScreen::removeShip(unsigned index)
@@ -38,8 +39,19 @@ void GameScreen::setInitialState()
 	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
 	{
 		_shipInfos[i]._pushPile.clear();
+		_shipInfos[i]._pullPile.clear();
 		_shipInfos[i]._velocity = Point::ZERO;
 		_shipInfos[i]._rotate = false;
+	}
+
+	_prevFreeFallingItems = _currFreeFallingItems;
+	_currFreeFallingItems.clear();
+	for(GameObjectSet::iterator itemIter = _items.begin(); itemIter != _items.end(); ++itemIter)
+	{
+		if(GameAlgorithm::isBlocked(**itemIter, _obstacles, Point::DOWN) == false)
+		{
+			_currFreeFallingItems += *itemIter;
+		}
 	}
 }
 
@@ -128,8 +140,6 @@ void GameScreen::readUserInput(const Keyboard & keyboard)
 
 void GameScreen::process()
 {
-	_prevFreeFallingItems = _currFreeFallingItems;
-
 	bool shipExploded = false;
 
 	{
@@ -190,13 +200,6 @@ void GameScreen::process()
 		}
 	}
 
-	if(shipExploded)
-	{
-		this->setState(GameScreen::GAME_STATE_LOST);
-
-		return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
-	}
-
 	//Bad ship crash detection
 	{
 		std::vector<BadShip *> crashedShips;
@@ -223,9 +226,8 @@ void GameScreen::process()
 		}
 	}
 
-	unsigned totalShipsMass = 0;
-
-	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
+	//Player ship crash detection
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
 	{
 		Ship * const ship = _ships[i];
 		if(ship == NULL) //Ship not present
@@ -233,26 +235,75 @@ void GameScreen::process()
 			continue; //Skip the not-present ship
 		}
 
-		ShipInfo & shipInfo = _shipInfos[i];
-
 		if(GameAlgorithm::isCrashed(*ship, _prevFreeFallingItems))
 		{
 			ship->explode();
-			this->setState(GameScreen::GAME_STATE_LOST);
-
-			return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
+			shipExploded = true;
 		}
+	}
 
-		GameAlgorithm::getTouchingObstacles(*ship, shipInfo._velocity, _obstacles, shipInfo._pushPile);
-		if(shipInfo._pushPile.isPushable() == false)
+	if(shipExploded)
+	{
+		this->setState(GameScreen::GAME_STATE_LOST);
+
+		return; //Nothing more is going to happen to the now-crashed spaceship or to anything else in the game
+	}
+
+	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
+	{
+		Ship * & ship = _ships[i];
+		if(ship == NULL) //Ship not present
 		{
-			shipInfo._velocity = Point::ZERO;
-			shipInfo._pushPile.clear();
+			continue; //Skip the not-present ship
 		}
 
-		GameAlgorithm::expandToPushablePile(shipInfo._pushPile, _allGameObjects, shipInfo._velocity);
+		ShipInfo & shipInfo = _shipInfos[i];
 
-		totalShipsMass += ship->getMass();
+		if(shipInfo._velocity != Point::ZERO)
+		{
+			//Get pull-pile
+			GameObjectSet pullableItems(_items);
+			GameObjectSet blockingObstacles(_obstacles);
+			blockingObstacles -= ship;
+
+			GameAlgorithm::removeBlockedFrom(pullableItems, blockingObstacles, shipInfo._velocity);
+			GameAlgorithm::getTouchingObstacles(*ship, Point::UP, pullableItems, shipInfo._pullPile, _isItemFrictionOn || (shipInfo._velocity == Point::DOWN));
+			shipInfo._pullPile += ship;
+
+			//Get push-pile
+			GameAlgorithm::getTouchingObstacles(*ship, shipInfo._velocity, _obstacles, shipInfo._pushPile, true);
+
+			if(_isItemFrictionOn)
+			{
+				GameAlgorithm::expandToPile(shipInfo._pushPile, _items);
+			}
+
+			if(shipInfo._pushPile.isPushable() == false)
+			{
+				shipInfo._velocity = Point::ZERO;
+				shipInfo._pushPile.clear();
+				shipInfo._pullPile.clear();
+			}
+			else
+			{
+				shipInfo._pushPile -= shipInfo._pullPile;
+			}
+		}
+		else if(shipInfo._rotate)
+		{
+			for(GameObjectSet::iterator iter = _items.begin(); iter != _items.end(); ++iter)
+			{
+				shipInfo._rotate &= (ship->isBlockedBy(**iter, Point::UP) == false);
+			}
+
+			for(GameObjectSet::iterator iter = _obstacles.begin(); iter != _obstacles.end(); ++iter)
+			{
+				if(ship != *iter)
+				{
+					shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
+				}
+			}
+		}
 	}
 
 	ShipInfo & smallShipInfo = _shipInfos[GameScreen::SMALL_SHIP_INDEX];
@@ -263,6 +314,19 @@ void GameScreen::process()
 		(smallShipInfo._velocity == bigShipInfo._velocity) &&
 		(smallShipInfo._velocity != Point::ZERO))
 	{
+		unsigned totalShipsMass = 0;
+
+		for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++) //For each ship do:
+		{
+			Ship * const ship = _ships[i];
+			if(ship == NULL) //Ship not present
+			{
+				continue; //Skip the not-present ship
+			}
+
+			totalShipsMass += ship->getMass();
+		}
+
 		if(bigShipInfo._pushPile.getTotalMass() > totalShipsMass)
 		{
 			bigShipInfo._velocity = smallShipInfo._velocity = Point::ZERO;
@@ -296,43 +360,6 @@ void GameScreen::process()
 			}
 		}
 	}
-
-	for(unsigned i = 0; i < GameScreen::SHIPS_COUNT; i++)
-	{
-		Ship * & ship = _ships[i];
-		if(ship == NULL) //Ship not present
-		{
-			continue; //Skip the not-present ship
-		}
-
-		ShipInfo & shipInfo = _shipInfos[i];
-
-		if(shipInfo._velocity != Point::ZERO)
-		{
-			shipInfo._pushPile += ship;
-			GameObjectSet pile(shipInfo._pushPile);
-			GameAlgorithm::expandToPile(pile, _allGameObjects);
-			pile -= shipInfo._pushPile;
-
-			GameAlgorithm::removeBlockedFrom(pile, _allGameObjects, shipInfo._velocity);
-			GameAlgorithm::expandToPile(shipInfo._pushPile, pile);
-		}
-		else if(shipInfo._rotate)
-		{
-			for(GameObjectSet::iterator iter = _items.begin(); iter != _items.end(); ++iter)
-			{
-				shipInfo._rotate &= (ship->isBlockedBy(**iter, Point::UP) == false);
-			}
-
-			for(GameObjectSet::iterator iter = _obstacles.begin(); iter != _obstacles.end(); ++iter)
-			{
-				if(ship != *iter)
-				{
-					shipInfo._rotate &= (ship->isBlockingRotation(**iter) == false);
-				}
-			}
-		}
-	}
 }
 
 void GameScreen::update()
@@ -359,6 +386,7 @@ void GameScreen::update()
 		else if(shipInfo._velocity != Point::ZERO)
 		{
 			GameAlgorithm::move(shipInfo._pushPile, shipInfo._velocity);
+			GameAlgorithm::move(shipInfo._pullPile, shipInfo._velocity);
 		}
 
 		if(GameAlgorithm::collidesWith(*ship, _exitPoints))
@@ -373,23 +401,12 @@ void GameScreen::update()
 	}
 	else //Nope, the show goes on!
 	{
-		//List free-falling Item-s (should be after the moving of the push-piles)
-		_currFreeFallingItems.clear();
-		for(GameObjectSet::iterator itemIter = _items.begin(); itemIter != _items.end(); ++itemIter)
-		{
-			if(GameAlgorithm::isBlocked(**itemIter, _obstacles, Point::DOWN) == false)
-			{
-				_currFreeFallingItems += *itemIter;
-			}
-		}
-
-		const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
-		const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
-
 		for(GameObjectSet::iterator badShipIter = _badShips.begin();
 			badShipIter != _badShips.end(); ++badShipIter)
 		{
 			GameObject & badShip = **badShipIter;
+			const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
+			const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
 
 			GameAlgorithm::updateBadSpaceshipPosition(badShip, smallShip, bigShip, _obstacles);
 		}
