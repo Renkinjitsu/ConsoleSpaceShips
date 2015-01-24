@@ -8,6 +8,13 @@ GameObject::GameObject(char texture, bool isPushable)
 	_isPushable = isPushable;
 }
 
+GameObject::GameObject(char texture, const Point & position, bool isPushable)
+{
+	this->setPoints(position);
+	_texture = texture;
+	_isPushable = isPushable;
+}
+
 GameObject::GameObject(char texture, const std::vector<Point> & points, bool isPushable)
 {
 	this->setPoints(points);

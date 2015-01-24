@@ -21,6 +21,7 @@ protected:
 
 public:
 	GameObject(char texture, bool isPushable);
+	GameObject(char texture, const Point & position, bool isPushable);
 	GameObject(char texture, const std::vector<Point> & points, bool isPushable);
 
 	void setPoints(unsigned x, unsigned y);

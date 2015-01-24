@@ -145,7 +145,10 @@ void GameScreenBuilder::loadFromFile(const std::string & fileName)
 		{
 			case GameConfig::TEXTURES_WALL:
 			{
-				_walls.push_back(new Wall(points));
+				for(unsigned i = 0; i < points.size(); ++i)
+				{
+					_walls.push_back(new Wall(points[i]));
+				}
 			}
 			break;
 

@@ -10,7 +10,6 @@ TODO
 ====
 - [Failed to] Verify that ships can't push items downwards.
 - Verify small ship can't rotate while carring items
-- Fix behavior for a wall that is partially damaged by explosion
 - Transform 'Area : GameObject' to 'Rectangle : None'
 
  - Slow push

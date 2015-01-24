@@ -1,5 +1,5 @@
 #include "Wall.h"
 
-Wall::Wall(const std::vector<Point> & points) : GameObject((char)219, points, false)
+Wall::Wall(const Point & position) : GameObject((char)219, position, false)
 {
 }
