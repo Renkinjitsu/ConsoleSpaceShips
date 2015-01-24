@@ -267,7 +267,8 @@ void GameScreen::process()
 			blockingObstacles -= ship;
 
 			GameAlgorithm::removeBlockedFrom(pullableItems, blockingObstacles, shipInfo._velocity);
-			GameAlgorithm::getTouchingObstacles(*ship, Point::UP, pullableItems, shipInfo._pullPile, _isItemFrictionOn || (shipInfo._velocity == Point::DOWN));
+			const bool recursiveTouch = _isItemFrictionOn || (shipInfo._velocity == Point::DOWN) || (shipInfo._velocity == Point::UP);
+			GameAlgorithm::getTouchingObstacles(*ship, Point::UP, pullableItems, shipInfo._pullPile, recursiveTouch);
 			shipInfo._pullPile += ship;
 
 			//Get push-pile
