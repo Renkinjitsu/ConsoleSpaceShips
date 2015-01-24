@@ -205,17 +205,30 @@ void GameAlgorithm::handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & 
 	}
 }
 
-void GameAlgorithm::updateBadSpaceshipPosition(GameObject & badShip, const Ship & smallShip, const Ship & bigShip, const GameObjectSet & obstacles)
+void GameAlgorithm::updateBadSpaceshipPosition(GameObject & badShip, const Ship * const smallShip, const Ship * const bigShip, const GameObjectSet & obstacles)
 {
 	const Point badShipPosition = badShip.getTopLeft();
 
-	const Point smallShipClosestPoint = smallShip.getClosestStepDistancePoint(badShip);
-	const Point bigShipClosestPoint = bigShip.getClosestStepDistancePoint(badShip);
+	Point targetPoint;
 
-	const unsigned smallShipDistance = badShip.getStepDistance(smallShipClosestPoint);
-	const unsigned bigShipDistance = badShip.getStepDistance(bigShipClosestPoint);
+	if(smallShip == NULL)
+	{
+		targetPoint = bigShip->getClosestStepDistancePoint(badShip);
+	}
+	else if(bigShip == NULL)
+	{
+		targetPoint = smallShip->getClosestStepDistancePoint(badShip);
+	}
+	else
+	{
+		const Point smallShipClosestPoint = smallShip->getClosestStepDistancePoint(badShip);
+		const Point bigShipClosestPoint = bigShip->getClosestStepDistancePoint(badShip);
 
-	const Point & targetPoint = (bigShipDistance <= smallShipDistance) ? bigShipClosestPoint : smallShipClosestPoint;
+		const unsigned smallShipDistance = badShip.getStepDistance(smallShipClosestPoint);
+		const unsigned bigShipDistance = badShip.getStepDistance(bigShipClosestPoint);
+
+		targetPoint = (bigShipDistance <= smallShipDistance) ? bigShipClosestPoint : smallShipClosestPoint;
+	}
 
 	Point verticalMovement = Point::ZERO;
 	if(targetPoint.isAbove(badShipPosition))

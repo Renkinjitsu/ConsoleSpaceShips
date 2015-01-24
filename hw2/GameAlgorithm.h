@@ -67,7 +67,7 @@ public:
 	 */
 	static void handleBombs(GameObjectSet & detonatedBombs, GameObjectSet & affectedObjects, GameObjectSet & bombs, GameObjectSet & potentiallyAffected);
 
-	static void updateBadSpaceshipPosition(GameObject & badShip, const Ship & smallShip, const Ship & bigShip, const GameObjectSet & obstacles);
+	static void updateBadSpaceshipPosition(GameObject & badShip, const Ship * const smallShip, const Ship * const bigShip, const GameObjectSet & obstacles);
 
 	/*
 	 * Moves the provided game objects 1 step in the provided direction.

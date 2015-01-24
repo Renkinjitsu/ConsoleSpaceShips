@@ -222,7 +222,6 @@ void GameScreen::process()
 			_obstacles -= crashedShips[i];
 
 			delete crashedShips[i];
-
 		}
 	}
 
@@ -406,10 +405,8 @@ void GameScreen::update()
 			badShipIter != _badShips.end(); ++badShipIter)
 		{
 			GameObject & badShip = **badShipIter;
-			const Ship & smallShip = *(_ships[GameScreen::SMALL_SHIP_INDEX]);
-			const Ship & bigShip = *(_ships[GameScreen::BIG_SHIP_INDEX]);
 
-			GameAlgorithm::updateBadSpaceshipPosition(badShip, smallShip, bigShip, _obstacles);
+			GameAlgorithm::updateBadSpaceshipPosition(badShip, _ships[GameScreen::SMALL_SHIP_INDEX], _ships[GameScreen::BIG_SHIP_INDEX], _obstacles);
 		}
 
 		GameAlgorithm::move(_currFreeFallingItems, Point::DOWN);
