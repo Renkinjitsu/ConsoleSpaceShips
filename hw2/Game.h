@@ -19,7 +19,7 @@ private:
 
 	static std::string getSteps();
 	static unsigned getSolutionInterationsCount(const std::string & levelName);
-	static std::string Game::prompt(const std::string & message);
+	static std::string prompt(const std::string & message);
 
 	static void startLevel();
 	static void saveSolution();
